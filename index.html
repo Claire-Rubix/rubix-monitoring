@@ -1,0 +1,829 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rubix Monitoring — Capacité &amp; Blockers</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:112px}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:#F8FAFC;color:#0F172A;min-height:100vh}
+
+/* ── Header ── */
+.header{background:#051E50;padding:14px 32px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,.15)}
+.logo{display:flex;align-items:center;gap:10px}
+.logo-icon{width:32px;height:32px;background:#FFD700;border-radius:7px;display:flex;align-items:center;justify-content:center;font-weight:900;color:#051E50;font-size:16px}
+.header h1{font-size:17px;font-weight:700;color:#fff}
+.header-meta{color:#94A3B8;font-size:11px;text-align:right;line-height:1.6}
+
+/* ── Nav ── */
+.nav{background:#fff;border-bottom:1px solid #E2E8F0;position:sticky;top:56px;z-index:99;padding:0 32px;display:flex;overflow-x:auto}
+.nav a{padding:10px 16px;font-size:12px;font-weight:600;color:#64748B;text-decoration:none;border-bottom:2px solid transparent;white-space:nowrap;transition:all .2s}
+.nav a:hover,.nav a.active{color:#051E50;border-bottom-color:#FFD700;background:#FEFCE8}
+
+/* ── Loading ── */
+.loading{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:80px 20px;gap:14px}
+.spinner{width:38px;height:38px;border:3px solid #E2E8F0;border-top-color:#051E50;border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading-text{color:#64748B;font-size:14px}
+.error-box{background:#FEE2E2;border:1px solid #FECACA;border-radius:8px;padding:16px 20px;color:#DC2626;font-size:13px;margin:20px auto;max-width:520px;text-align:center}
+
+/* ── Container ── */
+.container{max-width:1280px;margin:0 auto;padding:20px 24px}
+
+/* ── Section titles ── */
+.section-title{font-size:15px;font-weight:800;color:#051E50;margin:24px 0 10px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.st-bar{width:4px;height:20px;border-radius:3px;flex-shrink:0}
+
+/* ── Collapsible sections ── */
+.section{background:#fff;border:1px solid #E2E8F0;border-radius:10px;margin-bottom:14px;overflow:hidden}
+.section-head{padding:14px 20px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;user-select:none;transition:background .15s}
+.section-head:hover{background:#F8FAFC}
+.section-head h2{font-size:14px;font-weight:700;color:#051E50;display:flex;align-items:center;gap:8px;margin:0;flex-wrap:wrap}
+.chevron{font-size:18px;color:#94A3B8;transition:transform .25s;flex-shrink:0}
+.chevron.open{transform:rotate(180deg)}
+.section-body{padding:0 20px 16px;display:none}
+.section-body.open{display:block}
+
+/* ── Badges ── */
+.badge{font-size:9px;padding:2px 8px;border-radius:20px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;display:inline-block}
+.bv{background:#F0F4FF;color:#051E50}
+.bo{background:#ECFDF5;color:#059669}
+.bg{background:#FFF7ED;color:#D97706}
+.bd{background:#FEE2E2;color:#DC2626}
+.bw{background:#FEF3C7;color:#D97706}
+.bi{background:#F0F4FF;color:#3B82F6}
+
+/* ── Alert grid (4 blocks) ── */
+.alert-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:6px}
+.alert-block{border-radius:10px;border:1px solid #E2E8F0;overflow:hidden;background:#fff}
+.alert-block-head{padding:11px 16px;border-bottom:1px solid #F1F5F9;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.alert-block-head h3{font-size:13px;font-weight:700;color:#051E50;flex:1;white-space:nowrap}
+.alert-block-body{padding:10px 14px 12px}
+.alert-row{display:flex;align-items:flex-start;gap:8px;padding:6px 10px;border-radius:6px;margin-bottom:4px;font-size:11px;line-height:1.5}
+.alert-row:last-of-type{margin-bottom:0}
+.alert-icon{font-size:13px;flex-shrink:0;margin-top:1px}
+.detail-link{display:block;text-align:right;font-size:11px;font-weight:600;color:#3B82F6;text-decoration:none;padding:8px 0 0;border-top:1px solid #F1F5F9;margin-top:8px}
+.detail-link:hover{text-decoration:underline}
+
+/* ── Capacity cards ── */
+.summary{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px}
+.scard{background:#fff;border:1px solid #E2E8F0;border-radius:10px;padding:14px;position:relative;overflow:hidden}
+.stop{width:100%;height:3px;position:absolute;top:0;left:0}
+.slabel{font-size:9px;text-transform:uppercase;letter-spacing:1.2px;color:#64748B;margin-bottom:2px;font-weight:600;margin-top:6px}
+.sval{font-size:22px;font-weight:800;color:#051E50}
+.sdetail{font-size:11px;color:#94A3B8;margin-top:1px}
+.stop-gold{background:#FFD700}.stop-green{background:#00D26A}.stop-blue{background:#051E50}.stop-purple{background:#8B5CF6}
+
+/* ── Limit bars ── */
+.limits-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.limit-item{padding:12px;background:#F8FAFC;border-radius:7px;border:1px solid #E2E8F0}
+.limit-label{font-size:12px;font-weight:600;color:#334155;margin-bottom:6px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:4px}
+.limit-bar{height:7px;background:#E2E8F0;border-radius:4px;overflow:hidden;margin-bottom:4px}
+.limit-fill{height:100%;border-radius:4px;transition:width .5s ease}
+.fill-ok{background:linear-gradient(90deg,#00D26A,#34D399)}
+.fill-warn{background:linear-gradient(90deg,#FBBF24,#F59E0B)}
+.fill-danger{background:linear-gradient(90deg,#EF4444,#DC2626)}
+.limit-detail{font-size:10px;color:#94A3B8}
+
+/* ── Per-app breakdown ── */
+.per-app-breakdown{margin-top:8px;border-top:1px dashed #E2E8F0;padding-top:6px}
+.per-app-row{display:flex;align-items:center;gap:6px;padding:2px 0}
+.per-app-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.per-app-name{width:110px;color:#334155;font-weight:600;flex-shrink:0;font-size:10px}
+.per-app-bar-wrap{flex:1;height:5px;background:#E2E8F0;border-radius:3px;overflow:hidden}
+.per-app-bar{height:100%;border-radius:3px;min-width:2px}
+.per-app-val{font-size:10px;color:#64748B;white-space:nowrap;min-width:100px;text-align:right}
+
+/* ── Projection badges ── */
+.proj-badge{display:inline-block;font-size:9px;padding:2px 7px;border-radius:10px;font-weight:700}
+.proj-ok{background:#ECFDF5;color:#059669}
+.proj-warn{background:#FEF3C7;color:#D97706}
+.proj-danger{background:#FEE2E2;color:#DC2626}
+
+/* ── Tables ── */
+table{width:100%;border-collapse:collapse}
+th,td{text-align:left;padding:7px 12px;border-bottom:1px solid #F1F5F9;font-size:13px}
+th{color:#64748B;font-weight:600;font-size:10px;text-transform:uppercase;letter-spacing:.5px;background:#F8FAFC}
+
+/* ── App meta ── */
+.app-meta{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+.meta-card{padding:10px 14px;background:#F8FAFC;border-radius:7px;border:1px solid #E2E8F0}
+.meta-label{font-size:10px;color:#94A3B8;text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px}
+.meta-val{font-size:13px;font-weight:700;color:#051E50;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.status-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;background:#94A3B8}
+
+/* ── Mini metrics (Vercel per app) ── */
+.mini-metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:14px;padding-top:12px;border-top:1px solid #E2E8F0}
+.mini-metric{text-align:center;padding:8px 4px;background:#F8FAFC;border-radius:6px}
+.mini-val{font-size:16px;font-weight:800;color:#051E50}
+.mini-label{font-size:9px;color:#94A3B8;text-transform:uppercase;letter-spacing:.5px;margin-top:2px}
+
+/* ── Threshold blocks ── */
+.thr-d{padding:10px;background:#FEE2E2;border-radius:7px;border:1px solid #FECACA;margin-top:10px}
+.thr-w{padding:10px;background:#FEF3C7;border-radius:7px;border:1px solid #FDE68A;margin-top:10px}
+.thr-i{padding:10px;background:#F0F4FF;border-radius:7px;border:1px solid #BFDBFE;margin-top:10px}
+.thr-d h4{font-size:12px;font-weight:700;color:#DC2626;margin-bottom:6px}
+.thr-w h4{font-size:12px;font-weight:700;color:#D97706;margin-bottom:6px}
+.thr-i h4{font-size:12px;font-weight:700;color:#3B82F6;margin-bottom:6px}
+
+/* ── Recommendations ── */
+.reco{margin-top:10px;padding:10px;background:#ECFDF5;border-radius:7px;border:1px solid #A7F3D0}
+.reco h4{font-size:11px;font-weight:700;color:#059669;margin-bottom:5px}
+.reco p{font-size:11px;color:#334155;padding:2px 0}
+
+/* ── Buttons ── */
+.links{margin-top:10px;display:flex;gap:8px;flex-wrap:wrap}
+.btn{font-size:11px;padding:6px 12px;border-radius:6px;text-decoration:none;font-weight:600;display:inline-block;transition:all .2s}
+.btn-g{background:#FFF7ED;color:#D97706;border:1px solid #FDE68A}
+.btn-g:hover{background:#D97706;color:#fff}
+.btn-o{background:#ECFDF5;color:#059669;border:1px solid #A7F3D0}
+.btn-o:hover{background:#059669;color:#fff}
+.btn-v{background:#F0F4FF;color:#051E50;border:1px solid #BFDBFE}
+.btn-v:hover{background:#051E50;color:#fff}
+
+/* ── Footer ── */
+.footer{text-align:center;padding:16px;color:#94A3B8;font-size:11px;margin-top:8px}
+
+/* ── Back to top ── */
+.back-top{position:fixed;bottom:24px;right:24px;width:40px;height:40px;background:#051E50;color:#FFD700;border:none;border-radius:50%;font-size:18px;cursor:pointer;box-shadow:0 2px 10px rgba(0,0,0,.2);display:none;align-items:center;justify-content:center;z-index:100}
+.back-top:hover{background:#0A2D6E}
+
+@media(max-width:900px){
+  .alert-grid{grid-template-columns:1fr}
+  .limits-grid{grid-template-columns:1fr}
+  .summary{grid-template-columns:repeat(2,1fr)}
+  .app-meta{grid-template-columns:1fr}
+  .mini-metrics{grid-template-columns:repeat(2,1fr)}
+  .nav{padding:0 12px}
+  .header{padding:12px 16px}
+  .container{padding:16px 12px}
+}
+</style>
+</head>
+<body>
+
+<!-- ═══ HEADER ═══ -->
+<div class="header">
+  <div class="logo">
+    <div class="logo-icon">R</div>
+    <h1>Rubix Monitoring — Capacité &amp; Blockers</h1>
+  </div>
+  <div class="header-meta">
+    <div id="period-label">Chargement...</div>
+    <div id="generated-at"></div>
+  </div>
+</div>
+
+<!-- ═══ NAV ═══ -->
+<nav class="nav" id="nav">
+  <a href="#alertes" class="active">Alertes</a>
+  <a href="#pole-acquisition">Pôle Acquisition</a>
+  <a href="#pitch-generator">Pitch Generator</a>
+  <a href="#smart-content">Smart Content</a>
+  <a href="#vercel">Capacité Vercel</a>
+  <a href="#couts">Coûts</a>
+</nav>
+
+<!-- ═══ LOADING ═══ -->
+<div id="loading" class="loading">
+  <div class="spinner"></div>
+  <div class="loading-text">Chargement des données...</div>
+</div>
+
+<!-- ═══ MAIN (masqué jusqu'au chargement) ═══ -->
+<div id="main" style="display:none">
+<div class="container">
+
+  <!-- ──────────── ALERTES ──────────── -->
+  <div id="alertes" class="section-title">
+    <div class="st-bar" style="background:#EF4444"></div>
+    Alertes et blockers
+    <span class="badge bd" id="count-danger">0 CRITIQUE</span>
+    <span class="badge bw" id="count-warn">0 ATTENTION</span>
+  </div>
+
+  <div class="alert-grid">
+
+    <!-- Pôle Acquisition -->
+    <div class="alert-block" style="border-top:3px solid #FFD700">
+      <div class="alert-block-head">
+        <div style="width:10px;height:10px;border-radius:50%;background:#FFD700;flex-shrink:0"></div>
+        <h3>Pôle Acquisition</h3>
+        <span class="badge bg">GEMINI FREE TIER</span>
+        <span class="badge bd">BLOCKER #1</span>
+      </div>
+      <div class="alert-block-body">
+        <div class="alert-row" style="background:#FEE2E2">
+          <span class="alert-icon" style="color:#DC2626">&#9888;</span>
+          <span style="color:#DC2626">FREE TIER bloqué à 5+ users simultanés (15 RPM). Migrer vers GCP billing pour scaler.</span>
+        </div>
+        <div class="alert-row" style="background:#F0F4FF">
+          <span class="alert-icon" style="color:#3B82F6">&#9432;</span>
+          <span style="color:#3B82F6">Quota jour : 1 500 RPD = max 300 users/jour (5 actions/user)</span>
+        </div>
+        <a href="#pole-acquisition" class="detail-link">Voir détails Pôle Acquisition ↓</a>
+      </div>
+    </div>
+
+    <!-- Pitch Generator -->
+    <div class="alert-block" style="border-top:3px solid #8B5CF6">
+      <div class="alert-block-head">
+        <div style="width:10px;height:10px;border-radius:50%;background:#8B5CF6;flex-shrink:0"></div>
+        <h3>Pitch Generator</h3>
+        <span class="badge bo">OPENAI TIER 1</span>
+      </div>
+      <div class="alert-block-body">
+        <div class="alert-row" style="background:#FEF3C7">
+          <span class="alert-icon" style="color:#D97706">&#9888;</span>
+          <span style="color:#D97706">6+ appels OpenAI par pitch (5 priorisations + 1 génération) — paralléliser avec Promise.all</span>
+        </div>
+        <div class="alert-row" style="background:#FEF3C7">
+          <span class="alert-icon" style="color:#D97706">&#9888;</span>
+          <span style="color:#D97706">Polling Assistant API ~55s — frôle le timeout 60s Vercel. Risque d'échec sur pitchs complexes.</span>
+        </div>
+        <a href="#pitch-generator" class="detail-link">Voir détails Pitch Generator ↓</a>
+      </div>
+    </div>
+
+    <!-- Smart Content -->
+    <div class="alert-block" style="border-top:3px solid #00D26A">
+      <div class="alert-block-head">
+        <div style="width:10px;height:10px;border-radius:50%;background:#00D26A;flex-shrink:0"></div>
+        <h3>Smart Content</h3>
+        <span class="badge bg">GEMINI GCP</span>
+      </div>
+      <div class="alert-block-body">
+        <div class="alert-row" style="background:#FEF3C7">
+          <span class="alert-icon" style="color:#D97706">&#9888;</span>
+          <span style="color:#D97706">Crédits promo GCP : ~50 contenus couverts. Surveiller la console GCP avant épuisement.</span>
+        </div>
+        <div class="alert-row" style="background:#ECFDF5">
+          <span class="alert-icon" style="color:#059669">&#10003;</span>
+          <span style="color:#059669">Streaming + retry/backoff 429 déjà en place — pas de risque de timeout Vercel</span>
+        </div>
+        <a href="#smart-content" class="detail-link">Voir détails Smart Content ↓</a>
+      </div>
+    </div>
+
+    <!-- Global -->
+    <div class="alert-block" style="border-top:3px solid #CBD5E1">
+      <div class="alert-block-head">
+        <div style="width:10px;height:10px;border-radius:50%;background:#94A3B8;flex-shrink:0"></div>
+        <h3>Global — Vercel &amp; Claude</h3>
+        <span class="badge bv">PARTAGÉ</span>
+      </div>
+      <div class="alert-block-body">
+        <div id="global-dyn-alerts"><!-- alertes dynamiques Vercel projections --></div>
+        <div class="alert-row" style="background:#F0F4FF">
+          <span class="alert-icon" style="color:#3B82F6">&#9432;</span>
+          <span style="color:#3B82F6">Concurrent Builds : 1 seul build à la fois — les 3 apps partagent la queue</span>
+        </div>
+        <div class="alert-row" style="background:#FFF7ED">
+          <span class="alert-icon" style="color:#D97706">&#9432;</span>
+          <span style="color:#D97706">Claude Code Max 5x : fenêtre glissante 5h + plafond hebdo non documenté — pas d'API quota</span>
+        </div>
+        <div style="margin-top:8px">
+          <a href="https://claude.ai/settings/usage" target="_blank" class="btn btn-g">Vérifier quota Claude →</a>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /alert-grid -->
+
+  <!-- ──────────── PÔLE ACQUISITION ──────────── -->
+  <div id="pole-acquisition" class="section-title">
+    <div class="st-bar" style="background:#FFD700"></div>
+    Pôle Acquisition
+    <span class="badge bg">GEMINI FREE TIER</span>
+    <span class="badge bd">BLOCKER #1</span>
+  </div>
+
+  <div class="section">
+    <div class="section-head" onclick="toggle(this)">
+      <h2>
+        <span class="status-dot" id="pole-dot"></span>
+        rubix-pole-acquisition.vercel.app
+      </h2>
+      <span class="chevron open">&#9662;</span>
+    </div>
+    <div class="section-body open">
+      <div class="app-meta">
+        <div class="meta-card">
+          <div class="meta-label">Dernier déploiement</div>
+          <div class="meta-val" id="pole-last-deploy">—</div>
+        </div>
+        <div class="meta-card">
+          <div class="meta-label">Fournisseur IA</div>
+          <div class="meta-val"><span class="badge bg">Gemini 2.0 Flash</span>&nbsp;Google AI Studio</div>
+        </div>
+      </div>
+
+      <table>
+        <thead><tr><th>Action utilisateur</th><th>Appels IA</th><th>Tokens estimés</th><th>Grounding</th></tr></thead>
+        <tbody>
+          <tr><td style="font-weight:600">Recherche infos entreprise</td><td>1 appel Gemini</td><td>~1 500–4 000</td><td style="color:#D97706;font-weight:600">+ Google Search</td></tr>
+          <tr><td style="font-weight:600">Matcher produits / services</td><td>1 appel Gemini</td><td>~1 500–4 000</td><td style="color:#D97706;font-weight:600">+ Google Search</td></tr>
+          <tr><td style="font-weight:600">Trouver fournisseurs</td><td>1 appel Gemini</td><td>~1 500–4 000</td><td style="color:#D97706;font-weight:600">+ Google Search</td></tr>
+          <tr><td style="font-weight:600">Rédiger email</td><td>1 appel Gemini</td><td>~1 000–2 000</td><td>Non</td></tr>
+          <tr><td style="font-weight:600">Orchestrateur (analyse)</td><td>1 appel Gemini</td><td>~500–1 000</td><td>Non</td></tr>
+        </tbody>
+      </table>
+
+      <div class="thr-d">
+        <h4>Seuils de blocage — Free tier AI Studio : 15 RPM / 1 500 RPD</h4>
+        <table>
+          <thead><tr><th>Users simultanés</th><th>Appels IA/min</th><th>vs Limite 15 RPM</th><th>Statut</th></tr></thead>
+          <tbody>
+            <tr><td>1–3 users</td><td>~3–9 RPM</td><td style="color:#059669">OK (60%)</td><td><span class="proj-badge proj-ok">OK</span></td></tr>
+            <tr><td>5 users</td><td>~10–15 RPM</td><td style="color:#D97706">Limite (100%)</td><td><span class="proj-badge proj-warn">RISQUE</span></td></tr>
+            <tr><td>10+ users</td><td>~20–30+ RPM</td><td style="color:#DC2626;font-weight:700">DÉPASSÉ (200%+)</td><td><span class="proj-badge proj-danger">BLOQUÉ</span></td></tr>
+          </tbody>
+        </table>
+        <div style="font-size:11px;color:#DC2626;margin-top:6px">
+          <strong>Quota jour :</strong> 1 500 RPD → si chaque user fait ~5 actions = max 300 users/jour. Si 10 actions/user → max 150 users/jour.
+        </div>
+      </div>
+
+      <div class="reco">
+        <h4>Recommandations pour scaler</h4>
+        <p>1. <strong>Batcher les appels grounding</strong> : combiner infos_entreprise + matcher + fournisseur en 1 seul appel multi-tool (divisé par 3)</p>
+        <p>2. <strong>Cacher les résultats</strong> : même entreprise = même recherche → cacher 24h (Redis / KV Vercel)</p>
+        <p>3. <strong>Migrer vers GCP billing</strong> à partir de 5 users : 1 500 RPM au lieu de 15 RPM (×100)</p>
+        <p>4. <strong>Queue + rate limiter côté serveur</strong> : limiter à 10 RPM et mettre les requêtes en file d'attente</p>
+      </div>
+
+      <div class="mini-metrics">
+        <div class="mini-metric"><div class="mini-val" id="pole-build">—</div><div class="mini-label">Build min</div></div>
+        <div class="mini-metric"><div class="mini-val" id="pole-bw">—</div><div class="mini-label">Bandwidth</div></div>
+        <div class="mini-metric"><div class="mini-val" id="pole-fninv">—</div><div class="mini-label">Fn Invocations</div></div>
+        <div class="mini-metric"><div class="mini-val" id="pole-fndur">—</div><div class="mini-label">Fn Duration</div></div>
+      </div>
+
+      <div class="links">
+        <a href="https://aistudio.google.com/app/apikey" target="_blank" class="btn btn-g">AI Studio usage →</a>
+        <a href="https://console.cloud.google.com/apis/dashboard?project=app-acquisition-487813" target="_blank" class="btn btn-g">GCP Console →</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ──────────── PITCH GENERATOR ──────────── -->
+  <div id="pitch-generator" class="section-title">
+    <div class="st-bar" style="background:#8B5CF6"></div>
+    Pitch Generator
+    <span class="badge bo">OPENAI TIER 1</span>
+  </div>
+
+  <div class="section">
+    <div class="section-head" onclick="toggle(this)">
+      <h2>
+        <span class="status-dot" id="pitch-dot"></span>
+        rubix-pitch.vercel.app
+      </h2>
+      <span class="chevron open">&#9662;</span>
+    </div>
+    <div class="section-body open">
+      <div class="app-meta">
+        <div class="meta-card">
+          <div class="meta-label">Dernier déploiement</div>
+          <div class="meta-val" id="pitch-last-deploy">—</div>
+        </div>
+        <div class="meta-card">
+          <div class="meta-label">Coût / pitch complet (6 appels)</div>
+          <div class="meta-val" id="pitch-cost-per-pitch">—</div>
+        </div>
+      </div>
+
+      <table>
+        <thead><tr><th>Action utilisateur</th><th>Appels IA</th><th>Modèle</th><th>Détail pipeline</th></tr></thead>
+        <tbody>
+          <tr><td style="font-weight:600">Analyser contexte</td><td>1 appel</td><td>gpt-3.5-turbo</td><td>Identification enjeux métier</td></tr>
+          <tr style="border-top:2px solid #E2E8F0">
+            <td style="font-weight:600" rowspan="3">Générer pitch (3 versions)</td>
+            <td style="font-weight:700;color:#D97706">6+ appels</td>
+            <td>gpt-3.5-turbo + Assistant</td>
+            <td style="font-size:10px;color:#D97706">Pipeline ci-dessous</td>
+          </tr>
+          <tr><td colspan="3" style="font-size:10px;color:#64748B;padding-left:20px">1. Prioriser solutions &nbsp;2. Prioriser questions &nbsp;3. Prioriser tendances &nbsp;4. Prioriser crédibilité &nbsp;5. Prioriser pyramide &nbsp;6. Génération finale (Assistant API)</td></tr>
+          <tr><td colspan="3" style="font-size:10px;color:#059669;padding-left:20px">→ Les 5 priorisations peuvent être parallélisées avec Promise.all()</td></tr>
+          <tr><td style="font-weight:600">Générer one-pager</td><td>6+ appels</td><td>Assistant API</td><td>Même pipeline priorisation + fusion</td></tr>
+        </tbody>
+      </table>
+
+      <div class="thr-i">
+        <h4>Seuils de blocage — OpenAI Tier 1 : 500 RPM / 200K TPM</h4>
+        <table>
+          <thead><tr><th>Users simultanés</th><th>Appels IA/min</th><th>vs Limite 500 RPM</th><th>Statut</th></tr></thead>
+          <tbody>
+            <tr><td>1–10 users</td><td>~6–60 RPM</td><td style="color:#059669">OK (12%)</td><td><span class="proj-badge proj-ok">OK</span></td></tr>
+            <tr><td>50 users</td><td>~300 RPM</td><td style="color:#D97706">Attention (60%)</td><td><span class="proj-badge proj-warn">SURVEILLER</span></td></tr>
+            <tr><td>80+ users</td><td>~480+ RPM</td><td style="color:#DC2626;font-weight:700">Limite (96%+)</td><td><span class="proj-badge proj-danger">RISQUE</span></td></tr>
+          </tbody>
+        </table>
+        <div style="font-size:11px;color:#3B82F6;margin-top:6px" id="pitch-cost-detail">Chargement des coûts...</div>
+      </div>
+
+      <div class="reco">
+        <h4>Recommandations pour scaler</h4>
+        <p>1. <strong>Paralléliser les 5 priorisations</strong> : Promise.all() au lieu de séquentiel (divise le temps par 5, même nombre d'appels)</p>
+        <p>2. <strong>Timeout 55s Vercel</strong> : le polling Assistant API frôle la limite — envisager mode streaming natif</p>
+        <p>3. <strong>Monter de tier OpenAI</strong> : Tier 2 = 5 000 RPM (×10). Automatique après $50 dépensés + 7 jours</p>
+        <p>4. <strong>Cacher la matrice enrichie</strong> : les priorisations pour un même secteur/fonction sont identiques — cacher 1h</p>
+      </div>
+
+      <div class="mini-metrics">
+        <div class="mini-metric"><div class="mini-val" id="pitch-build">—</div><div class="mini-label">Build min</div></div>
+        <div class="mini-metric"><div class="mini-val" id="pitch-bw">—</div><div class="mini-label">Bandwidth</div></div>
+        <div class="mini-metric"><div class="mini-val" id="pitch-fninv">—</div><div class="mini-label">Fn Invocations</div></div>
+        <div class="mini-metric"><div class="mini-val" id="pitch-fndur">—</div><div class="mini-label">Fn Duration</div></div>
+      </div>
+
+      <div class="links">
+        <a href="https://platform.openai.com/usage" target="_blank" class="btn btn-o">OpenAI Usage →</a>
+        <a href="https://platform.openai.com/settings/organization/limits" target="_blank" class="btn btn-o">Rate Limits →</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ──────────── SMART CONTENT ──────────── -->
+  <div id="smart-content" class="section-title">
+    <div class="st-bar" style="background:#00D26A"></div>
+    Smart Content
+    <span class="badge bg">GEMINI GCP</span>
+  </div>
+
+  <div class="section">
+    <div class="section-head" onclick="toggle(this)">
+      <h2>
+        <span class="status-dot" id="smart-dot"></span>
+        rubix-smart-content.vercel.app
+      </h2>
+      <span class="chevron open">&#9662;</span>
+    </div>
+    <div class="section-body open">
+      <div class="app-meta">
+        <div class="meta-card">
+          <div class="meta-label">Dernier déploiement</div>
+          <div class="meta-val" id="smart-last-deploy">—</div>
+        </div>
+        <div class="meta-card">
+          <div class="meta-label">Fournisseur IA</div>
+          <div class="meta-val"><span class="badge bg">Gemini Flash</span>&nbsp;Google Cloud Platform</div>
+        </div>
+      </div>
+
+      <table>
+        <thead><tr><th>Action utilisateur</th><th>Appels IA</th><th>Modèle</th><th>Streaming</th></tr></thead>
+        <tbody>
+          <tr><td style="font-weight:600">Planifier intentions (10 sujets)</td><td>2 appels</td><td>Gemini 2.0 Flash</td><td>Non (batch)</td></tr>
+          <tr><td style="font-weight:600">Générer 1 article / landing page</td><td>1 appel</td><td>Gemini 2.5 Flash</td><td style="color:#059669;font-weight:600">Oui (stream)</td></tr>
+          <tr><td style="font-weight:600">Validation sources / SEO</td><td>1 appel</td><td>Gemini 2.0 Flash</td><td>Non</td></tr>
+        </tbody>
+      </table>
+
+      <div class="thr-w">
+        <h4>Seuils de blocage — GCP : 1 500 RPM mais crédits limités</h4>
+        <table>
+          <thead><tr><th>Users simultanés</th><th>Appels IA/min</th><th>Coût/mois estimé</th><th>Statut</th></tr></thead>
+          <tbody>
+            <tr><td>1–5 users</td><td>~2–10 RPM</td><td>~3–15 EUR</td><td><span class="proj-badge proj-ok">OK</span></td></tr>
+            <tr><td>10 users</td><td>~10–20 RPM</td><td>~30 EUR</td><td><span class="proj-badge proj-warn">CRÉDITS ?</span></td></tr>
+            <tr><td>50+ users</td><td>~50–100 RPM</td><td>~150+ EUR</td><td><span class="proj-badge proj-danger">PAYANT</span></td></tr>
+          </tbody>
+        </table>
+        <div style="font-size:11px;color:#D97706;margin-top:6px">
+          <strong>Blocker principal :</strong> pas le RPM (1 500 = large) mais le <strong>coût</strong> quand les crédits promo GCP seront épuisés.
+          Actuellement ~2.98 EUR brut / ~50 contenus ≈ 0.06 EUR/contenu.
+        </div>
+      </div>
+
+      <div class="reco">
+        <h4>Recommandations pour scaler</h4>
+        <p>1. <strong>Streaming déjà en place</strong> : évite les timeouts Vercel 60s sur contenus longs — ne pas toucher</p>
+        <p>2. <strong>Retry + backoff 429 déjà en place</strong> : gestion des rate limits côté serveur — ne pas toucher</p>
+        <p>3. <strong>Surveiller les crédits GCP</strong> : quand épuisés → ~0.06 EUR/contenu en production</p>
+        <p>4. <strong>Batching intentions</strong> : générer les 10 intentions en 1 seul appel plutôt que 2 (possible vu la taille du prompt)</p>
+      </div>
+
+      <div class="mini-metrics">
+        <div class="mini-metric"><div class="mini-val" id="smart-build">—</div><div class="mini-label">Build min</div></div>
+        <div class="mini-metric"><div class="mini-val" id="smart-bw">—</div><div class="mini-label">Bandwidth</div></div>
+        <div class="mini-metric"><div class="mini-val" id="smart-fninv">—</div><div class="mini-label">Fn Invocations</div></div>
+        <div class="mini-metric"><div class="mini-val" id="smart-fndur">—</div><div class="mini-label">Fn Duration</div></div>
+      </div>
+
+      <div class="links">
+        <a href="https://console.cloud.google.com/billing?project=n8n-landing-pages" target="_blank" class="btn btn-g">Crédits GCP restants →</a>
+        <a href="https://console.cloud.google.com/apis/dashboard?project=n8n-landing-pages" target="_blank" class="btn btn-g">GCP Dashboard →</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ──────────── CAPACITÉ VERCEL ──────────── -->
+  <div id="vercel" class="section-title">
+    <div class="st-bar" style="background:#FFD700"></div>
+    Capacité Vercel
+    <span class="badge bv" id="vercel-period">—</span>
+  </div>
+
+  <div class="summary">
+    <div class="scard"><div class="stop stop-gold"></div>
+      <div class="slabel">Build Minutes restantes</div>
+      <div class="sval" id="build-rem">—</div>
+      <div class="sdetail" id="build-detail">—</div>
+    </div>
+    <div class="scard"><div class="stop stop-green"></div>
+      <div class="slabel">Bandwidth restante</div>
+      <div class="sval" id="bw-rem">—</div>
+      <div class="sdetail" id="bw-detail">—</div>
+    </div>
+    <div class="scard"><div class="stop stop-blue"></div>
+      <div class="slabel">Fn Invocations restantes</div>
+      <div class="sval" id="fninv-rem">—</div>
+      <div class="sdetail" id="fninv-detail">—</div>
+    </div>
+    <div class="scard"><div class="stop stop-purple"></div>
+      <div class="slabel">Fn Duration restante</div>
+      <div class="sval" id="fndur-rem">—</div>
+      <div class="sdetail" id="fndur-detail">—</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-head" onclick="toggle(this)">
+      <h2>Quotas et projections <span class="badge bv" id="reset-badge">—</span></h2>
+      <span class="chevron open">&#9662;</span>
+    </div>
+    <div class="section-body open">
+      <div class="limits-grid">
+        <div class="limit-item">
+          <div class="limit-label"><span>Build Minutes <span class="proj-badge" id="build-pbadge">—</span></span><span id="build-used">—</span></div>
+          <div class="limit-bar"><div class="limit-fill fill-ok" id="build-bar" style="width:.5%"></div></div>
+          <div class="limit-detail" id="build-proj">—</div>
+          <div id="build-perapp"></div>
+        </div>
+        <div class="limit-item">
+          <div class="limit-label"><span>Bandwidth <span class="proj-badge" id="bw-pbadge">—</span></span><span id="bw-used">—</span></div>
+          <div class="limit-bar"><div class="limit-fill fill-ok" id="bw-bar" style="width:.5%"></div></div>
+          <div class="limit-detail" id="bw-proj">—</div>
+          <div id="bw-perapp"></div>
+        </div>
+        <div class="limit-item">
+          <div class="limit-label"><span>Function Invocations <span class="proj-badge" id="fninv-pbadge">—</span></span><span id="fninv-used">—</span></div>
+          <div class="limit-bar"><div class="limit-fill fill-ok" id="fninv-bar" style="width:.5%"></div></div>
+          <div class="limit-detail" id="fninv-proj">—</div>
+          <div id="fninv-perapp"></div>
+        </div>
+        <div class="limit-item">
+          <div class="limit-label"><span>Function Duration <span class="proj-badge" id="fndur-pbadge">—</span></span><span id="fndur-used">—</span></div>
+          <div class="limit-bar"><div class="limit-fill fill-ok" id="fndur-bar" style="width:.5%"></div></div>
+          <div class="limit-detail" id="fndur-proj">—</div>
+          <div id="fndur-perapp"></div>
+        </div>
+      </div>
+      <div style="margin-top:12px;padding:10px;background:#FFF7ED;border-radius:7px;border:1px solid #FDE68A">
+        <div style="font-size:11px;font-weight:700;color:#D97706;margin-bottom:4px">Limites hard Vercel Pro (blocage direct, pas de surcharge)</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;font-size:11px;color:#64748B">
+          <div><strong>Concurrent Builds :</strong> 1 seul (les autres en queue)</div>
+          <div><strong>Serverless Timeout :</strong> 60s max par requête</div>
+          <div><strong>Edge Function :</strong> 30s max / body 4 MB</div>
+          <div><strong>Deployments :</strong> 100/jour (soft limit)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ──────────── COÛTS ──────────── -->
+  <div id="couts" class="section-title">
+    <div class="st-bar" style="background:#051E50"></div>
+    Coûts (référence)
+  </div>
+
+  <div class="section">
+    <div class="section-head" onclick="toggle(this)">
+      <h2>Résumé coûts <span class="badge bv" id="total-badge">—</span></h2>
+      <span class="chevron">&#9662;</span>
+    </div>
+    <div class="section-body">
+      <table>
+        <thead><tr><th>Service</th><th>Coût</th><th>Détail</th></tr></thead>
+        <tbody>
+          <tr><td style="font-weight:600">Vercel Pro</td><td style="font-weight:700">$20.00/mois</td><td style="color:#64748B">Forfait fixe mutualisé — 3 apps</td></tr>
+          <tr><td style="font-weight:600">OpenAI</td><td style="font-weight:700" id="openai-cost">—</td><td style="color:#64748B" id="openai-detail">—</td></tr>
+          <tr><td style="font-weight:600">Gemini Smart Content</td><td style="font-weight:700">0 EUR</td><td style="color:#64748B">~2.98 EUR brut couvert par crédits promo GCP</td></tr>
+          <tr><td style="font-weight:600">Gemini Pôle Acquisition</td><td style="font-weight:700;color:#00D26A">0 EUR</td><td style="color:#64748B">Free tier Google AI Studio</td></tr>
+          <tr><td style="font-weight:600">Claude Code</td><td style="font-weight:700">$100/mois</td><td style="color:#64748B">Max 5x plan — inclus dans l'abonnement Claude</td></tr>
+          <tr style="font-weight:700;border-top:2px solid #E2E8F0"><td>Total réel</td><td style="font-size:16px;color:#051E50" id="total-cost">—</td><td style="color:#64748B">Vercel + OpenAI (Gemini = 0)</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div><!-- /container -->
+</div><!-- /main -->
+
+<div class="footer" id="footer">Rubix Monitoring — Capacité &amp; Blockers</div>
+<button class="back-top" id="backTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">&#8593;</button>
+
+<script>
+// ═══════════════════════════════════════
+// UI utils
+// ═══════════════════════════════════════
+function toggle(head) {
+  head.nextElementSibling.classList.toggle('open');
+  head.querySelector('.chevron').classList.toggle('open');
+}
+
+// Nav highlight on scroll
+const navLinks = document.querySelectorAll('.nav a');
+const sections = ['alertes','pole-acquisition','pitch-generator','smart-content','vercel','couts'];
+window.addEventListener('scroll', () => {
+  const pos = window.scrollY + 130;
+  for (let i = sections.length - 1; i >= 0; i--) {
+    const el = document.getElementById(sections[i]);
+    if (el && el.offsetTop <= pos) {
+      navLinks.forEach(a => a.classList.remove('active'));
+      navLinks[i].classList.add('active');
+      break;
+    }
+  }
+  document.getElementById('backTop').style.display = window.scrollY > 400 ? 'flex' : 'none';
+});
+
+// ═══════════════════════════════════════
+// Helpers
+// ═══════════════════════════════════════
+const APP_COLORS = {
+  'rubix-pole-acquisition':    '#FFD700',
+  'rubix-pitch-generator-dev': '#8B5CF6',
+  'rubix-smart-content':       '#00D26A',
+  '_other':                    '#94A3B8',
+};
+const APP_SHORT = {
+  'rubix-pole-acquisition':    'pôle-acq.',
+  'rubix-pitch-generator-dev': 'pitch-gen.',
+  'rubix-smart-content':       'smart-cont.',
+};
+
+const $ = id => document.getElementById(id);
+const html  = (id, v) => { const el = $(id); if (el) el.innerHTML  = v; };
+const text  = (id, v) => { const el = $(id); if (el) el.textContent = v; };
+const fmtN  = n => (n >= 1000 ? n.toLocaleString('fr-FR') : String(n));
+
+function projBadge(risk, label) {
+  return `<span class="proj-badge proj-${risk}">${label}</span>`;
+}
+
+function fillBar(id, pct, risk) {
+  const el = $(id);
+  if (!el) return;
+  el.className = `limit-fill fill-${risk}`;
+  el.style.width = Math.max(pct, 0.5) + '%';
+}
+
+function perAppHtml(perApp, total) {
+  const entries = Object.entries(perApp || {}).filter(([,v]) => v > 0).sort((a,b) => b[1]-a[1]);
+  if (!entries.length) return '';
+  let h = '<div class="per-app-breakdown">';
+  for (const [name, qty] of entries) {
+    const color = APP_COLORS[name] || '#94A3B8';
+    const short = APP_SHORT[name]  || name;
+    const pct   = total > 0 ? Math.round(qty / total * 1000) / 10 : 0;
+    const qFmt  = qty >= 1000 ? fmtN(Math.round(qty)) : (Math.round(qty * 100) / 100).toLocaleString('fr-FR');
+    h += `<div class="per-app-row">
+      <span class="per-app-dot" style="background:${color}"></span>
+      <span class="per-app-name">${short}</span>
+      <span class="per-app-bar-wrap"><span class="per-app-bar" style="width:${Math.max(pct,2)}%;background:${color}"></span></span>
+      <span class="per-app-val">${qFmt} (${pct}%)</span>
+    </div>`;
+  }
+  return h + '</div>';
+}
+
+// ═══════════════════════════════════════
+// Render functions
+// ═══════════════════════════════════════
+function renderAll(d) {
+  const { period, vercel, openai } = d;
+
+  // Header
+  html('period-label', `${period.from} → ${period.to}`);
+  html('generated-at', `Mis à jour : ${new Date(d.generatedAt).toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'})}`);
+
+  renderDeploys(vercel.deploys);
+  renderOpenAI(openai);
+  renderVercelCapacity(vercel.proj, period);
+  renderMiniMetrics(vercel.proj);
+  renderGlobalAlerts(vercel.proj);
+
+  html('footer', `Rubix Monitoring — Capacité &amp; Blockers | Période : ${period.from} → ${period.to} | Reset le ${period.reset}`);
+}
+
+function renderDeploys(deploys) {
+  const map = { pole: 'pole', pitch: 'pitch', smart: 'smart' };
+  for (const [key, d] of Object.entries(deploys)) {
+    const k = map[key] || key;
+    const color = d.state === 'READY' ? '#00D26A' : d.state === 'N/A' ? '#94A3B8' : '#EF4444';
+    const dot = $(`${k}-dot`); if (dot) dot.style.background = color;
+    const badge = `<span class="badge" style="background:${d.state==='READY'?'#ECFDF5':'#FEE2E2'};color:${d.state==='READY'?'#059669':'#DC2626'}">${d.state}</span>`;
+    html(`${k}-last-deploy`, `${badge} ${d.lastDate}`);
+  }
+}
+
+function renderOpenAI(oa) {
+  const cpp6 = Math.round(oa.costPerPrompt * 6 * 1000) / 1000;
+  html('pitch-cost-per-pitch', `<strong>~$${cpp6}</strong> &nbsp;(6 × $${oa.costPerPrompt}/appel)`);
+  html('pitch-cost-detail', `<strong>Coût/pitch complet :</strong> ~$${oa.costPerPrompt} × 6 appels = ~$${cpp6}/pitch &nbsp;|&nbsp; À $${oa.monthlyProjected}/mois (rythme actuel since jan. 2026)`);
+  html('openai-cost',   `<strong>$${oa.totalCost}</strong>`);
+  html('openai-detail', `${fmtN(oa.requests)} req. | $${oa.costPerPrompt}/prompt | Rubix Pitch uniquement`);
+  const total = Math.round((20 + oa.totalCost) * 100) / 100;
+  html('total-cost',  `$${total}`);
+  html('total-badge', `$${total} TOTAL`);
+}
+
+function renderVercelCapacity(proj, period) {
+  const METRICS = [
+    { svc:'Build Minutes',        id:'build', fmtV: v => Math.round(v)+' min',     fmtU: v => Math.round(v)+' / 6 000 min',    overage:'$0.02/min'   },
+    { svc:'Fast Data Transfer',   id:'bw',    fmtV: v => v.toFixed(1)+' GB',       fmtU: v => v.toFixed(2)+' / 1 000 GB',      overage:'$0.15/GB'    },
+    { svc:'Function Invocations', id:'fninv', fmtV: v => fmtN(Math.round(v)),      fmtU: v => fmtN(Math.round(v))+' / 1M',     overage:'$0.60/M'     },
+    { svc:'Function Duration',    id:'fndur', fmtV: v => v.toFixed(1)+' GB-h',     fmtU: v => v.toFixed(2)+' / 1 000 GB-h',   overage:'$0.18/GB-h'  },
+  ];
+  let dangerC = 0, warnC = 0;
+  for (const { svc, id, fmtV, fmtU, overage } of METRICS) {
+    const p = proj[svc]; if (!p) continue;
+    const pct = Math.round(p.used / p.limit * 1000) / 10;
+    html(`${id}-rem`,    fmtV(p.remaining));
+    html(`${id}-detail`, `${fmtU(p.used)} | ${fmtV(p.dailyRate)}/jour`);
+    html(`${id}-used`,   fmtU(p.used));
+    html(`${id}-pbadge`, `Proj. ${fmtV(p.projected)}`);
+    const pb = $(`${id}-pbadge`); if (pb) pb.className = `proj-badge proj-${p.risk}`;
+    html(`${id}-proj`,   `${pct}% | ${fmtV(p.dailyRate)}/jour | Limite dans ${p.daysUntil} j. | Surcharge : ${overage}`);
+    fillBar(`${id}-bar`, pct, p.risk);
+    html(`${id}-perapp`, perAppHtml(p.perApp, p.used));
+    if (p.risk === 'danger') dangerC++;
+    else if (p.risk === 'warn') warnC++;
+  }
+  html('vercel-period', `${period.from} → ${period.to}`);
+  html('reset-badge',   `Reset ${period.reset} (dans ${Math.ceil(period.daysRemaining)} j.)`);
+  html('count-danger',  `${dangerC} CRITIQUE`);
+  html('count-warn',    `${warnC} ATTENTION`);
+}
+
+function renderMiniMetrics(proj) {
+  const appsMap = { pole:'rubix-pole-acquisition', pitch:'rubix-pitch-generator-dev', smart:'rubix-smart-content' };
+  const metMap  = [
+    { svc:'Build Minutes',        suf:'build', fmt:v => Math.round(v)+' min'    },
+    { svc:'Fast Data Transfer',   suf:'bw',    fmt:v => v.toFixed(2)+' GB'      },
+    { svc:'Function Invocations', suf:'fninv', fmt:v => fmtN(Math.round(v))     },
+    { svc:'Function Duration',    suf:'fndur', fmt:v => v.toFixed(3)+' GB-h'    },
+  ];
+  for (const [app, appKey] of Object.entries(appsMap)) {
+    for (const { svc, suf, fmt } of metMap) {
+      const val = proj[svc]?.perApp?.[appKey] ?? 0;
+      html(`${app}-${suf}`, fmt(val));
+    }
+  }
+}
+
+function renderGlobalAlerts(proj) {
+  let h = '';
+  const build = proj['Build Minutes'];
+  const fnInv = proj['Function Invocations'];
+  if (build?.risk === 'danger') {
+    h += `<div class="alert-row" style="background:#FEE2E2"><span class="alert-icon" style="color:#DC2626">&#9888;</span><span style="color:#DC2626">Build Minutes : projection ${Math.round(build.projected)} / 6 000 min (${build.projPct}%) — risque de dépassement</span></div>`;
+  } else if (build?.risk === 'warn') {
+    h += `<div class="alert-row" style="background:#FEF3C7"><span class="alert-icon" style="color:#D97706">&#9888;</span><span style="color:#D97706">Build Minutes : projection ${Math.round(build.projected)} / 6 000 min (${build.projPct}%) — à surveiller</span></div>`;
+  }
+  if (fnInv?.risk === 'danger') {
+    h += `<div class="alert-row" style="background:#FEE2E2"><span class="alert-icon" style="color:#DC2626">&#9888;</span><span style="color:#DC2626">Function Invocations : projection ${fmtN(Math.round(fnInv.projected))} / 1M — risque de dépassement</span></div>`;
+  } else if (fnInv?.risk === 'warn') {
+    h += `<div class="alert-row" style="background:#FEF3C7"><span class="alert-icon" style="color:#D97706">&#9888;</span><span style="color:#D97706">Function Invocations : projection ${fmtN(Math.round(fnInv.projected))} / 1M — à surveiller</span></div>`;
+  }
+  html('global-dyn-alerts', h);
+}
+
+// ═══════════════════════════════════════
+// Bootstrap
+// ═══════════════════════════════════════
+(async () => {
+  try {
+    const resp = await fetch('/api/data');
+    if (!resp.ok) throw new Error(`Erreur API ${resp.status}`);
+    const d = await resp.json();
+    if (d.error) throw new Error(d.error);
+    renderAll(d);
+    $('loading').style.display = 'none';
+    $('main').style.display    = 'block';
+  } catch (err) {
+    $('loading').innerHTML = `
+      <div class="error-box">
+        <strong>Erreur de chargement</strong><br><br>${err.message}<br><br>
+        <button onclick="location.reload()" style="padding:7px 16px;border-radius:6px;border:none;background:#051E50;color:#FFD700;font-weight:700;cursor:pointer">
+          Réessayer
+        </button>
+      </div>`;
+  }
+})();
+</script>
+</body>
+</html>
