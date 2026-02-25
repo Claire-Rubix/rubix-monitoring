@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
@@ -179,11 +179,11 @@ th{color:#64748B;font-weight:600;font-size:10px;text-transform:uppercase;letter-
 <!-- NAV -->
 <nav class="nav" id="nav">
   <a class="active" onclick="showTab('alertes')">Alertes</a>
-  <a onclick="showTab('pole')">Pole Acquisition</a>
+  <a onclick="showTab('pole')">Pôle Acquisition</a>
   <a onclick="showTab('pitch')">Pitch Generator</a>
   <a onclick="showTab('smart')">Smart Content</a>
-  <a onclick="showTab('vercel')">Capacite Vercel</a>
-  <a onclick="showTab('couts')">Couts</a>
+  <a onclick="showTab('vercel')">Capacité Vercel</a>
+  <a onclick="showTab('couts')">Coûts</a>
 </nav>
 
 <!-- LOADING -->
@@ -210,20 +210,20 @@ th{color:#64748B;font-weight:600;font-size:10px;text-transform:uppercase;letter-
       <div class="alert-block" style="border-top:3px solid #FFD700">
         <div class="alert-block-head">
           <div style="width:10px;height:10px;border-radius:50%;background:#FFD700;flex-shrink:0"></div>
-          <h3>Pole Acquisition</h3>
+          <h3>Pôle Acquisition</h3>
           <span class="badge bg">GEMINI FREE TIER</span>
           <span class="badge bd">BLOCKER #1</span>
         </div>
         <div class="alert-block-body">
           <div class="alert-row" style="background:#FEE2E2">
             <span class="alert-icon" style="color:#DC2626">&#9888;</span>
-            <span style="color:#DC2626">FREE TIER bloque a 5+ users simultanees (15 RPM). Migrer vers GCP billing pour scaler.</span>
+            <span style="color:#DC2626">FREE TIER bloqué a 5+ users simultanées (15 RPM). Migrer vers GCP billing pour scaler.</span>
           </div>
           <div class="alert-row" style="background:#F0F4FF">
             <span class="alert-icon" style="color:#3B82F6">&#9432;</span>
             <span style="color:#3B82F6">Quota jour : 1 500 RPD = max 300 users/jour (5 actions/user)</span>
           </div>
-          <a class="detail-link" onclick="showTab('pole')">Voir details Pole Acquisition</a>
+          <a class="detail-link" onclick="showTab('pole')">Voir détails Pôle Acquisition</a>
         </div>
       </div>
 
@@ -236,13 +236,13 @@ th{color:#64748B;font-weight:600;font-size:10px;text-transform:uppercase;letter-
         <div class="alert-block-body">
           <div class="alert-row" style="background:#FEF3C7">
             <span class="alert-icon" style="color:#D97706">&#9888;</span>
-            <span style="color:#D97706">6+ appels OpenAI par pitch (5 priorisations + 1 generation) paralleliser avec Promise.all</span>
+            <span style="color:#D97706">6+ appels OpenAI par pitch (5 priorisations + 1 génération) paralléliser avec Promise.all</span>
           </div>
           <div class="alert-row" style="background:#FEF3C7">
             <span class="alert-icon" style="color:#D97706">&#9888;</span>
             <span style="color:#D97706">Polling Assistant API ~55s frole le timeout 60s Vercel. Risque d'echec sur pitchs complexes.</span>
           </div>
-          <a class="detail-link" onclick="showTab('pitch')">Voir details Pitch Generator</a>
+          <a class="detail-link" onclick="showTab('pitch')">Voir détails Pitch Generator</a>
         </div>
       </div>
 
@@ -255,13 +255,13 @@ th{color:#64748B;font-weight:600;font-size:10px;text-transform:uppercase;letter-
         <div class="alert-block-body">
           <div class="alert-row" style="background:#FEF3C7">
             <span class="alert-icon" style="color:#D97706">&#9888;</span>
-            <span style="color:#D97706">Credits promo GCP : ~50 contenus couverts. Surveiller la console GCP avant epuisement.</span>
+            <span style="color:#D97706">Credits promo GCP : ~50 contenus couverts. Surveiller la console GCP avant épuisement.</span>
           </div>
           <div class="alert-row" style="background:#ECFDF5">
             <span class="alert-icon" style="color:#059669">&#10003;</span>
-            <span style="color:#059669">Streaming + retry/backoff 429 deja en place pas de risque de timeout Vercel</span>
+            <span style="color:#059669">Streaming + retry/backoff 429 déjà en place pas de risque de timeout Vercel</span>
           </div>
-          <a class="detail-link" onclick="showTab('smart')">Voir details Smart Content</a>
+          <a class="detail-link" onclick="showTab('smart')">Voir détails Smart Content</a>
         </div>
       </div>
 
@@ -279,14 +279,14 @@ th{color:#64748B;font-weight:600;font-size:10px;text-transform:uppercase;letter-
           </div>
           <div class="alert-row" style="background:#FFF7ED">
             <span class="alert-icon" style="color:#D97706">&#9432;</span>
-            <span style="color:#D97706">Claude Code Max 5x : fenetre glissante 5h + plafond hebdo non documente pas d'API quota</span>
+            <span style="color:#D97706">Claude Code Max 5x : fenêtre glissante 5h + plafond hebdo non documente pas d'API quota</span>
           </div>
           <div class="alert-row" style="background:#FEE2E2">
             <span class="alert-icon" style="color:#DC2626">&#9888;</span>
-            <span style="color:#DC2626"><strong>Claude Code bloque sur reseau entreprise</strong> : proxy / pare-feu bloque les connexions API (ConnectionRefused, timeout). VS Code fonctionne, mais Claude Code ne peut pas contacter les serveurs Claude. Contournement : utiliser Claude dans le navigateur au bureau.</span>
+            <span style="color:#DC2626"><strong>Claude Code bloqué sur réseau entreprise</strong> : proxy / pare-feu bloqué les connexions API (ConnectionRefused, timeout). VS Code fonctionne, mais Claude Code ne peut pas contacter les serveurs Claude. Contournement : utiliser Claude dans le navigateur au bureau.</span>
           </div>
           <div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap">
-            <a href="https://claude.ai/settings/usage" target="_blank" class="btn btn-g">Verifier quota Claude</a>
+            <a href="https://claude.ai/settings/usage" target="_blank" class="btn btn-g">Vérifier quota Claude</a>
             <a href="https://claude.ai" target="_blank" class="btn btn-v">Claude en ligne (secours)</a>
           </div>
         </div>
@@ -306,11 +306,11 @@ th{color:#64748B;font-weight:600;font-size:10px;text-transform:uppercase;letter-
           </div>
           <div class="alert-row" style="background:#FEE2E2">
             <span class="alert-icon" style="color:#DC2626">&#9888;</span>
-            <span style="color:#DC2626"><strong>ERR_NETWORK_CHANGED / ERR_INTERNET_DISCONNECTED</strong> : bascule VPN, changement de WiFi ou mise en veille coupe la connexion en cours de generation (90 a 180s). L'article reste bloque en PROCESSING dans Google Sheets.</span>
+            <span style="color:#DC2626"><strong>ERR_NETWORK_CHANGED / ERR_INTERNET_DISCONNECTED</strong> : bascule VPN, changement de WiFi ou mise en veille coupe la connexion en cours de génération (90 a 180s). L'article reste bloqué en PROCESSING dans Google Sheets.</span>
           </div>
           <div class="alert-row" style="background:#FEF3C7">
             <span class="alert-icon" style="color:#D97706">&#9888;</span>
-            <span style="color:#D97706">Solution : deplacer la generation cote serveur Vercel. Le navigateur ne fait qu'un seul appel court, Vercel gere les appels Gemini en interne (serveur a serveur, sans proxy).</span>
+            <span style="color:#D97706">Solution : déplacer la génération cote serveur Vercel. Le navigateur ne fait qu'un seul appel court, Vercel gere les appels Gemini en interne (serveur a serveur, sans proxy).</span>
           </div>
           <a class="detail-link" onclick="showTab('smart')">Voir le plan d'action dans Smart Content</a>
         </div>
@@ -325,7 +325,7 @@ th{color:#64748B;font-weight:600;font-size:10px;text-transform:uppercase;letter-
   <div class="container">
     <div class="section-title">
       <div class="st-bar" style="background:#FFD700"></div>
-      Pole Acquisition
+      Pôle Acquisition
       <span class="badge bg">GEMINI FREE TIER</span>
       <span class="badge bd">BLOCKER #1</span>
     </div>
@@ -341,7 +341,7 @@ th{color:#64748B;font-weight:600;font-size:10px;text-transform:uppercase;letter-
       <div class="section-body open">
         <div class="app-meta">
           <div class="meta-card">
-            <div class="meta-label">Dernier deploiement</div>
+            <div class="meta-label">Dernier déploiement</div>
             <div class="meta-val" id="pole-last-deploy"></div>
           </div>
           <div class="meta-card">
@@ -356,7 +356,7 @@ th{color:#64748B;font-weight:600;font-size:10px;text-transform:uppercase;letter-
             <tr><td style="font-weight:600">Recherche infos entreprise</td><td>1 appel Gemini</td><td>1 500 a 4 000</td><td style="color:#D97706;font-weight:600">+ Google Search</td></tr>
             <tr><td style="font-weight:600">Matcher produits / services</td><td>1 appel Gemini</td><td>1 500 a 4 000</td><td style="color:#D97706;font-weight:600">+ Google Search</td></tr>
             <tr><td style="font-weight:600">Trouver fournisseurs</td><td>1 appel Gemini</td><td>1 500 a 4 000</td><td style="color:#D97706;font-weight:600">+ Google Search</td></tr>
-            <tr><td style="font-weight:600">Rediger email</td><td>1 appel Gemini</td><td>1 000 a 2 000</td><td>Non</td></tr>
+            <tr><td style="font-weight:600">Rédiger email</td><td>1 appel Gemini</td><td>1 000 a 2 000</td><td>Non</td></tr>
             <tr><td style="font-weight:600">Orchestrateur (analyse)</td><td>1 appel Gemini</td><td>500 a 1 000</td><td>Non</td></tr>
           </tbody>
         </table>
@@ -364,11 +364,11 @@ th{color:#64748B;font-weight:600;font-size:10px;text-transform:uppercase;letter-
         <div class="thr-d">
           <h4>Seuils de blocage Free tier AI Studio : 15 RPM / 1 500 RPD</h4>
           <table>
-            <thead><tr><th>Users simultanees</th><th>Appels IA/min</th><th>vs Limite 15 RPM</th><th>Statut</th></tr></thead>
+            <thead><tr><th>Users simultanées</th><th>Appels IA/min</th><th>vs Limite 15 RPM</th><th>Statut</th></tr></thead>
             <tbody>
               <tr><td>1 a 3 users</td><td>3 a 9 RPM</td><td style="color:#059669">OK (60%)</td><td><span class="proj-badge proj-ok">OK</span></td></tr>
               <tr><td>5 users</td><td>10 a 15 RPM</td><td style="color:#D97706">Limite (100%)</td><td><span class="proj-badge proj-warn">RISQUE</span></td></tr>
-              <tr><td>10+ users</td><td>20 a 30+ RPM</td><td style="color:#DC2626;font-weight:700">DEPASSE (200%+)</td><td><span class="proj-badge proj-danger">BLOQUE</span></td></tr>
+              <tr><td>10+ users</td><td>20 a 30+ RPM</td><td style="color:#DC2626;font-weight:700">DÉPASSÉ (200%+)</td><td><span class="proj-badge proj-danger">BLOQUÉ</span></td></tr>
             </tbody>
           </table>
           <div style="font-size:11px;color:#DC2626;margin-top:6px">
@@ -378,18 +378,18 @@ th{color:#64748B;font-weight:600;font-size:10px;text-transform:uppercase;letter-
 
         <div style="margin-top:10px;padding:10px;background:#ECFDF5;border-radius:7px;border:1px solid #A7F3D0">
           <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
-            <span style="font-size:12px;font-weight:700;color:#059669">Securite timeout Vercel</span>
+            <span style="font-size:12px;font-weight:700;color:#059669">Sécurité timeout Vercel</span>
             <span class="proj-badge proj-ok">HAUTE</span>
           </div>
-          <div style="font-size:11px;color:#334155">Chaque appel Gemini repond en 2 a 8s. Largement sous le timeout de 60s.<br>Marge de securite : 90%+ — aucune modification necessaire.</div>
+          <div style="font-size:11px;color:#334155">Chaque appel Gemini repond en 2 a 8s. Largement sous le timeout de 60s.<br>Marge de sécurité : 90%+ — aucune modification nécessaire.</div>
         </div>
 
         <div class="reco">
           <h4>Recommandations pour scaler</h4>
           <p>1. <strong>Batcher les appels grounding</strong> : combiner infos entreprise + matcher + fournisseur en 1 seul appel multi-tool (divise par 3)</p>
-          <p>2. <strong>Cacher les resultats</strong> : meme entreprise = meme recherche, cacher 24h (Redis / KV Vercel)</p>
+          <p>2. <strong>Cacher les resultats</strong> : même entreprise = meme recherche, cacher 24h (Redis / KV Vercel)</p>
           <p>3. <strong>Migrer vers GCP billing</strong> a partir de 5 users : 1 500 RPM au lieu de 15 RPM (x100)</p>
-          <p>4. <strong>Queue + rate limiter cote serveur</strong> : limiter a 10 RPM et mettre les requetes en file d'attente</p>
+          <p>4. <strong>Queue + rate limiter cote serveur</strong> : limiter a 10 RPM et mettre les requêtes en file d'attente</p>
         </div>
 
         <div class="mini-metrics">
@@ -428,11 +428,11 @@ th{color:#64748B;font-weight:600;font-size:10px;text-transform:uppercase;letter-
       <div class="section-body open">
         <div class="app-meta">
           <div class="meta-card">
-            <div class="meta-label">Dernier deploiement</div>
+            <div class="meta-label">Dernier déploiement</div>
             <div class="meta-val" id="pitch-last-deploy"></div>
           </div>
           <div class="meta-card">
-            <div class="meta-label">Cout / pitch complet (6 appels)</div>
+            <div class="meta-label">Coût / pitch complet (6 appels)</div>
             <div class="meta-val" id="pitch-cost-per-pitch"></div>
           </div>
         </div>
@@ -442,21 +442,21 @@ th{color:#64748B;font-weight:600;font-size:10px;text-transform:uppercase;letter-
           <tbody>
             <tr><td style="font-weight:600">Analyser contexte</td><td>1 appel</td><td>gpt-3.5-turbo</td><td>Identification enjeux metier</td></tr>
             <tr style="border-top:2px solid #E2E8F0">
-              <td style="font-weight:600" rowspan="3">Generer pitch (3 versions)</td>
+              <td style="font-weight:600" rowspan="3">Générer pitch (3 versions)</td>
               <td style="font-weight:700;color:#D97706">6+ appels</td>
               <td>gpt-3.5-turbo + Assistant</td>
               <td style="font-size:10px;color:#D97706">Pipeline ci-dessous</td>
             </tr>
-            <tr><td colspan="3" style="font-size:10px;color:#64748B;padding-left:20px">1. Prioriser solutions &nbsp; 2. Prioriser questions &nbsp; 3. Prioriser tendances &nbsp; 4. Prioriser credibilite &nbsp; 5. Prioriser pyramide &nbsp; 6. Generation finale (Assistant API)</td></tr>
-            <tr><td colspan="3" style="font-size:10px;color:#059669;padding-left:20px">Les 5 priorisations peuvent etre parallelisees avec Promise.all()</td></tr>
-            <tr><td style="font-weight:600">Generer one-pager</td><td>6+ appels</td><td>Assistant API</td><td>Meme pipeline priorisation + fusion</td></tr>
+            <tr><td colspan="3" style="font-size:10px;color:#64748B;padding-left:20px">1. Prioriser solutions &nbsp; 2. Prioriser questions &nbsp; 3. Prioriser tendances &nbsp; 4. Prioriser credibilite &nbsp; 5. Prioriser pyramide &nbsp; 6. Génération finale (Assistant API)</td></tr>
+            <tr><td colspan="3" style="font-size:10px;color:#059669;padding-left:20px">Les 5 priorisations peuvent etre parallélisées avec Promise.all()</td></tr>
+            <tr><td style="font-weight:600">Générer one-pager</td><td>6+ appels</td><td>Assistant API</td><td>Meme pipeline priorisation + fusion</td></tr>
           </tbody>
         </table>
 
         <div class="thr-i">
           <h4>Seuils de blocage OpenAI Tier 1 : 500 RPM / 200K TPM</h4>
           <table>
-            <thead><tr><th>Users simultanees</th><th>Appels IA/min</th><th>vs Limite 500 RPM</th><th>Statut</th></tr></thead>
+            <thead><tr><th>Users simultanées</th><th>Appels IA/min</th><th>vs Limite 500 RPM</th><th>Statut</th></tr></thead>
             <tbody>
               <tr><td>1 a 10 users</td><td>6 a 60 RPM</td><td style="color:#059669">OK (12%)</td><td><span class="proj-badge proj-ok">OK</span></td></tr>
               <tr><td>50 users</td><td>300 RPM</td><td style="color:#D97706">Attention (60%)</td><td><span class="proj-badge proj-warn">SURVEILLER</span></td></tr>
@@ -468,31 +468,31 @@ th{color:#64748B;font-weight:600;font-size:10px;text-transform:uppercase;letter-
 
         <div style="margin-top:10px;padding:10px;background:#FEE2E2;border-radius:7px;border:1px solid #FECACA">
           <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
-            <span style="font-size:12px;font-weight:700;color:#DC2626">Securite timeout Vercel</span>
+            <span style="font-size:12px;font-weight:700;color:#DC2626">Sécurité timeout Vercel</span>
             <span class="proj-badge proj-danger">FAIBLE</span>
             <span style="font-size:11px;color:#64748B">55s / 60s = 92% de la limite</span>
           </div>
           <table>
-            <thead><tr><th>Situation</th><th>Temps</th><th>Limite</th><th>Marge</th><th>Securite</th></tr></thead>
+            <thead><tr><th>Situation</th><th>Temps</th><th>Limite</th><th>Marge</th><th>Sécurité</th></tr></thead>
             <tbody>
               <tr><td style="font-weight:600">Polling Assistant API (actuel)</td><td style="color:#DC2626;font-weight:700">~55s</td><td>60s</td><td style="color:#DC2626;font-weight:700">5s</td><td><span class="proj-badge proj-danger">FAIBLE</span></td></tr>
-              <tr><td style="font-weight:600">Priorisations paralleles (Promise.all)</td><td style="color:#D97706;font-weight:700">~25-30s</td><td>60s</td><td style="color:#D97706">30s</td><td><span class="proj-badge proj-warn">MOYENNE</span></td></tr>
+              <tr><td style="font-weight:600">Priorisations parallèles (Promise.all)</td><td style="color:#D97706;font-weight:700">~25-30s</td><td>60s</td><td style="color:#D97706">30s</td><td><span class="proj-badge proj-warn">MOYENNE</span></td></tr>
               <tr><td style="font-weight:600">Streaming natif OpenAI (cible)</td><td style="color:#059669;font-weight:700">connexion maintenue</td><td>N/A</td><td style="color:#059669">illimitee</td><td><span class="proj-badge proj-ok">HAUTE</span></td></tr>
             </tbody>
           </table>
-          <div style="margin-top:10px;font-size:12px;font-weight:700;color:#051E50;margin-bottom:6px">Modifications a faire pour atteindre securite haute</div>
+          <div style="margin-top:10px;font-size:12px;font-weight:700;color:#051E50;margin-bottom:6px">Modifications a faire pour atteindre sécurité haute</div>
           <div style="padding:8px;background:#FFF7ED;border-radius:6px;margin-bottom:6px;font-size:11px;color:#334155">
-            <strong style="color:#D97706">Etape 1 (rapide) :</strong> Paralleliser les 5 priorisations avec <code style="background:#F1F5F9;padding:1px 4px;border-radius:3px">Promise.all()</code> dans <strong>useContentGeneration.js</strong>. Passe de 55s a 25-30s. Securite moyenne.</div>
+            <strong style="color:#D97706">Etape 1 (rapide) :</strong> Paralléliser les 5 priorisations avec <code style="background:#F1F5F9;padding:1px 4px;border-radius:3px">Promise.all()</code> dans <strong>useContentGénération.js</strong>. Passe de 55s a 25-30s. Sécurité moyenne.</div>
           <div style="padding:8px;background:#ECFDF5;border-radius:6px;font-size:11px;color:#334155">
-            <strong style="color:#059669">Etape 2 (securite haute) :</strong> Remplacer le polling <code style="background:#F1F5F9;padding:1px 4px;border-radius:3px">assistants.runs.retrieve()</code> par <code style="background:#F1F5F9;padding:1px 4px;border-radius:3px">stream()</code> de l'API OpenAI. Le streaming garde la connexion vivante, le timeout de 60s ne s'applique plus. Fichier a modifier : <strong>api/generate-pitch.js</strong> (ou equivalent backend).</div>
+            <strong style="color:#059669">Etape 2 (sécurité haute) :</strong> Remplacer le polling <code style="background:#F1F5F9;padding:1px 4px;border-radius:3px">assistants.runs.retrieve()</code> par <code style="background:#F1F5F9;padding:1px 4px;border-radius:3px">stream()</code> de l'API OpenAI. Le streaming garde la connexion vivante, le timeout de 60s ne s'applique plus. Fichier a modifiér : <strong>api/generate-pitch.js</strong> (ou equivalent backend).</div>
         </div>
 
         <div class="reco">
           <h4>Recommandations pour scaler</h4>
-          <p>1. <strong>Paralleliser les 5 priorisations</strong> : Promise.all() au lieu de sequentiel (divise le temps par 5, meme nombre d'appels)</p>
-          <p>2. <strong>Remplacer polling par streaming</strong> : utiliser stream() de l'API OpenAI Assistants a la place de runs.retrieve() — securite haute</p>
-          <p>3. <strong>Monter de tier OpenAI</strong> : Tier 2 = 5 000 RPM (x10). Automatique apres 50$ depenses + 7 jours</p>
-          <p>4. <strong>Cacher la matrice enrichie</strong> : les priorisations pour un meme secteur/fonction sont identiques, cacher 1h</p>
+          <p>1. <strong>Paralléliser les 5 priorisations</strong> : Promise.all() au lieu de sequentiel (divise le temps par 5, même nombre d'appels)</p>
+          <p>2. <strong>Remplacer polling par streaming</strong> : utiliser stream() de l'API OpenAI Assistants a la place de runs.retrieve() — sécurité haute</p>
+          <p>3. <strong>Monter de tier OpenAI</strong> : Tier 2 = 5 000 RPM (x10). Automatique apres 50$ dépenses + 7 jours</p>
+          <p>4. <strong>Cacher la matrice enrichie</strong> : les priorisations pour un même secteur/fonction sont identiques, cacher 1h</p>
         </div>
 
         <div class="mini-metrics">
@@ -531,7 +531,7 @@ th{color:#64748B;font-weight:600;font-size:10px;text-transform:uppercase;letter-
       <div class="section-body open">
         <div class="app-meta">
           <div class="meta-card">
-            <div class="meta-label">Dernier deploiement</div>
+            <div class="meta-label">Dernier déploiement</div>
             <div class="meta-val" id="smart-last-deploy"></div>
           </div>
           <div class="meta-card">
@@ -544,7 +544,7 @@ th{color:#64748B;font-weight:600;font-size:10px;text-transform:uppercase;letter-
           <thead><tr><th>Action utilisateur</th><th>Appels IA</th><th>Modele</th><th>Streaming</th></tr></thead>
           <tbody>
             <tr><td style="font-weight:600">Planifier intentions (10 sujets)</td><td>2 appels</td><td>Gemini 2.0 Flash</td><td>Non (batch)</td></tr>
-            <tr><td style="font-weight:600">Generer 1 article / landing page</td><td>1 appel</td><td>Gemini 2.5 Flash</td><td style="color:#059669;font-weight:600">Oui (stream)</td></tr>
+            <tr><td style="font-weight:600">Générer 1 article / landing page</td><td>1 appel</td><td>Gemini 2.5 Flash</td><td style="color:#059669;font-weight:600">Oui (stream)</td></tr>
             <tr><td style="font-weight:600">Validation sources / SEO</td><td>1 appel</td><td>Gemini 2.0 Flash</td><td>Non</td></tr>
           </tbody>
         </table>
@@ -552,7 +552,7 @@ th{color:#64748B;font-weight:600;font-size:10px;text-transform:uppercase;letter-
         <div class="thr-w">
           <h4>Seuils de blocage GCP : 1 500 RPM mais credits limites</h4>
           <table>
-            <thead><tr><th>Users simultanees</th><th>Appels IA/min</th><th>Cout/mois estime</th><th>Statut</th></tr></thead>
+            <thead><tr><th>Users simultanées</th><th>Appels IA/min</th><th>Coût/mois estime</th><th>Statut</th></tr></thead>
             <tbody>
               <tr><td>1 a 5 users</td><td>2 a 10 RPM</td><td>3 a 15 EUR</td><td><span class="proj-badge proj-ok">OK</span></td></tr>
               <tr><td>10 users</td><td>10 a 20 RPM</td><td>30 EUR</td><td><span class="proj-badge proj-warn">CREDITS ?</span></td></tr>
@@ -560,17 +560,17 @@ th{color:#64748B;font-weight:600;font-size:10px;text-transform:uppercase;letter-
             </tbody>
           </table>
           <div style="font-size:11px;color:#D97706;margin-top:6px">
-            <strong>Blocker principal :</strong> pas le RPM (1 500 = large) mais le <strong>cout</strong> quand les credits promo GCP seront epuises.
+            <strong>Blocker principal :</strong> pas le RPM (1 500 = large) mais le <strong>cout</strong> quand les credits promo GCP seront épuisés.
             Actuellement 2.98 EUR brut / 50 contenus = 0.06 EUR/contenu.
           </div>
         </div>
 
         <div class="reco">
           <h4>Recommandations pour scaler</h4>
-          <p>1. <strong>Streaming deja en place</strong> : evite les timeouts Vercel 60s sur contenus longs, ne pas toucher</p>
-          <p>2. <strong>Retry + backoff 429 deja en place</strong> : gestion des rate limits cote serveur, ne pas toucher</p>
-          <p>3. <strong>Surveiller les credits GCP</strong> : quand epuises, 0.06 EUR/contenu en production</p>
-          <p>4. <strong>Batching intentions</strong> : generer les 10 intentions en 1 seul appel plutot que 2 (possible vu la taille du prompt)</p>
+          <p>1. <strong>Streaming déjà en place</strong> : evite les timeouts Vercel 60s sur contenus longs, ne pas toucher</p>
+          <p>2. <strong>Retry + backoff 429 déjà en place</strong> : gestion des rate limits cote serveur, ne pas toucher</p>
+          <p>3. <strong>Surveiller les credits GCP</strong> : quand épuisés, 0.06 EUR/contenu en production</p>
+          <p>4. <strong>Batching intentions</strong> : générer les 10 intentions en 1 seul appel plutot que 2 (possible vu la taille du prompt)</p>
         </div>
 
         <div class="mini-metrics">
@@ -596,31 +596,31 @@ th{color:#64748B;font-weight:600;font-size:10px;text-transform:uppercase;letter-
 
     <div class="section">
       <div class="section-head" onclick="toggle(this)">
-        <h2>Proxy SSL et bascules reseau (ERR_CERT / ERR_NETWORK_CHANGED)</h2>
+        <h2>Proxy SSL et bascules réseau (ERR_CERT / ERR_NETWORK_CHANGED)</h2>
         <span class="chevron open">&#9662;</span>
       </div>
       <div class="section-body open">
 
         <div class="thr-d">
           <h4>Le probleme : connexions longues cassees par le proxy d'entreprise</h4>
-          <div style="font-size:11px;color:#334155;margin-bottom:8px">Generer un article necessite 90 a 180 secondes de connexion continue. Le proxy entreprise coupe ou perturbe ces connexions longues.</div>
+          <div style="font-size:11px;color:#334155;margin-bottom:8px">Générer un article nécessite 90 a 180 secondes de connexion continue. Le proxy entreprise coupe ou perturbe ces connexions longues.</div>
           <table>
             <thead><tr><th>Erreur</th><th>Cause</th><th>Impact</th></tr></thead>
             <tbody>
               <tr>
                 <td style="font-weight:700;color:#DC2626">ERR_CERT_COMMON_NAME_INVALID</td>
-                <td style="font-size:11px">Le proxy SSL (Zscaler) intercepte le trafic HTTPS et remplace le certificat Google par le sien. Le navigateur detecte que le nom du certificat ne correspond pas.</td>
-                <td style="font-size:11px;color:#DC2626">Connexion refusee, generation impossible</td>
+                <td style="font-size:11px">Le proxy SSL (Zscaler) intercepte le trafic HTTPS et remplace le certificat Google par le sien. Le navigateur détecte que le nom du certificat ne correspond pas.</td>
+                <td style="font-size:11px;color:#DC2626">Connexion refusee, génération impossible</td>
               </tr>
               <tr>
                 <td style="font-weight:700;color:#DC2626">ERR_NETWORK_CHANGED</td>
-                <td style="font-size:11px">La route reseau change en cours de generation : bascule VPN, changement de point WiFi, reconnexion automatique.</td>
-                <td style="font-size:11px;color:#DC2626">Connexion coupee, article bloque en PROCESSING</td>
+                <td style="font-size:11px">La route réseau change en cours de génération : bascule VPN, changement de point WiFi, reconnexion automatique.</td>
+                <td style="font-size:11px;color:#DC2626">Connexion coupee, article bloqué en PROCESSING</td>
               </tr>
               <tr>
                 <td style="font-weight:700;color:#DC2626">ERR_INTERNET_DISCONNECTED</td>
-                <td style="font-size:11px">Coupure reseau breve (mise en veille, instabilite WiFi) pendant les 90 a 180s de generation Gemini.</td>
-                <td style="font-size:11px;color:#DC2626">Requete echouee, article bloque en PROCESSING</td>
+                <td style="font-size:11px">Coupure réseau breve (mise en veille, instabilite WiFi) pendant les 90 a 180s de génération Gemini.</td>
+                <td style="font-size:11px;color:#DC2626">Requete échouée, article bloqué en PROCESSING</td>
               </tr>
             </tbody>
           </table>
@@ -635,7 +635,7 @@ th{color:#64748B;font-weight:600;font-size:10px;text-transform:uppercase;letter-
             </div>
             <div style="padding:10px;background:#ECFDF5;border-radius:6px">
               <div style="font-weight:700;color:#059669;margin-bottom:6px">Apres correction (robuste)</div>
-              <div style="color:#334155;line-height:1.8">Navigateur fait 1 seul appel court a Vercel<br>Vercel gere les 3 appels Gemini en interne (serveur vers serveur)<br>Le navigateur interroge le statut toutes les 5s<br>Meme si le proxy coupe, Vercel continue et sauvegarde dans Sheets</div>
+              <div style="color:#334155;line-height:1.8">Navigateur fait 1 seul appel court a Vercel<br>Vercel gere les 3 appels Gemini en interne (serveur vers serveur)<br>Le navigateur interroge le statut toutes les 5s<br>Même si le proxy coupe, Vercel continue et sauvegarde dans Sheets</div>
             </div>
           </div>
         </div>
@@ -646,10 +646,10 @@ th{color:#64748B;font-weight:600;font-size:10px;text-transform:uppercase;letter-
           <div style="padding:10px;background:#ECFDF5;border-radius:7px;border:1px solid #A7F3D0;margin-bottom:8px">
             <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
               <span class="badge bo">CHANTIER 1</span>
-              <span style="font-size:12px;font-weight:700;color:#059669">Fix immediat (5 min, zero code)</span>
+              <span style="font-size:12px;font-weight:700;color:#059669">Fix immédiat (5 min, zero code)</span>
               <span class="proj-badge proj-ok">FAISABLE MAINTENANT</span>
             </div>
-            <div style="font-size:11px;color:#334155">Debloquer les articles coincés en PROCESSING.<br>Dans Google Sheets, onglet <strong>_meta</strong>, colonne L : chercher les cellules contenant <strong>PROCESSING:...</strong> et les remplacer par <strong>QUEUED</strong>. Ils seront re-generes a la prochaine tentative.</div>
+            <div style="font-size:11px;color:#334155">Débloquer les articles coincés en PROCESSING.<br>Dans Google Sheets, onglet <strong>_meta</strong>, colonne L : chercher les cellules contenant <strong>PROCESSING:...</strong> et les remplacer par <strong>QUEUED</strong>. Ils seront re-générés a la prochaine tentative.</div>
           </div>
 
           <div style="padding:10px;background:#FEF3C7;border-radius:7px;border:1px solid #FDE68A;margin-bottom:8px">
@@ -658,16 +658,16 @@ th{color:#64748B;font-weight:600;font-size:10px;text-transform:uppercase;letter-
               <span style="font-size:12px;font-weight:700;color:#D97706">Bouton Annuler dans l'UI (30 min de code)</span>
               <span class="proj-badge proj-warn">A FAIRE</span>
             </div>
-            <div style="font-size:11px;color:#334155">La route backend <strong>/cancel-article/:rowId</strong> existe deja mais n'a aucun bouton dans l'interface. Ajouter un bouton sur les cartes bloquees en PROCESSING pour debloquer sans aller dans Google Sheets.</div>
+            <div style="font-size:11px;color:#334155">La route backend <strong>/cancel-article/:rowId</strong> existe déjà mais n'a aucun bouton dans l'interface. Ajouter un bouton sur les cartes bloquées en PROCESSING pour débloquer sans aller dans Google Sheets.</div>
           </div>
 
           <div style="padding:10px;background:#F0F4FF;border-radius:7px;border:1px solid #BFDBFE">
             <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
               <span class="badge bi">CHANTIER 3</span>
-              <span style="font-size:12px;font-weight:700;color:#3B82F6">Generation cote serveur (2 a 3h de code)</span>
+              <span style="font-size:12px;font-weight:700;color:#3B82F6">Génération cote serveur (2 a 3h de code)</span>
               <span class="proj-badge proj-warn">EN COURS</span>
             </div>
-            <div style="font-size:11px;color:#334155">La vraie solution. Creer une nouvelle route dans <strong>api/index.js</strong> qui fait les 3 appels Gemini en interne, et simplifier <strong>useContentGeneration.js</strong> cote frontend. Approche : batch 1 par 1 (lancer un article, attendre qu'il finisse, passer au suivant).<br><br><strong>Risque :</strong> Vercel Pro = timeout 300s par fonction. Un article prend 90 a 180s, ca passe normalement. Si Gemini est lent, le backend remet l'article en QUEUED automatiquement.</div>
+            <div style="font-size:11px;color:#334155">La vraie solution. Créer une nouvelle route dans <strong>api/index.js</strong> qui fait les 3 appels Gemini en interne, et simplifiér <strong>useContentGénération.js</strong> cote frontend. Approche : batch 1 par 1 (lancer un article, attendre qu'il finisse, passer au suivant).<br><br><strong>Risque :</strong> Vercel Pro = timeout 300s par fonction. Un article prend 90 a 180s, ca passe normalement. Si Gemini est lent, le backend remet l'article en QUEUED automatiquement.</div>
           </div>
         </div>
 
@@ -682,7 +682,7 @@ th{color:#64748B;font-weight:600;font-size:10px;text-transform:uppercase;letter-
   <div class="container">
     <div class="section-title">
       <div class="st-bar" style="background:#FFD700"></div>
-      Capacite Vercel
+      Capacité Vercel
       <span class="badge bv" id="vercel-period"></span>
     </div>
 
@@ -750,7 +750,7 @@ th{color:#64748B;font-weight:600;font-size:10px;text-transform:uppercase;letter-
             <div><strong>Deployments :</strong> 100/jour (soft limit)</div>
           </div>
           <div style="margin-top:8px;font-size:11px;color:#64748B">
-            <strong>Note :</strong> le streaming evite le timeout (Smart Content article). Les appels non-streaming longs (Pitch Generator ~55s, Gemini non-stream) sont limites a 60s par defaut. Pour le Chantier 3 (generation serveur), ajouter <code style="background:#F1F5F9;padding:1px 5px;border-radius:3px">maxDuration: 300</code> dans vercel.json.
+            <strong>Note :</strong> le streaming evite le timeout (Smart Content article). Les appels non-streaming longs (Pitch Generator ~55s, Gemini non-stream) sont limites a 60s par defaut. Pour le Chantier 3 (génération serveur), ajouter <code style="background:#F1F5F9;padding:1px 5px;border-radius:3px">maxDuration: 300</code> dans vercel.json.
           </div>
         </div>
       </div>
@@ -763,30 +763,30 @@ th{color:#64748B;font-weight:600;font-size:10px;text-transform:uppercase;letter-
   <div class="container">
     <div class="section-title">
       <div class="st-bar" style="background:#051E50"></div>
-      Couts (reference)
+      Coûts (référence)
     </div>
 
     <div class="section">
       <div class="section-head" onclick="toggle(this)">
-        <h2>Resume couts <span class="badge bv" id="total-badge"></span></h2>
+        <h2>Résumé coûts <span class="badge bv" id="total-badge"></span></h2>
         <span class="chevron open">&#9662;</span>
       </div>
       <div class="section-body open">
         <table>
-          <thead><tr><th>Service</th><th>Cout</th><th>Detail</th></tr></thead>
+          <thead><tr><th>Service</th><th>Coût</th><th>Detail</th></tr></thead>
           <tbody>
             <tr><td style="font-weight:600">Vercel Pro</td><td style="font-weight:700">$20.00/mois</td><td style="color:#64748B">Forfait fixe mutualise 3 apps</td></tr>
             <tr><td style="font-weight:600">OpenAI</td><td style="font-weight:700" id="openai-cost"></td><td style="color:#64748B" id="openai-detail"></td></tr>
             <tr><td style="font-weight:600">Gemini Smart Content</td><td style="font-weight:700">0 EUR</td><td style="color:#64748B">2.98 EUR brut couvert par credits promo GCP</td></tr>
-            <tr><td style="font-weight:600">Gemini Pole Acquisition</td><td style="font-weight:700;color:#00D26A">0 EUR</td><td style="color:#64748B">Free tier Google AI Studio</td></tr>
-            <tr style="font-weight:700;border-top:2px solid #E2E8F0"><td>Total reel</td><td style="font-size:16px;color:#051E50" id="total-cost"></td><td style="color:#64748B">Vercel + OpenAI (Gemini = 0)</td></tr>
+            <tr><td style="font-weight:600">Gemini Pôle Acquisition</td><td style="font-weight:700;color:#00D26A">0 EUR</td><td style="color:#64748B">Free tier Google AI Studio</td></tr>
+            <tr style="font-weight:700;border-top:2px solid #E2E8F0"><td>Total réel</td><td style="font-size:16px;color:#051E50" id="total-cost"></td><td style="color:#64748B">Vercel + OpenAI (Gemini = 0)</td></tr>
           </tbody>
         </table>
 
         <div style="margin-top:14px;padding:10px;background:#F0F4FF;border-radius:7px;border:1px solid #BFDBFE">
           <div style="font-size:11px;font-weight:700;color:#3B82F6;margin-bottom:6px">Enabler</div>
           <table>
-            <thead><tr><th>Outil</th><th>Cout</th><th>Role</th></tr></thead>
+            <thead><tr><th>Outil</th><th>Coût</th><th>Role</th></tr></thead>
             <tbody>
               <tr><td style="font-weight:600">Claude Code</td><td style="font-weight:700">$100/mois</td><td style="color:#64748B">Max 5x plan, inclus dans l'abonnement Claude, developpement et iteration rapide sur les 3 apps</td></tr>
             </tbody>
@@ -875,7 +875,7 @@ function renderAll(d) {
   renderMiniMetrics(vercel.proj);
   renderGlobalAlerts(vercel.proj);
 
-  html('footer', `Rubix Monitoring | Periode : ${period.from} au ${period.to} | Reset le ${period.reset}`);
+  html('footer', `Rubix Monitoring | Période : ${period.from} au ${period.to} | Reset le ${period.reset}`);
 }
 
 function renderDeploys(deploys) {
@@ -892,7 +892,7 @@ function renderDeploys(deploys) {
 function renderOpenAI(oa) {
   const cpp6 = Math.round(oa.costPerPrompt * 6 * 1000) / 1000;
   html('pitch-cost-per-pitch', `<strong>~$${cpp6}</strong> &nbsp;(6 x $${oa.costPerPrompt}/appel)`);
-  html('pitch-cost-detail', `<strong>Cout/pitch complet :</strong> ~$${oa.costPerPrompt} x 6 appels = ~$${cpp6}/pitch &nbsp;|&nbsp; A $${oa.monthlyProjected}/mois (rythme actuel depuis jan. 2026)`);
+  html('pitch-cost-detail', `<strong>Coût/pitch complet :</strong> ~$${oa.costPerPrompt} x 6 appels = ~$${cpp6}/pitch &nbsp;|&nbsp; A $${oa.monthlyProjected}/mois (rythme actuel depuis jan. 2026)`);
   html('openai-cost',   `<strong>$${oa.totalCost}</strong>`);
   html('openai-detail', `${fmtN(oa.requests)} req. | $${oa.costPerPrompt}/prompt | Rubix Pitch uniquement`);
   const total = Math.round((20 + oa.totalCost) * 100) / 100;
@@ -949,12 +949,12 @@ function renderGlobalAlerts(proj) {
   const build = proj['Build Minutes'];
   const fnInv = proj['Function Invocations'];
   if (build?.risk === 'danger') {
-    h += `<div class="alert-row" style="background:#FEE2E2"><span class="alert-icon" style="color:#DC2626">&#9888;</span><span style="color:#DC2626">Build Minutes : projection ${Math.round(build.projected)} / 6 000 min (${build.projPct}%) risque de depassement</span></div>`;
+    h += `<div class="alert-row" style="background:#FEE2E2"><span class="alert-icon" style="color:#DC2626">&#9888;</span><span style="color:#DC2626">Build Minutes : projection ${Math.round(build.projected)} / 6 000 min (${build.projPct}%) risque de dépassement</span></div>`;
   } else if (build?.risk === 'warn') {
     h += `<div class="alert-row" style="background:#FEF3C7"><span class="alert-icon" style="color:#D97706">&#9888;</span><span style="color:#D97706">Build Minutes : projection ${Math.round(build.projected)} / 6 000 min (${build.projPct}%) a surveiller</span></div>`;
   }
   if (fnInv?.risk === 'danger') {
-    h += `<div class="alert-row" style="background:#FEE2E2"><span class="alert-icon" style="color:#DC2626">&#9888;</span><span style="color:#DC2626">Function Invocations : projection ${fmtN(Math.round(fnInv.projected))} / 1M risque de depassement</span></div>`;
+    h += `<div class="alert-row" style="background:#FEE2E2"><span class="alert-icon" style="color:#DC2626">&#9888;</span><span style="color:#DC2626">Function Invocations : projection ${fmtN(Math.round(fnInv.projected))} / 1M risque de dépassement</span></div>`;
   } else if (fnInv?.risk === 'warn') {
     h += `<div class="alert-row" style="background:#FEF3C7"><span class="alert-icon" style="color:#D97706">&#9888;</span><span style="color:#D97706">Function Invocations : projection ${fmtN(Math.round(fnInv.projected))} / 1M a surveiller</span></div>`;
   }
