@@ -7,20 +7,20 @@
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 html{font-size:14px}
-body{font-family:'Segoe UI',system-ui,sans-serif;background:#F8FAFC;color:#0F172A;min-height:100vh}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:#EEF2FF;color:#0F172A;min-height:100vh}
 
 /* Header */
-.header{background:#051E50;padding:14px 32px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,.15)}
+.header{background:#051E50;padding:14px 32px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 2px 12px rgba(5,30,80,.3)}
 .logo{display:flex;align-items:center;gap:10px}
 .logo-icon{width:32px;height:32px;background:#FFD700;border-radius:7px;display:flex;align-items:center;justify-content:center;font-weight:900;color:#051E50;font-size:16px}
 .header h1{font-size:17px;font-weight:700;color:#fff}
-.header-meta{color:#94A3B8;font-size:11px;text-align:right;line-height:1.6}
+.header-meta{color:#93C5FD;font-size:11px;text-align:right;line-height:1.6}
 
-/* Nav */
-.nav{background:#fff;border-bottom:1px solid #E2E8F0;position:sticky;top:56px;z-index:99;padding:0 32px;display:flex;overflow-x:auto}
-.nav a{padding:10px 16px;font-size:12px;font-weight:600;color:#64748B;text-decoration:none;border-bottom:2px solid transparent;white-space:nowrap;transition:all .2s;cursor:pointer}
-.nav a:hover{color:#051E50;border-bottom-color:#FFD700}
-.nav a.active{color:#051E50;border-bottom-color:#FFD700;background:#FEFCE8}
+/* Nav — Rubix navy + gold */
+.nav{background:#051E50;border-bottom:2px solid rgba(255,215,0,.25);position:sticky;top:56px;z-index:99;padding:0 32px;display:flex;overflow-x:auto}
+.nav a{padding:11px 16px;font-size:12px;font-weight:600;color:#93C5FD;text-decoration:none;border-bottom:3px solid transparent;white-space:nowrap;transition:all .2s;cursor:pointer;margin-bottom:-2px}
+.nav a:hover{color:#fff;border-bottom-color:#FFD700}
+.nav a.active{color:#FFD700;border-bottom-color:#FFD700;background:rgba(255,215,0,.1)}
 
 /* Pages */
 .page{display:none}
@@ -28,7 +28,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#F8FAFC;color:#0F172
 
 /* Loading */
 .loading{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:80px 20px;gap:14px}
-.spinner{width:38px;height:38px;border:3px solid #E2E8F0;border-top-color:#051E50;border-radius:50%;animation:spin .8s linear infinite}
+.spinner{width:38px;height:38px;border:3px solid #DBEAFE;border-top-color:#051E50;border-radius:50%;animation:spin .8s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
 .loading-text{color:#64748B;font-size:14px}
 .error-box{background:#FEE2E2;border:1px solid #FECACA;border-radius:8px;padding:16px 20px;color:#DC2626;font-size:13px;margin:20px auto;max-width:520px;text-align:center}
@@ -41,40 +41,40 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#F8FAFC;color:#0F172
 .st-bar{width:4px;height:20px;border-radius:3px;flex-shrink:0}
 
 /* Collapsible sections */
-.section{background:#fff;border:1px solid #E2E8F0;border-radius:10px;margin-bottom:14px;overflow:hidden}
+.section{background:#fff;border:1px solid #DBEAFE;border-radius:12px;margin-bottom:14px;overflow:hidden;box-shadow:0 1px 6px rgba(5,30,80,.07)}
 .section-head{padding:14px 20px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;user-select:none;transition:background .15s}
-.section-head:hover{background:#F8FAFC}
+.section-head:hover{background:#EFF6FF}
 .section-head h2{font-size:14px;font-weight:700;color:#051E50;display:flex;align-items:center;gap:8px;margin:0;flex-wrap:wrap}
-.chevron{font-size:18px;color:#94A3B8;transition:transform .25s;flex-shrink:0}
+.chevron{font-size:18px;color:#93C5FD;transition:transform .25s;flex-shrink:0}
 .chevron.open{transform:rotate(180deg)}
 .section-body{padding:0 20px 16px;display:none}
 .section-body.open{display:block}
 
 /* Badges */
 .badge{font-size:9px;padding:2px 8px;border-radius:20px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;display:inline-block}
-.bv{background:#F0F4FF;color:#051E50}
+.bv{background:#DBEAFE;color:#1D4ED8}
 .bo{background:#ECFDF5;color:#059669}
-.bg{background:#FFF7ED;color:#D97706}
+.bg{background:#DBEAFE;color:#1D4ED8}
 .bd{background:#FEE2E2;color:#DC2626}
-.bw{background:#FEF3C7;color:#D97706}
-.bi{background:#F0F4FF;color:#3B82F6}
+.bw{background:#FEFCE8;color:#92400E}
+.bi{background:#EFF6FF;color:#1D4ED8}
 
 /* Alert grid */
 .alert-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:6px}
-.alert-block{border-radius:10px;border:1px solid #E2E8F0;overflow:hidden;background:#fff}
-.alert-block-head{padding:11px 16px;border-bottom:1px solid #F1F5F9;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.alert-block{border-radius:12px;border:1px solid #DBEAFE;overflow:hidden;background:#fff;box-shadow:0 1px 6px rgba(5,30,80,.07)}
+.alert-block-head{padding:11px 16px;border-bottom:1px solid #EFF6FF;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 .alert-block-head h3{font-size:13px;font-weight:700;color:#051E50;flex:1;white-space:nowrap}
 .alert-block-body{padding:10px 14px 12px}
 .alert-row{display:flex;align-items:flex-start;gap:8px;padding:6px 10px;border-radius:6px;margin-bottom:4px;font-size:11px;line-height:1.5}
 .alert-row:last-of-type{margin-bottom:0}
 .alert-icon{font-size:13px;flex-shrink:0;margin-top:1px}
-.detail-link{display:block;text-align:right;font-size:11px;font-weight:600;color:#3B82F6;text-decoration:none;padding:8px 0 0;border-top:1px solid #F1F5F9;margin-top:8px;cursor:pointer}
+.detail-link{display:block;text-align:right;font-size:11px;font-weight:600;color:#1D4ED8;text-decoration:none;padding:8px 0 0;border-top:1px solid #EFF6FF;margin-top:8px;cursor:pointer}
 .detail-link:hover{text-decoration:underline}
 
 /* Capacity cards */
 .summary{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px}
-.scard{background:#fff;border:1px solid #E2E8F0;border-radius:10px;padding:14px;position:relative;overflow:hidden}
-.stop{width:100%;height:3px;position:absolute;top:0;left:0}
+.scard{background:#fff;border:1px solid #DBEAFE;border-radius:12px;padding:14px;position:relative;overflow:hidden;box-shadow:0 1px 6px rgba(5,30,80,.07)}
+.stop{width:100%;height:4px;position:absolute;top:0;left:0}
 .slabel{font-size:9px;text-transform:uppercase;letter-spacing:1.2px;color:#64748B;margin-bottom:2px;font-weight:600;margin-top:6px}
 .sval{font-size:22px;font-weight:800;color:#051E50}
 .sdetail{font-size:11px;color:#94A3B8;margin-top:1px}
@@ -82,69 +82,69 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#F8FAFC;color:#0F172
 
 /* Limit bars */
 .limits-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.limit-item{padding:12px;background:#F8FAFC;border-radius:7px;border:1px solid #E2E8F0}
+.limit-item{padding:12px;background:#F8FAFF;border-radius:8px;border:1px solid #DBEAFE}
 .limit-label{font-size:12px;font-weight:600;color:#334155;margin-bottom:6px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:4px}
-.limit-bar{height:7px;background:#E2E8F0;border-radius:4px;overflow:hidden;margin-bottom:4px}
+.limit-bar{height:7px;background:#DBEAFE;border-radius:4px;overflow:hidden;margin-bottom:4px}
 .limit-fill{height:100%;border-radius:4px;transition:width .5s ease}
 .fill-ok{background:linear-gradient(90deg,#00D26A,#34D399)}
-.fill-warn{background:linear-gradient(90deg,#FBBF24,#F59E0B)}
+.fill-warn{background:linear-gradient(90deg,#FFD700,#FCD34D)}
 .fill-danger{background:linear-gradient(90deg,#EF4444,#DC2626)}
 .limit-detail{font-size:10px;color:#94A3B8}
 
 /* Per-app breakdown */
-.per-app-breakdown{margin-top:8px;border-top:1px dashed #E2E8F0;padding-top:6px}
+.per-app-breakdown{margin-top:8px;border-top:1px dashed #DBEAFE;padding-top:6px}
 .per-app-row{display:flex;align-items:center;gap:6px;padding:2px 0}
 .per-app-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
 .per-app-name{width:110px;color:#334155;font-weight:600;flex-shrink:0;font-size:10px}
-.per-app-bar-wrap{flex:1;height:5px;background:#E2E8F0;border-radius:3px;overflow:hidden}
+.per-app-bar-wrap{flex:1;height:5px;background:#DBEAFE;border-radius:3px;overflow:hidden}
 .per-app-bar{height:100%;border-radius:3px;min-width:2px}
 .per-app-val{font-size:10px;color:#64748B;white-space:nowrap;min-width:100px;text-align:right}
 
 /* Projection badges */
 .proj-badge{display:inline-block;font-size:9px;padding:2px 7px;border-radius:10px;font-weight:700}
 .proj-ok{background:#ECFDF5;color:#059669}
-.proj-warn{background:#FEF3C7;color:#D97706}
+.proj-warn{background:#FEFCE8;color:#92400E}
 .proj-danger{background:#FEE2E2;color:#DC2626}
 
 /* Tables */
 table{width:100%;border-collapse:collapse}
-th,td{text-align:left;padding:7px 12px;border-bottom:1px solid #F1F5F9;font-size:13px}
-th{color:#64748B;font-weight:600;font-size:10px;text-transform:uppercase;letter-spacing:.5px;background:#F8FAFC}
+th,td{text-align:left;padding:7px 12px;border-bottom:1px solid #EFF6FF;font-size:13px}
+th{color:#1D4ED8;font-weight:600;font-size:10px;text-transform:uppercase;letter-spacing:.5px;background:#EFF6FF}
 
 /* App meta */
 .app-meta{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
-.meta-card{padding:10px 14px;background:#F8FAFC;border-radius:7px;border:1px solid #E2E8F0}
+.meta-card{padding:10px 14px;background:#F8FAFF;border-radius:8px;border:1px solid #DBEAFE}
 .meta-label{font-size:10px;color:#94A3B8;text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px}
 .meta-val{font-size:13px;font-weight:700;color:#051E50;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
 .status-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;background:#94A3B8}
 
 /* Mini metrics */
-.mini-metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:14px;padding-top:12px;border-top:1px solid #E2E8F0}
-.mini-metric{text-align:center;padding:8px 4px;background:#F8FAFC;border-radius:6px}
+.mini-metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:14px;padding-top:12px;border-top:1px solid #DBEAFE}
+.mini-metric{text-align:center;padding:8px 4px;background:#EFF6FF;border-radius:8px}
 .mini-val{font-size:16px;font-weight:800;color:#051E50}
-.mini-label{font-size:9px;color:#94A3B8;text-transform:uppercase;letter-spacing:.5px;margin-top:2px}
+.mini-label{font-size:9px;color:#64748B;text-transform:uppercase;letter-spacing:.5px;margin-top:2px}
 
 /* Threshold blocks */
-.thr-d{padding:10px;background:#FEE2E2;border-radius:7px;border:1px solid #FECACA;margin-top:10px}
-.thr-w{padding:10px;background:#FEF3C7;border-radius:7px;border:1px solid #FDE68A;margin-top:10px}
-.thr-i{padding:10px;background:#F0F4FF;border-radius:7px;border:1px solid #BFDBFE;margin-top:10px}
+.thr-d{padding:10px;background:#FEE2E2;border-radius:8px;border:1px solid #FECACA;margin-top:10px}
+.thr-w{padding:10px;background:#FEFCE8;border-radius:8px;border:1px solid #FFD700;margin-top:10px}
+.thr-i{padding:10px;background:#EFF6FF;border-radius:8px;border:1px solid #BFDBFE;margin-top:10px}
 .thr-d h4{font-size:12px;font-weight:700;color:#DC2626;margin-bottom:6px}
-.thr-w h4{font-size:12px;font-weight:700;color:#D97706;margin-bottom:6px}
-.thr-i h4{font-size:12px;font-weight:700;color:#3B82F6;margin-bottom:6px}
+.thr-w h4{font-size:12px;font-weight:700;color:#92400E;margin-bottom:6px}
+.thr-i h4{font-size:12px;font-weight:700;color:#1D4ED8;margin-bottom:6px}
 
 /* Recommendations */
-.reco{margin-top:10px;padding:10px;background:#ECFDF5;border-radius:7px;border:1px solid #A7F3D0}
-.reco h4{font-size:11px;font-weight:700;color:#059669;margin-bottom:5px}
+.reco{margin-top:10px;padding:10px;background:#EFF6FF;border-radius:8px;border:1px solid #BFDBFE}
+.reco h4{font-size:11px;font-weight:700;color:#1D4ED8;margin-bottom:5px}
 .reco p{font-size:11px;color:#334155;padding:2px 0}
 
 /* Buttons */
 .links{margin-top:10px;display:flex;gap:8px;flex-wrap:wrap}
 .btn{font-size:11px;padding:6px 12px;border-radius:6px;text-decoration:none;font-weight:600;display:inline-block;transition:all .2s}
-.btn-g{background:#FFF7ED;color:#D97706;border:1px solid #FDE68A}
-.btn-g:hover{background:#D97706;color:#fff}
+.btn-g{background:#FEFCE8;color:#92400E;border:1px solid #FFD700}
+.btn-g:hover{background:#FFD700;color:#051E50}
 .btn-o{background:#ECFDF5;color:#059669;border:1px solid #A7F3D0}
 .btn-o:hover{background:#059669;color:#fff}
-.btn-v{background:#F0F4FF;color:#051E50;border:1px solid #BFDBFE}
+.btn-v{background:#EFF6FF;color:#051E50;border:1px solid #BFDBFE}
 .btn-v:hover{background:#051E50;color:#fff}
 
 /* Footer */
@@ -234,11 +234,11 @@ th{color:#64748B;font-weight:600;font-size:10px;text-transform:uppercase;letter-
           <span class="badge bo">OPENAI TIER 1</span>
         </div>
         <div class="alert-block-body">
-          <div class="alert-row" style="background:#FEF3C7">
+          <div class="alert-row" style="background:#FEFCE8">
             <span class="alert-icon" style="color:#D97706">&#9888;</span>
             <span style="color:#D97706">6+ appels OpenAI par pitch (5 priorisations + 1 génération) paralléliser avec Promise.all</span>
           </div>
-          <div class="alert-row" style="background:#FEF3C7">
+          <div class="alert-row" style="background:#FEFCE8">
             <span class="alert-icon" style="color:#D97706">&#9888;</span>
             <span style="color:#D97706">Polling Assistant API ~55s frôle le timeout 60s Vercel. Risque d'échec sur pitchs complexes.</span>
           </div>
@@ -253,7 +253,7 @@ th{color:#64748B;font-weight:600;font-size:10px;text-transform:uppercase;letter-
           <span class="badge bg">GEMINI GCP</span>
         </div>
         <div class="alert-block-body">
-          <div class="alert-row" style="background:#FEF3C7">
+          <div class="alert-row" style="background:#FEFCE8">
             <span class="alert-icon" style="color:#D97706">&#9888;</span>
             <span style="color:#D97706">Crédits promo GCP : ~50 contenus couverts. Surveiller la console GCP avant épuisement.</span>
           </div>
@@ -277,7 +277,7 @@ th{color:#64748B;font-weight:600;font-size:10px;text-transform:uppercase;letter-
             <span class="alert-icon" style="color:#3B82F6">&#9432;</span>
             <span style="color:#3B82F6">Concurrent Builds : 1 seul build à la fois, les 3 apps partagent la queue</span>
           </div>
-          <div class="alert-row" style="background:#FFF7ED">
+          <div class="alert-row" style="background:#FEFCE8">
             <span class="alert-icon" style="color:#D97706">&#9432;</span>
             <span style="color:#D97706">Claude Code Max 5x : fenêtre glissante 5h + plafond hebdo non documenté, pas d'API quota</span>
           </div>
@@ -308,7 +308,7 @@ th{color:#64748B;font-weight:600;font-size:10px;text-transform:uppercase;letter-
             <span class="alert-icon" style="color:#DC2626">&#9888;</span>
             <span style="color:#DC2626"><strong>ERR_NETWORK_CHANGED / ERR_INTERNET_DISCONNECTED</strong> : bascule VPN, changement de WiFi ou mise en veille coupe la connexion en cours de génération (90 a 180s). L'article reste bloqué en PROCESSING dans Google Sheets.</span>
           </div>
-          <div class="alert-row" style="background:#FEF3C7">
+          <div class="alert-row" style="background:#FEFCE8">
             <span class="alert-icon" style="color:#D97706">&#9888;</span>
             <span style="color:#D97706">Solution : déplacer la génération côté serveur Vercel. Le navigateur ne fait qu'un seul appel court, Vercel gère les appels Gemini en interne (serveur à serveur, sans proxy).</span>
           </div>
@@ -437,7 +437,7 @@ th{color:#64748B;font-weight:600;font-size:10px;text-transform:uppercase;letter-
           </div>
         </div>
 
-        <div style="margin-bottom:14px;padding:12px 14px;background:#FEF3C7;border-radius:8px;border:1px solid #F59E0B">
+        <div style="margin-bottom:14px;padding:12px 14px;background:#FEFCE8;border-radius:8px;border:1px solid #FFD700">
           <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
             <span style="font-size:13px;font-weight:700;color:#92400E">⚠️ Compte OpenAI partagé — aucun budget dédié</span>
             <span class="proj-badge proj-danger">RISQUE</span>
@@ -446,7 +446,7 @@ th{color:#64748B;font-weight:600;font-size:10px;text-transform:uppercase;letter-
             Rubix Pitch est rattaché au compte OpenAI de <strong>Smart Spec</strong> (pas de compte séparé).<br>
             Si Smart Spec consomme tous les crédits, <strong>Pitch Generator s'arrête immédiatement</strong> sans préavis.
           </div>
-          <div style="margin-top:8px;padding:8px;background:#FFFBEB;border-radius:6px;font-size:11px;color:#334155">
+          <div style="margin-top:8px;padding:8px;background:#FEFCE8;border-radius:6px;font-size:11px;color:#334155">
             <strong style="color:#D97706">Action à faire :</strong> Créer un compte OpenAI dédié pour Rubix Pitch avec un budget séparé. Mettre à jour la variable d'environnement <code style="background:#F1F5F9;padding:1px 4px;border-radius:3px">OPENAI_API_KEY</code> dans Vercel.
           </div>
         </div>
@@ -468,16 +468,24 @@ th{color:#64748B;font-weight:600;font-size:10px;text-transform:uppercase;letter-
         </table>
 
         <div class="thr-i">
-          <h4>Seuils de blocage OpenAI Tier 1 : 500 appels/min / 200 000 tokens/min</h4>
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;flex-wrap:wrap">
+            <h4 style="margin:0">Capacité OpenAI — Tier actuel</h4>
+            <span class="proj-badge proj-warn">TIER 1 — 500 appels/min</span>
+          </div>
+          <div style="font-size:11px;color:#334155;margin-bottom:8px">Un pitch complet = <strong>6 appels API</strong>. En pic (tout le monde génère en même temps le matin), le risque de blocage commence dès <strong>40-50 users simultanés</strong>.</div>
           <table>
-            <thead><tr><th>Users simultanées</th><th>Appels IA/min</th><th>vs Limite 500 appels/min</th><th>Statut</th></tr></thead>
+            <thead><tr><th>Users simultanés</th><th>Appels/min</th><th>vs Limite 500</th><th>Statut</th></tr></thead>
             <tbody>
-              <tr><td>1 a 10 users</td><td>6 a 60 appels/min</td><td style="color:#059669">OK (12%)</td><td><span class="proj-badge proj-ok">OK</span></td></tr>
-              <tr><td>50 users</td><td>300 appels/min</td><td style="color:#D97706">Attention (60%)</td><td><span class="proj-badge proj-warn">SURVEILLER</span></td></tr>
-              <tr><td>80+ users</td><td>480+ appels/min</td><td style="color:#DC2626;font-weight:700">Limite (96%+)</td><td><span class="proj-badge proj-danger">RISQUE</span></td></tr>
+              <tr><td>1 à 10 users</td><td>6 à 60 appels/min</td><td style="color:#059669">OK (12%)</td><td><span class="proj-badge proj-ok">OK</span></td></tr>
+              <tr><td>40-50 users (pic)</td><td>240-300 appels/min</td><td style="color:#D97706;font-weight:700">Risque en pic (60%)</td><td><span class="proj-badge proj-warn">ATTENTION</span></td></tr>
+              <tr><td>80+ users</td><td>480+ appels/min</td><td style="color:#DC2626;font-weight:700">Limite dépassée (96%+)</td><td><span class="proj-badge proj-danger">BLOQUÉ</span></td></tr>
             </tbody>
           </table>
-          <div style="font-size:11px;color:#3B82F6;margin-top:6px" id="pitch-cost-detail">Chargement des couts...</div>
+          <div style="margin-top:10px;padding:8px 12px;background:#DBEAFE;border-radius:7px;border-left:3px solid #051E50;font-size:11px;color:#1D4ED8">
+            <strong>Pour scaler à 50 users en toute sécurité → Tier 2 OpenAI (5 000 appels/min)</strong><br>
+            Condition : <strong>50$ de dépenses cumulées + 7 jours d'ancienneté</strong> sur le compte. Passage automatique, aucune action manuelle. Tier 2 = confortable jusqu'à 250+ users simultanés.
+          </div>
+          <div style="font-size:11px;color:#1D4ED8;margin-top:6px" id="pitch-cost-detail">Chargement des coûts...</div>
         </div>
 
         <div style="margin-top:10px;padding:10px;background:#FEE2E2;border-radius:7px;border:1px solid #FECACA">
@@ -495,7 +503,7 @@ th{color:#64748B;font-weight:600;font-size:10px;text-transform:uppercase;letter-
             </tbody>
           </table>
           <div style="margin-top:10px;font-size:12px;font-weight:700;color:#051E50;margin-bottom:6px">Modifications a faire pour atteindre sécurité haute</div>
-          <div style="padding:8px;background:#FFF7ED;border-radius:6px;margin-bottom:6px;font-size:11px;color:#334155">
+          <div style="padding:8px;background:#FEFCE8;border-radius:6px;margin-bottom:6px;font-size:11px;color:#334155">
             <strong style="color:#D97706">Étape 1 (rapide) :</strong> Paralléliser les 5 priorisations avec <code style="background:#F1F5F9;padding:1px 4px;border-radius:3px">Promise.all()</code> dans <strong>useContentGénération.js</strong>. Passe de 55s à 25-30s. Sécurité moyenne.</div>
           <div style="padding:8px;background:#ECFDF5;border-radius:6px;font-size:11px;color:#334155">
             <strong style="color:#059669">Étape 2 (sécurité haute) :</strong> Remplacer le polling <code style="background:#F1F5F9;padding:1px 4px;border-radius:3px">assistants.runs.retrieve()</code> par <code style="background:#F1F5F9;padding:1px 4px;border-radius:3px">stream()</code> de l'API OpenAI. Le streaming garde la connexion vivante, le timeout de 60s ne s'applique plus. Fichier à modifier : <strong>api/generate-pitch.js</strong> (ou équivalent backend).</div>
@@ -507,6 +515,139 @@ th{color:#64748B;font-weight:600;font-size:10px;text-transform:uppercase;letter-
           <p>2. <strong>Remplacer polling par streaming</strong> : utiliser stream() de l'API OpenAI Assistants à la place de runs.retrieve() — sécurité haute</p>
           <p>3. <strong>Monter de tier OpenAI</strong> : Tier 2 = 5 000 appels/min (x10). Automatique apres 50$ dépenses + 7 jours</p>
           <p>4. <strong>Cacher la matrice enrichie</strong> : les priorisations pour un même secteur/fonction sont identiques, cacher 1h</p>
+        </div>
+
+        <!-- PLAN DE SCALING -->
+        <div style="margin-top:16px">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;flex-wrap:wrap">
+            <div style="font-size:14px;font-weight:800;color:#051E50">Plan de scaling — 8 chantiers</div>
+            <span class="badge bd">2 CRITIQUES</span>
+            <span class="badge bw">3 IMPORTANTS</span>
+            <span class="badge bv">3 OPTIMISATIONS</span>
+          </div>
+
+          <!-- Tableau priorités -->
+          <table style="margin-bottom:14px">
+            <thead><tr><th>Priorité</th><th>Chantier</th><th>Impact</th><th>Effort</th><th>Statut</th></tr></thead>
+            <tbody>
+              <tr><td style="font-weight:700">1</td><td>Gestion d'erreur UX (messages + bouton réessayer)</td><td><span class="proj-badge proj-danger">CRITIQUE</span></td><td>Moyen</td><td><span class="proj-badge proj-warn">À FAIRE</span></td></tr>
+              <tr><td style="font-weight:700">2</td><td>Retry automatique exponential backoff (429/500)</td><td><span class="proj-badge proj-danger">CRITIQUE</span></td><td>Faible</td><td><span class="proj-badge proj-warn">À FAIRE</span></td></tr>
+              <tr><td style="font-weight:700">3</td><td>Compte OpenAI dédié Rubix Pitch</td><td><span class="proj-badge proj-danger">CRITIQUE</span></td><td>Faible</td><td><span class="proj-badge proj-warn">À FAIRE</span></td></tr>
+              <tr><td style="font-weight:700">4</td><td>Timeout Vercel : paralléliser + streaming</td><td><span class="proj-badge proj-warn">IMPORTANT</span></td><td>Moyen</td><td><span class="proj-badge proj-warn">À FAIRE</span></td></tr>
+              <tr><td style="font-weight:700">5</td><td>Logging structuré des erreurs et métriques</td><td><span class="proj-badge proj-warn">IMPORTANT</span></td><td>Faible</td><td><span class="proj-badge proj-warn">À FAIRE</span></td></tr>
+              <tr><td style="font-weight:700">6</td><td>Endpoint health check /api/health</td><td><span class="proj-badge proj-warn">IMPORTANT</span></td><td>Moyen</td><td><span class="proj-badge proj-warn">À FAIRE</span></td></tr>
+              <tr><td style="font-weight:700">7</td><td>Cache priorisations par secteur/fonction (1h)</td><td><span class="proj-badge proj-ok">OPTIMISATION</span></td><td>Moyen</td><td><span class="proj-badge proj-warn">À FAIRE</span></td></tr>
+              <tr><td style="font-weight:700">8</td><td>Mode dégradé si OpenAI est down</td><td><span class="proj-badge proj-ok">OPTIMISATION</span></td><td>Moyen</td><td><span class="proj-badge proj-warn">À FAIRE</span></td></tr>
+            </tbody>
+          </table>
+
+          <!-- Chantier 1 -->
+          <div style="padding:12px;background:#FEE2E2;border-radius:8px;border-left:4px solid #DC2626;margin-bottom:8px">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;flex-wrap:wrap">
+              <span style="font-size:12px;font-weight:800;color:#DC2626">Chantier 1 — Gestion d'erreur côté utilisateur</span>
+              <span class="proj-badge proj-danger">CRITIQUE</span><span class="proj-badge proj-warn">À FAIRE</span>
+            </div>
+            <div style="font-size:11px;color:#334155;margin-bottom:8px">Quand OpenAI renvoie une erreur (timeout, 429, 500), le commercial voit un spinner infini ou un écran blanc. Pas de message d'erreur, pas de bouton réessayer. L'app semble cassée.</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;font-size:11px">
+              <div style="padding:6px 8px;background:#fff;border-radius:5px;border:1px solid #FECACA"><strong style="color:#DC2626">Timeout</strong><br>→ "La génération prend plus de temps que prévu. Veuillez réessayer."</div>
+              <div style="padding:6px 8px;background:#fff;border-radius:5px;border:1px solid #FECACA"><strong style="color:#DC2626">429 (trop de requêtes)</strong><br>→ "Forte affluence. Veuillez patienter quelques secondes puis réessayer."</div>
+              <div style="padding:6px 8px;background:#fff;border-radius:5px;border:1px solid #FECACA"><strong style="color:#DC2626">500 (erreur serveur)</strong><br>→ "Service temporairement indisponible. Réessayez dans quelques instants."</div>
+              <div style="padding:6px 8px;background:#fff;border-radius:5px;border:1px solid #FECACA"><strong style="color:#DC2626">Règle générale</strong><br>→ Spinner limité à 60s. Bouton "Réessayer" sans perdre les données saisies.</div>
+            </div>
+            <div style="font-size:10px;color:#64748B;margin-top:6px">Fichier : <code style="background:#F1F5F9;padding:1px 4px;border-radius:3px">useContentGeneration.js</code> (frontend) — Style : fond #FFF9E6, bouton réessayer bleu #051E50</div>
+          </div>
+
+          <!-- Chantier 2 -->
+          <div style="padding:12px;background:#FEE2E2;border-radius:8px;border-left:4px solid #DC2626;margin-bottom:8px">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;flex-wrap:wrap">
+              <span style="font-size:12px;font-weight:800;color:#DC2626">Chantier 2 — Retry automatique (exponential backoff)</span>
+              <span class="proj-badge proj-danger">CRITIQUE</span><span class="proj-badge proj-warn">À FAIRE</span>
+            </div>
+            <div style="font-size:11px;color:#334155;margin-bottom:8px">Si OpenAI renvoie 429, l'app abandonne immédiatement. À 50 users, les 429 arrivent régulièrement en pic. Il faut réessayer automatiquement avant d'afficher une erreur.</div>
+            <div style="padding:8px;background:#fff;border-radius:5px;border:1px solid #FECACA;font-size:11px;color:#334155">
+              <strong>Logique :</strong> 429 ou 500/502/503 → attendre 1s → réessayer → 2s → réessayer → 4s → réessayer. Max 3 retries. Erreurs 400/401 = ne pas réessayer (problème de requête ou auth).<br>
+              <code style="background:#F1F5F9;padding:2px 4px;border-radius:3px;font-size:10px">callOpenAIWithRetry(params, maxRetries=3) — sleep(2^i * 1000ms)</code>
+            </div>
+            <div style="font-size:10px;color:#64748B;margin-top:6px">Fichiers : <code style="background:#F1F5F9;padding:1px 4px;border-radius:3px">api/generate-pitch.js</code> + <code style="background:#F1F5F9;padding:1px 4px;border-radius:3px">api/generate-fusion.js</code></div>
+          </div>
+
+          <!-- Chantier 3 -->
+          <div style="padding:12px;background:#FEFCE8;border-radius:8px;border-left:4px solid #FFD700;margin-bottom:8px">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;flex-wrap:wrap">
+              <span style="font-size:12px;font-weight:800;color:#92400E">Chantier 3 — Compte OpenAI dédié Rubix Pitch</span>
+              <span class="proj-badge proj-danger">CRITIQUE</span><span class="proj-badge proj-warn">À FAIRE</span>
+            </div>
+            <div style="font-size:11px;color:#334155;margin-bottom:6px">Compte partagé avec Smart Spec. Si Smart Spec consomme tous les crédits, Rubix Pitch s'arrête immédiatement sans préavis. Aucun commercial ne comprendra pourquoi l'app ne répond plus.</div>
+            <div style="font-size:11px;color:#334155"><strong>Résolution (15 min) :</strong> 1. Créer un compte OpenAI dédié (email dédié Rubix Pitch) → 2. Ajouter moyen de paiement + budget mensuel → 3. Générer nouvelle clé API → 4. Mettre à jour <code style="background:#F1F5F9;padding:1px 4px;border-radius:3px">OPENAI_API_KEY</code> dans Vercel → 5. Redéployer</div>
+          </div>
+
+          <!-- Chantier 4 -->
+          <div style="padding:12px;background:#FEFCE8;border-radius:8px;border-left:4px solid #FFD700;margin-bottom:8px">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;flex-wrap:wrap">
+              <span style="font-size:12px;font-weight:800;color:#92400E">Chantier 4 — Timeout Vercel : paralléliser + streaming</span>
+              <span class="proj-badge proj-warn">IMPORTANT</span><span class="proj-badge proj-warn">À FAIRE</span>
+            </div>
+            <div style="font-size:11px;color:#334155;margin-bottom:6px">Pipeline actuel = ~55s. Limite Vercel = 60s. Marge = 5s. Si OpenAI ralentit légèrement, le commercial voit un écran blanc.</div>
+            <div style="font-size:11px;color:#334155">
+              <strong style="color:#D97706">Étape 1 (rapide) :</strong> Paralléliser les 5 priorisations avec <code style="background:#F1F5F9;padding:1px 4px;border-radius:3px">Promise.all()</code> dans <strong>useContentGeneration.js</strong>. Passe de 55s à 25-30s. Marge 30s.<br>
+              <strong style="color:#059669">Étape 2 (sécurité haute) :</strong> Remplacer le polling <code style="background:#F1F5F9;padding:1px 4px;border-radius:3px">runs.retrieve()</code> par <code style="background:#F1F5F9;padding:1px 4px;border-radius:3px">stream()</code> dans <strong>api/generate-pitch.js</strong>. Plus aucun timeout.
+            </div>
+          </div>
+
+          <!-- Chantier 5 -->
+          <div style="padding:12px;background:#EFF6FF;border-radius:8px;border-left:4px solid #1D4ED8;margin-bottom:8px">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;flex-wrap:wrap">
+              <span style="font-size:12px;font-weight:800;color:#1D4ED8">Chantier 5 — Logging structuré des erreurs et métriques</span>
+              <span class="proj-badge proj-warn">IMPORTANT</span><span class="proj-badge proj-warn">À FAIRE</span>
+            </div>
+            <div style="font-size:11px;color:#334155;margin-bottom:6px">Aujourd'hui on ne sait pas combien de pitchs sont générés, quels secteurs sont populaires, ni combien d'erreurs se produisent. Impossible de mesurer le ROI.</div>
+            <div style="padding:6px 8px;background:#fff;border-radius:5px;border:1px solid #BFDBFE;font-size:10px;color:#334155;font-family:monospace">
+              &#123; "event": "pitch_generated", "secteur": "agroalimentaire", "fonction": "resp-achats", "duree_ms": 34500, "status": "success", "appels_openai": 6 &#125;<br>
+              &#123; "event": "pitch_error", "error_type": "timeout|rate_limit|openai_500", "retry_count": 2 &#125;
+            </div>
+            <div style="font-size:10px;color:#64748B;margin-top:6px">Lisible dans Vercel Dashboard → Functions → Logs. Aucune infrastructure supplémentaire. Fichiers : <code style="background:#F1F5F9;padding:1px 4px;border-radius:3px">api/generate-pitch.js</code> + <code style="background:#F1F5F9;padding:1px 4px;border-radius:3px">api/generate-fusion.js</code></div>
+          </div>
+
+          <!-- Chantier 6 -->
+          <div style="padding:12px;background:#EFF6FF;border-radius:8px;border-left:4px solid #1D4ED8;margin-bottom:8px">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;flex-wrap:wrap">
+              <span style="font-size:12px;font-weight:800;color:#1D4ED8">Chantier 6 — Endpoint health check /api/health</span>
+              <span class="proj-badge proj-warn">IMPORTANT</span><span class="proj-badge proj-warn">À FAIRE</span>
+            </div>
+            <div style="font-size:11px;color:#334155;margin-bottom:6px">Aujourd'hui personne ne sait si l'app est up ou down avant qu'un commercial se plaigne.</div>
+            <div style="font-size:11px;color:#334155;margin-bottom:6px">Créer <code style="background:#F1F5F9;padding:1px 4px;border-radius:3px">/api/health</code> qui teste : connectivité OpenAI (1 appel minimal) + accès Vercel Blob. Réponse JSON : <code style="background:#F1F5F9;padding:1px 4px;border-radius:3px">&#123; status: "ok"|"degraded", openai: "ok"|"ko", blob: "ok"|"ko", timestamp &#125;</code></div>
+            <div style="font-size:10px;color:#64748B">Suggestion : brancher UptimeRobot (gratuit) → appelle <code style="background:#F1F5F9;padding:1px 4px;border-radius:3px">/api/health</code> toutes les 5 min → alerte email/Slack si KO</div>
+          </div>
+
+          <!-- Chantier 7 -->
+          <div style="padding:12px;background:#ECFDF5;border-radius:8px;border-left:4px solid #059669;margin-bottom:8px">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;flex-wrap:wrap">
+              <span style="font-size:12px;font-weight:800;color:#059669">Chantier 7 — Cache priorisations par secteur/fonction (1h)</span>
+              <span class="proj-badge proj-ok">OPTIMISATION</span><span class="proj-badge proj-warn">À FAIRE</span>
+            </div>
+            <div style="font-size:11px;color:#334155;margin-bottom:6px">Les 5 priorisations (solutions, questions, tendances, crédibilité, pyramide) donnent le même résultat pour un même secteur + fonction. 10 commerciaux sur le même secteur = 50 appels inutiles.</div>
+            <div style="font-size:11px;color:#334155">
+              Clé de cache : <code style="background:#F1F5F9;padding:1px 4px;border-radius:3px">${secteur}_${fonction}_${langue}</code> (ex: "agroalimentaire_resp-achats_fr")<br>
+              TTL : 1h. Stockage : Vercel KV (Redis, payant) ou Vercel Blob JSON (gratuit, moins rapide).<br>
+              Le contexte libre saisi par le commercial n'est PAS inclus dans la clé (envoyé uniquement à la génération finale).<br>
+              <strong>Gain estimé : divise les appels API par 3 à 5x en conditions réelles.</strong>
+            </div>
+          </div>
+
+          <!-- Chantier 8 -->
+          <div style="padding:12px;background:#ECFDF5;border-radius:8px;border-left:4px solid #059669;margin-bottom:8px">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;flex-wrap:wrap">
+              <span style="font-size:12px;font-weight:800;color:#059669">Chantier 8 — Mode dégradé si OpenAI est down</span>
+              <span class="proj-badge proj-ok">OPTIMISATION</span><span class="proj-badge proj-warn">À FAIRE</span>
+            </div>
+            <div style="font-size:11px;color:#334155;margin-bottom:6px">Si OpenAI tombe (pannes de quelques minutes à quelques heures), l'app est 100% inutilisable. Le commercial devant son client n'a rien.</div>
+            <div style="font-size:11px;color:#334155">
+              À chaque pitch généré avec succès → sauvegarder dans Vercel Blob : <code style="background:#F1F5F9;padding:1px 4px;border-radius:3px">cache_pitch_${secteur}_${fonction}_${langue}</code>.<br>
+              Si OpenAI échoue après 3 retries → servir le pitch en cache avec bandeau : <strong>"⚠️ Service IA indisponible. Ce pitch est basé sur une génération récente."</strong><br>
+              Si aucun cache disponible → message d'erreur standard (chantier 1).
+            </div>
+          </div>
+
         </div>
 
         <div class="mini-metrics">
@@ -666,7 +807,7 @@ th{color:#64748B;font-weight:600;font-size:10px;text-transform:uppercase;letter-
             <div style="font-size:11px;color:#334155">Débloquer les articles coincés en PROCESSING.<br>Dans Google Sheets, onglet <strong>_meta</strong>, colonne L : chercher les cellules contenant <strong>PROCESSING:...</strong> et les remplacer par <strong>QUEUED</strong>. Ils seront re-générés à la prochaine tentative.</div>
           </div>
 
-          <div style="padding:10px;background:#FEF3C7;border-radius:7px;border:1px solid #FDE68A;margin-bottom:8px">
+          <div style="padding:10px;background:#FEFCE8;border-radius:7px;border:1px solid #FFD700;margin-bottom:8px">
             <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
               <span class="badge bw">CHANTIER 2</span>
               <span style="font-size:12px;font-weight:700;color:#D97706">Bouton Annuler dans l'UI (30 min de code)</span>
@@ -759,7 +900,7 @@ th{color:#64748B;font-weight:600;font-size:10px;text-transform:uppercase;letter-
             <div id="fndur-perapp"></div>
           </div>
         </div>
-        <div style="margin-top:12px;padding:10px;background:#FFF7ED;border-radius:7px;border:1px solid #FDE68A">
+        <div style="margin-top:12px;padding:10px;background:#FEFCE8;border-radius:7px;border:1px solid #FFD700">
           <div style="font-size:11px;font-weight:700;color:#D97706;margin-bottom:4px">Limites hard Vercel Pro (blocage direct, pas de surcharge)</div>
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;font-size:11px;color:#64748B">
             <div><strong>Concurrent Builds :</strong> 1 seul (les autres en queue)</div>
@@ -970,12 +1111,12 @@ function renderGlobalAlerts(proj) {
   if (build?.risk === 'danger') {
     h += `<div class="alert-row" style="background:#FEE2E2"><span class="alert-icon" style="color:#DC2626">&#9888;</span><span style="color:#DC2626">Build Minutes : projection ${Math.round(build.projected)} / 6 000 min (${build.projPct}%) risque de dépassement</span></div>`;
   } else if (build?.risk === 'warn') {
-    h += `<div class="alert-row" style="background:#FEF3C7"><span class="alert-icon" style="color:#D97706">&#9888;</span><span style="color:#D97706">Build Minutes : projection ${Math.round(build.projected)} / 6 000 min (${build.projPct}%) a surveiller</span></div>`;
+    h += `<div class="alert-row" style="background:#FEFCE8"><span class="alert-icon" style="color:#D97706">&#9888;</span><span style="color:#D97706">Build Minutes : projection ${Math.round(build.projected)} / 6 000 min (${build.projPct}%) a surveiller</span></div>`;
   }
   if (fnInv?.risk === 'danger') {
     h += `<div class="alert-row" style="background:#FEE2E2"><span class="alert-icon" style="color:#DC2626">&#9888;</span><span style="color:#DC2626">Function Invocations : projection ${fmtN(Math.round(fnInv.projected))} / 1M risque de dépassement</span></div>`;
   } else if (fnInv?.risk === 'warn') {
-    h += `<div class="alert-row" style="background:#FEF3C7"><span class="alert-icon" style="color:#D97706">&#9888;</span><span style="color:#D97706">Function Invocations : projection ${fmtN(Math.round(fnInv.projected))} / 1M a surveiller</span></div>`;
+    h += `<div class="alert-row" style="background:#FEFCE8"><span class="alert-icon" style="color:#D97706">&#9888;</span><span style="color:#D97706">Function Invocations : projection ${fmtN(Math.round(fnInv.projected))} / 1M a surveiller</span></div>`;
   }
   html('global-dyn-alerts', h);
 }
