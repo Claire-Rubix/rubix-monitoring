@@ -247,15 +247,37 @@ th{color:#1D4ED8;font-weight:600;font-size:10px;text-transform:uppercase;letter-
 .pitch-prog-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,#DC2626,#F59E0B);transition:width .3s}
 /* Demandes en attente */
 .demandes-wrap{margin-bottom:20px}
-.demande-card{background:#fff;border-radius:8px;border:1px solid #EDE9FE;border-left:4px solid #7C3AED;padding:14px 16px;margin-bottom:10px;position:relative}
-.demande-header{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:6px}
-.demande-titre{font-size:13px;font-weight:700;color:#051E50;flex:1}
-.demande-status-btn{background:none;border:none;font-size:18px;cursor:pointer;padding:0;line-height:1;flex-shrink:0;margin-top:-2px}
-.demande-meta{font-size:11px;color:#6B7280;margin-bottom:6px;display:flex;gap:12px;flex-wrap:wrap}
-.demande-meta span::before{content:"→ "}
-.demande-detail{font-size:11px;color:#334155;margin-bottom:5px;background:#F5F3FF;border-radius:5px;padding:5px 8px}
-.demande-pourquoi{font-size:12px;color:#6B7280;font-style:italic;line-height:1.6}
-.demande-card.demande-done{opacity:.6}
+.dem-header{display:flex;align-items:center;gap:10px;margin-bottom:8px;flex-wrap:wrap}
+.dem-header-title{font-size:13px;font-weight:800;color:#7C3AED}
+.dem-header-count{font-size:11px;color:#6B7280;font-weight:500}
+.dem-prog{display:flex;align-items:center;gap:6px;margin-left:auto}
+.dem-prog-bar{width:80px;height:6px;background:#EDE9FE;border-radius:3px;overflow:hidden}
+.dem-prog-fill{height:100%;background:#7C3AED;border-radius:3px;transition:width .3s}
+.dem-prog-lbl{font-size:10px;color:#6B7280;font-weight:600}
+.dem-list{display:flex;flex-direction:column;gap:0}
+.dem-row{background:#fff;border:1px solid #EDE9FE;border-left:3px solid #7C3AED;padding:0;transition:all .15s}
+.dem-row:first-child{border-radius:8px 8px 0 0}
+.dem-row:last-child{border-radius:0 0 8px 8px}
+.dem-row:only-child{border-radius:8px}
+.dem-row+.dem-row{border-top:none}
+.dem-row.dem-done{opacity:.5;border-left-color:#A78BFA}
+.dem-row-main{display:flex;align-items:center;gap:8px;padding:8px 12px;cursor:pointer;user-select:none}
+.dem-row-main:hover{background:#FAFAFE}
+.dem-chevron{font-size:10px;color:#A78BFA;transition:transform .2s;flex-shrink:0;width:14px;text-align:center}
+.dem-row.dem-open .dem-chevron{transform:rotate(90deg)}
+.dem-row-titre{font-size:12px;font-weight:600;color:#051E50;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dem-badge{font-size:9px;font-weight:700;padding:2px 7px;border-radius:10px;white-space:nowrap;text-transform:uppercase;letter-spacing:.3px}
+.dem-badge-it{background:#DBEAFE;color:#1E40AF}
+.dem-badge-manager{background:#FEF3C7;color:#92400E}
+.dem-badge-orga{background:#D1FAE5;color:#065F46}
+.dem-badge-claire{background:#F3E8FF;color:#6B21A8}
+.dem-deadline{font-size:10px;color:#6B7280;white-space:nowrap;font-weight:500}
+.dem-status-btn{background:none;border:none;font-size:16px;cursor:pointer;padding:0;line-height:1;flex-shrink:0}
+.dem-expand{max-height:0;overflow:hidden;transition:max-height .25s ease}
+.dem-row.dem-open .dem-expand{max-height:200px}
+.dem-expand-inner{padding:4px 12px 10px 34px;font-size:11px;color:#6B7280;line-height:1.5}
+.dem-expand-inner .dem-detail{color:#334155;background:#F5F3FF;border-radius:4px;padding:4px 8px;margin-bottom:4px}
+.dem-expand-inner .dem-why{font-style:italic}
 /* Vercel costs */
 .vercel-prog-wrap{margin:12px 0}
 .vercel-prog-bar{height:12px;background:#E2E8F0;border-radius:6px;overflow:visible;position:relative;margin-top:4px}
@@ -1498,30 +1520,58 @@ function toggleDemandeStatus(id) {
   const next = D_CYCLE[(D_CYCLE.indexOf(cur) + 1) % D_CYCLE.length];
   setDStatus(id, next);
   const btn  = document.getElementById('db-' + id); if (btn) { btn.textContent = D_ICONS[next]; btn.title = D_LABELS[next]; }
-  const card = document.getElementById('dc-' + id); if (card) card.classList.toggle('demande-done', next === 'done');
+  const card = document.getElementById('dc-' + id); if (card) card.classList.toggle('dem-done', next === 'done');
+  /* update progress bar */
+  const doneCount = DEMANDES.filter(d => getDStatus(d.id) === 'done').length;
+  const pct = Math.round(doneCount / DEMANDES.length * 100);
+  const fill = document.querySelector('.dem-prog-fill'); if (fill) fill.style.width = pct + '%';
+  const lbl  = document.querySelector('.dem-prog-lbl');  if (lbl)  lbl.textContent = pct + '%';
+  const cnt  = document.querySelector('.dem-header-count'); if (cnt) cnt.textContent = `${doneCount}/${DEMANDES.length} traitées`;
+}
+
+function demBadgeClass(dest) {
+  const d = dest.toLowerCase();
+  if (d.includes('it')) return 'dem-badge-it';
+  if (d.includes('manager')) return 'dem-badge-manager';
+  if (d.includes('orga') || d.includes('formation')) return 'dem-badge-orga';
+  return 'dem-badge-claire';
+}
+
+function toggleDemRow(id) {
+  const row = document.getElementById('dc-' + id);
+  if (row) row.classList.toggle('dem-open');
 }
 
 function renderDemandes() {
   const el = $('retro-demandes-wrap'); if (!el) return;
-  let h = `<div style="font-size:13px;font-weight:800;color:#7C3AED;margin-bottom:10px;display:flex;align-items:center;gap:8px">
-    🟣 Demandes en attente — Ce dont j'ai besoin des autres
-    <span style="font-size:11px;font-weight:500;color:#6B7280">(${DEMANDES.length} demandes)</span>
+  const doneCount = DEMANDES.filter(d => getDStatus(d.id) === 'done').length;
+  const pct = Math.round(doneCount / DEMANDES.length * 100);
+
+  let h = `<div class="dem-header">
+    <span class="dem-header-title">🟣 Demandes en attente</span>
+    <span class="dem-header-count">${doneCount}/${DEMANDES.length} traitées</span>
+    <div class="dem-prog"><div class="dem-prog-bar"><div class="dem-prog-fill" style="width:${pct}%"></div></div><span class="dem-prog-lbl">${pct}%</span></div>
   </div>`;
+
+  h += `<div class="dem-list">`;
   for (const d of DEMANDES) {
     const status = getDStatus(d.id);
-    h += `<div class="demande-card${status === 'done' ? ' demande-done' : ''}" id="dc-${d.id}">
-      <div class="demande-header">
-        <div class="demande-titre">${d.titre}</div>
-        <button class="demande-status-btn" id="db-${d.id}" onclick="toggleDemandeStatus('${d.id}')" title="${D_LABELS[status]}">${D_ICONS[status]}</button>
+    const done = status === 'done';
+    h += `<div class="dem-row${done ? ' dem-done' : ''}" id="dc-${d.id}">
+      <div class="dem-row-main" onclick="toggleDemRow('${d.id}')">
+        <span class="dem-chevron">▶</span>
+        <span class="dem-row-titre">${d.titre}</span>
+        <span class="dem-badge ${demBadgeClass(d.destinataire)}">${d.destinataire}</span>
+        <span class="dem-deadline">${d.deadline}</span>
+        <button class="dem-status-btn" id="db-${d.id}" onclick="event.stopPropagation();toggleDemandeStatus('${d.id}')" title="${D_LABELS[status]}">${D_ICONS[status]}</button>
       </div>
-      <div class="demande-meta">
-        <span>Destinataire : <strong>${d.destinataire}</strong></span>
-        <span>Deadline : <strong>${d.deadline}</strong></span>
-      </div>
-      ${d.detail ? `<div class="demande-detail">📋 ${d.detail}</div>` : ''}
-      <div class="demande-pourquoi">💬 Pourquoi : ${d.pourquoi}</div>
+      <div class="dem-expand"><div class="dem-expand-inner">
+        ${d.detail ? `<div class="dem-detail">📋 ${d.detail}</div>` : ''}
+        <div class="dem-why">💬 ${d.pourquoi}</div>
+      </div></div>
     </div>`;
   }
+  h += `</div>`;
   el.innerHTML = h;
 }
 
