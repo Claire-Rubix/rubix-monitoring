@@ -168,11 +168,21 @@ th{color:#1D4ED8;font-weight:600;font-size:10px;text-transform:uppercase;letter-
 .retro-prog-stats{display:flex;gap:16px;flex-wrap:wrap;font-size:11px;color:#64748B}
 .retro-filter-btn{font-size:11px;font-weight:600;padding:4px 12px;border-radius:20px;border:1px solid #E2E8F0;cursor:pointer;transition:all .15s;white-space:nowrap}
 .retro-filter-btn:hover{border-color:#051E50}
-.retro-week{margin-bottom:24px}
-.retro-week-label{font-size:11px;font-weight:700;color:#64748B;text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid #E2E8F0}
-.retro-days{display:flex;gap:10px;overflow-x:auto;padding-bottom:10px}
-.retro-day{min-width:200px;flex-shrink:0}
-.retro-phase-header{font-size:13px;font-weight:800;padding:10px 18px;border-radius:8px;border:2px solid;text-align:center;margin:20px 0 6px;letter-spacing:.4px}
+.retro-week{margin-bottom:16px}
+.retro-week-label{font-size:11px;font-weight:700;color:#64748B;text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px;padding-bottom:4px;border-bottom:1px solid #E2E8F0;display:flex;align-items:center;justify-content:space-between}
+.retro-week-toggle{background:none;border:none;cursor:pointer;font-size:13px;color:#94A3B8;padding:0 0 0 8px;line-height:1}
+.retro-week-toggle:hover{color:#051E50}
+.retro-days{display:flex;gap:8px;overflow-x:auto;padding-bottom:8px}
+.retro-day{min-width:190px;flex-shrink:0}
+.retro-phase-header{font-size:13px;font-weight:800;padding:10px 16px;border-radius:8px;border:2px solid;margin:16px 0 4px;letter-spacing:.3px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none}
+.retro-phase-header:hover{filter:brightness(.95)}
+.retro-phase-arrow{font-size:16px;flex-shrink:0;margin-left:8px}
+/* Compact mode */
+body.retro-compact .retro-card-text{font-size:11px;margin-bottom:3px}
+body.retro-compact .retro-card{padding:5px 7px 4px;margin-bottom:3px}
+body.retro-compact .retro-tag{display:none}
+body.retro-compact .retro-days{gap:6px}
+body.retro-compact .retro-day{min-width:160px}
 /* Sub-tabs (Pitch Generator) */
 .sub-tabs-nav{display:flex;gap:0;flex-wrap:wrap;margin-bottom:16px;border-bottom:2px solid #E2E8F0}
 .sub-tab-btn{padding:7px 13px;border:1px solid transparent;border-bottom:none;border-radius:6px 6px 0 0;font-size:11px;font-weight:600;cursor:pointer;background:none;color:#64748B;transition:all .15s;margin-bottom:-2px;white-space:nowrap}
@@ -507,6 +517,7 @@ th{color:#1D4ED8;font-weight:600;font-size:10px;text-transform:uppercase;letter-
       <button class="sub-tab-btn" onclick="showPitchTab('openai',this)">OpenAI &amp; Tiers</button>
       <button class="sub-tab-btn" onclick="showPitchTab('formations',this)">📅 Formations</button>
       <button class="sub-tab-btn" onclick="showPitchTab('couts',this)">💰 Coûts globaux</button>
+      <button class="sub-tab-btn" onclick="showPitchTab('pilote',this)">🏁 Pilote &amp; IT</button>
       <button class="sub-tab-btn" onclick="showPitchTab('checklist',this)">✅ Checklist</button>
       <button class="sub-tab-btn" onclick="showPitchTab('chantiers',this)">⚙️ Chantiers</button>
     </div>
@@ -592,7 +603,12 @@ th{color:#1D4ED8;font-weight:600;font-size:10px;text-transform:uppercase;letter-
       <div id="pitch-couts-widget"></div>
     </div><!-- /couts -->
 
-    <!-- SUB-PAGE 5 : Checklist -->
+    <!-- SUB-PAGE 5 : Pilote & Transition IT -->
+    <div class="sub-page" id="pitch-sub-pilote">
+      <div id="pitch-pilote-widget"></div>
+    </div><!-- /pilote -->
+
+    <!-- SUB-PAGE 6 : Checklist -->
     <div class="sub-page" id="pitch-sub-checklist">
       <div style="font-size:14px;font-weight:700;color:#051E50;margin-bottom:3px">Checklist pré-formation</div>
       <div style="font-size:11px;color:#64748B;margin-bottom:14px">Cocher chaque item au fil de la préparation. Sauvegardé automatiquement dans le navigateur.</div>
@@ -1341,6 +1357,7 @@ function perAppHtml(perApp, total) {
 // Render
 function renderAll(d) {
   const { period, vercel, openai } = d;
+  vercelBillingAPI = vercel?.billing ?? null;
 
   html('period-label', `${period.from} au ${period.to}`);
   html('generated-at', `Mis a jour : ${new Date(d.generatedAt).toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'})}`);
@@ -1523,6 +1540,7 @@ const VERCEL_PROJECTIONS = [
 ];
 
 function renderVercelCosts() {
+  if (vercelBillingAPI) return renderVercelCostsAPI(vercelBillingAPI);
   const v = VERCEL_USAGE;
   const today0 = new Date(); today0.setHours(0,0,0,0);
   const cycleStart = new Date(v.cycleStart);
@@ -1621,6 +1639,90 @@ function renderVercelCosts() {
   return h;
 }
 
+// ── Vercel Costs depuis API (données automatiques) ────────────────────────────
+function renderVercelCostsAPI(api) {
+  const joursRestants = Math.max(0, Math.round(api.totalJours - api.joursEcoules));
+  const surplus       = api.currentOverage;
+  const projSurplus   = api.projectedOverage;
+  const borderColor   = api.projectedTotal <= api.creditIncluded ? '#22C55E'
+                      : api.projectedTotal < api.creditIncluded + 5 ? '#F97316' : '#EF4444';
+  const statusIcon    = api.projectedTotal <= api.creditIncluded ? '🟢'
+                      : api.projectedTotal < api.creditIncluded + 5 ? '🟠' : '🔴';
+  const barColor      = surplus === 0 ? '#22C55E' : surplus < 5 ? '#F59E0B' : '#EF4444';
+
+  let h = `<div style="border-left:4px solid ${borderColor};background:#fff;border-radius:8px;border:1px solid #E2E8F0;border-left-width:4px;padding:16px;margin-bottom:16px">`;
+  h += `<div style="font-size:14px;font-weight:800;color:#051E50;margin-bottom:4px">${statusIcon} 🖥️ Hébergement Vercel — Suivi des coûts</div>`;
+  h += `<div style="font-size:12px;color:#64748B;margin-bottom:12px">Plan Pro · $${api.planFee}/mois inclus · <span style="color:#059669;font-weight:700">⚡ Données en temps réel</span></div>`;
+  h += `<div style="font-size:12px;color:#334155;margin-bottom:12px">L'application est hébergée sur Vercel (plan Pro, $20/mois). Le plan inclut un crédit de $20. Au-delà, les frais supplémentaires sont facturés automatiquement.</div>`;
+
+  h += `<div style="font-size:11px;color:#64748B;margin-bottom:10px">Cycle : ${api.cycleStart} → ${api.cycleEnd} &nbsp;|&nbsp; Jours écoulés : <strong>${api.joursEcoules} / ${api.totalJours}</strong> &nbsp;|&nbsp; Restants : <strong>${joursRestants}</strong></div>`;
+
+  h += `<div style="font-size:12px;font-weight:700;color:#051E50;margin-bottom:4px">Facture cycle actuelle : $${api.currentTotal.toFixed(2)} ($${api.planFee} plan${surplus > 0 ? ` + $${surplus.toFixed(2)} surplus` : ' — dans le crédit'})</div>`;
+  h += `<div class="vercel-prog-bar"><div class="vercel-prog-fill" style="width:${Math.min(100, Math.round(api.currentTotal / (api.creditIncluded * 2) * 100))}%;background:${barColor}"></div></div>`;
+  if (surplus > 0) {
+    h += `<div style="font-size:11px;color:#EF4444;font-weight:700;margin-bottom:10px">⚠️ Dépassement actuel : +$${surplus.toFixed(2)}</div>`;
+  } else {
+    h += `<div style="font-size:11px;color:#22C55E;font-weight:700;margin-bottom:10px">✅ Aucun dépassement — dans le crédit inclus</div>`;
+  }
+
+  const UNIT_LABELS = { 'Build Minutes':'min', 'Fast Data Transfer':'GB', 'Function Invocations':'invoc.', 'Function Duration':'GB-h' };
+  h += `<div style="font-size:11px;font-weight:700;color:#051E50;margin:12px 0 6px;text-transform:uppercase;letter-spacing:.6px">Détail par poste</div>`;
+  h += `<table style="margin-bottom:12px"><thead><tr><th>Service</th><th>Utilisé</th><th>Seuil inclus</th><th>Surplus actuel</th><th>Proj. surplus</th></tr></thead><tbody>`;
+  for (const [svc, b] of Object.entries(api.breakdown)) {
+    const isOver     = b.currentCost > 0;
+    const isProjOver = b.projectedCost > 0;
+    const freeFmt    = svc === 'Function Invocations' ? (b.free / 1e6) + 'M' : b.free.toLocaleString('fr-FR');
+    h += `<tr>
+      <td>${svc}</td>
+      <td>${b.used.toLocaleString('fr-FR')} ${UNIT_LABELS[svc] || ''}</td>
+      <td>${freeFmt} ${UNIT_LABELS[svc] || ''}</td>
+      <td>${isOver ? `🔴 $${b.currentCost.toFixed(4)}` : '🟢 —'}</td>
+      <td>${isProjOver ? `~$${b.projectedCost.toFixed(4)}` : '—'}</td>
+    </tr>`;
+  }
+  h += `<tr style="font-weight:700;border-top:2px solid #E2E8F0"><td>TOTAL</td><td colspan="2">—</td><td>$${surplus.toFixed(2)}</td><td>~$${projSurplus.toFixed(2)}</td></tr>`;
+  h += '</tbody></table>';
+
+  h += `<div style="font-size:11px;font-weight:700;color:#051E50;margin:10px 0 4px">Projection fin de cycle</div>`;
+  if (projSurplus > 0) {
+    const projTotal  = api.creditIncluded + projSurplus;
+    const coveredPct = Math.min(100, Math.round(api.creditIncluded / projTotal * 100));
+    const surplusPct = 100 - coveredPct;
+    h += `<div class="vercel-proj-bar">
+      <div class="vercel-proj-covered" style="width:${coveredPct}%;background:#22C55E"></div>
+      <div class="vercel-proj-surplus" style="width:${surplusPct}%;background:#F97316"></div>
+    </div>`;
+    h += `<div style="font-size:11px;color:#64748B;margin-top:4px;display:flex;gap:12px"><span style="color:#22C55E">■ Plan inclus ($${api.creditIncluded})</span><span style="color:#F97316">■ Surplus estimé ($${projSurplus.toFixed(2)})</span></div>`;
+    h += `<div style="font-size:11px;color:#F97316;font-weight:700;margin-top:4px">Total projeté fin de cycle : ~$${api.projectedTotal.toFixed(2)}</div>`;
+  } else {
+    h += `<div class="vercel-proj-bar"><div class="vercel-proj-covered" style="width:${Math.min(100, Math.round(api.projectedTotal / api.creditIncluded * 100))}%;background:#22C55E"></div></div>`;
+    h += `<div style="font-size:11px;color:#22C55E;margin-top:4px">✅ Projection dans le crédit inclus (~$${api.projectedTotal.toFixed(2)} total)</div>`;
+  }
+
+  h += `<div style="font-size:11px;font-weight:700;color:#051E50;margin:12px 0 6px;text-transform:uppercase;letter-spacing:.6px">Prévisions par période</div>`;
+  h += `<table style="margin-bottom:10px"><thead><tr><th>Période</th><th>Build Minutes</th><th>Fonctions</th><th>Total/mois</th></tr></thead><tbody>`;
+  for (const row of VERCEL_PROJECTIONS) {
+    const total    = row.build + row.functions;
+    const surplus2 = Math.max(0, total - api.creditIncluded);
+    const icon     = row.status === 'red' ? '🔴' : row.status === 'green' ? '🟢' : '🟠';
+    const comment  = row.comment ? ` — ${row.comment}` : (surplus2 > 0 ? ` — surplus $${surplus2.toFixed(0)}` : ' — dans le crédit');
+    h += `<tr><td>${row.label}</td><td>~$${row.build}</td><td>~$${row.functions}</td><td>${icon} ~$${total}${comment}</td></tr>`;
+  }
+  h += '</tbody></table>';
+
+  h += `<div style="font-size:11px;color:#334155;padding:8px 10px;background:#F8FAFC;border-radius:6px;border:1px solid #E2E8F0">
+    <strong>Seuils d'alerte :</strong>&nbsp;
+    🟢 Aucun surplus = OK &nbsp;|&nbsp;
+    🟠 Surplus &lt;$5 = surveiller &nbsp;|&nbsp;
+    🔴 Surplus &gt;$5 = ralentir les déploiements
+    <br><strong>Statut actuel :</strong> ${surplus === 0 ? '🟢 OK — aucun surplus' : surplus < 5 ? `🟠 Surplus $${surplus.toFixed(2)}` : `🔴 Surplus $${surplus.toFixed(2)}`}
+    &nbsp;|&nbsp; Projection fin de cycle : ${projSurplus === 0 ? '🟢 OK' : `🟠 ~$${projSurplus.toFixed(2)} surplus`}
+  </div>`;
+  h += `<div style="font-size:11px;color:#64748B;margin-top:8px;font-style:italic">💡 Données calculées automatiquement depuis l'API Vercel à chaque chargement. Seul l'excédent au-delà des seuils inclus génère un coût supplémentaire.</div>`;
+  h += '</div>';
+  return h;
+}
+
 // ====================== PITCH GENERATOR SUB-TABS ======================
 
 // ---- Constantes modifiables ----
@@ -1706,55 +1808,177 @@ function renderPitchFormations() {
 }
 
 // ---- Coûts globaux ----
-function renderPitchCouts() {
-  const cpp   = PITCH_CALLS_PITCH * PITCH_PRICE_CALL;
-  const cppE  = (cpp * PITCH_EUR_USD).toFixed(3);
-  const max5  = (5  * cpp * PITCH_EUR_USD).toFixed(2);
+const COSTS = {
+  setup: [
+    { label:'Vercel Pro — Février 2026',  sub:'(phase de dev intensif)',    cost:34, detail:'Hébergement pendant le développement. Élevé à cause des déploiements fréquents.' },
+    { label:'Vercel Pro — Mars 2026',     sub:'(stabilisation)',            cost:20, detail:'Dev + formations. Retour à la normale après code freeze.' },
+    { label:'OpenAI API — Dev & tests',   sub:'(jan.–mars 2026)',           cost:1,  detail:'Tous les appels IA pendant le développement et les tests.' },
+    { label:'OpenAI — Crédits Tier 2',    sub:'(paiement unique)',          cost:50, detail:'Prépayé pour monter en capacité. Consommé progressivement par l\'usage.' },
+  ],
+  running: {
+    vercelPro:      15,
+    openaiPer15:    0.60,
+    openaiPer66:    2.64,
+    costPerPitch:   0.008,
+  },
+  openaiCredits: {
+    loaded:      50,
+    consumed:    1.25,
+    lastChecked: '2026-02-25',
+  },
+  testBudget: [
+    { label:'Tests unitaires (matrice)',     pitchs:3,  cost:0.024 },
+    { label:'Tests petit groupe',            pitchs:10, cost:0.08  },
+    { label:'Simulation formation (22)',     pitchs:22, cost:0.18  },
+    { label:'Simulation stress (35)',        pitchs:35, cost:0.28  },
+    { label:'Testeurs réels (5 pers.)',      pitchs:25, cost:0.20  },
+    { label:'Retests après debug',           pitchs:22, cost:0.18  },
+    { label:'Tests quotidiens (7 jours)',    pitchs:7,  cost:0.056 },
+  ],
+  oaiScenarios: [
+    { label:'5 users (pilote)',   pitchs:25  },
+    { label:'15 users',           pitchs:75  },
+    { label:'50 users',           pitchs:250 },
+    { label:'66 users (cible)',   pitchs:330 },
+    { label:'100 users',          pitchs:500 },
+  ],
+  EUR_USD: 0.92,
+};
 
-  // Vercel + OpenAI summary
-  const vercelNow  = VERCEL_PROJECTIONS[0]; // dev intensif
-  const vercelStab = VERCEL_PROJECTIONS[1]; // après code freeze
-  const openaiStab = (66 * 5 * 20 * PITCH_CALLS_PITCH * PITCH_PRICE_CALL).toFixed(0); // 66 users, 5 pitchs, 20j
-  const vercelStabTotal = vercelStab.build + vercelStab.functions;
-  const totalStab = (+openaiStab * PITCH_EUR_USD + vercelStabTotal).toFixed(0);
-
-  let h = `<div style="margin-bottom:16px;padding:14px;background:#F8FAFC;border-radius:8px;border:1px solid #E2E8F0">
-    <div style="font-size:13px;font-weight:800;color:#051E50;margin-bottom:10px">💰 Coûts globaux — Résumé</div>
-    <table><thead><tr><th>Source</th><th>Ce mois</th><th>Cible (66 users, stabilisé)</th></tr></thead><tbody>
-      <tr><td>Vercel (Pro)</td><td>~$${vercelNow.build + vercelNow.functions}*</td><td>~$${vercelStabTotal}/mois</td></tr>
-      <tr><td>OpenAI (API)</td><td>~$0.25</td><td>~${(+openaiStab * PITCH_EUR_USD).toFixed(0)} €/mois</td></tr>
-      <tr style="font-weight:700;border-top:2px solid #E2E8F0"><td>TOTAL</td><td>~$${vercelNow.build + vercelNow.functions + 0.25}</td><td>~$${totalStab}/mois</td></tr>
-    </tbody></table>
-    <div style="font-size:11px;color:#64748B;margin-top:8px">* Vercel élevé ce mois à cause du développement intensif. Redescend à ~$${vercelStabTotal} après stabilisation.</div>
-    <div style="font-size:11px;color:#334155;margin-top:4px;font-weight:600">Coût par commercial/mois (66 users) : ~$${(+totalStab / 66).toFixed(2)}</div>
+function sectionSep(title, sub) {
+  return `<div style="border-top:2px solid #E5E7EB;margin:20px 0 12px;padding-top:12px">
+    <div style="font-size:12px;font-weight:800;color:#6B7280;letter-spacing:.8px;text-transform:uppercase">${title}</div>
+    ${sub ? `<div style="font-size:11px;color:#9CA3AF;margin-top:2px">${sub}</div>` : ''}
   </div>`;
+}
 
-  // Vercel details
+function renderPitchCouts() {
+  const C   = COSTS;
+  const EUR = C.EUR_USD;
+
+  // SET-UP totaux
+  const setupUSD = C.setup.reduce((s, r) => s + r.cost, 0);          // 105
+  const setupEUR = Math.round(setupUSD * EUR);                        // ~97
+
+  // FONCTIONNEMENT totaux
+  const t15 = C.running.vercelPro + C.running.openaiPer15;            // 15.60
+  const t66 = C.running.vercelPro + C.running.openaiPer66;            // 17.64
+
+  // CRÉDITS OPENAI
+  const oaiRem    = C.openaiCredits.loaded - C.openaiCredits.consumed; // 48.75
+  const oaiPct    = Math.round(C.openaiCredits.consumed / C.openaiCredits.loaded * 1000) / 10; // 2.5
+  const monthsRem = Math.round(oaiRem / C.running.openaiPer15);       // ~81 mois
+
+  let h = '';
+
+  // ── Vercel temps réel (section existante) ──────────────────────────────
   h += renderVercelCosts();
 
-  // Séparateur OpenAI
-  h += `<div style="font-size:13px;font-weight:800;color:#051E50;margin:20px 0 10px">🤖 Coûts API OpenAI — Détail</div>`;
+  // ── Carte principale ───────────────────────────────────────────────────
+  h += `<div style="border-left:4px solid #22C55E;background:#fff;border-radius:8px;border:1px solid #E2E8F0;padding:16px;margin-bottom:16px">`;
+  h += `<div style="font-size:14px;font-weight:800;color:#051E50;margin-bottom:4px">💰 Coûts Rubix Pitch Generator</div>`;
 
-  h += `<div class="pitch-cost-kpis">
-    <div class="pitch-cost-kpi"><div class="pitch-cost-val">${cppE} €</div><div class="pitch-cost-lbl">par pitch complet</div></div>
-    <div class="pitch-cost-kpi"><div class="pitch-cost-val">${cpp.toFixed(5)} $</div><div class="pitch-cost-lbl">${PITCH_CALLS_PITCH} appels × ${PITCH_PRICE_CALL} $/appel</div></div>
-    <div class="pitch-cost-kpi"><div class="pitch-cost-val">${max5} €</div><div class="pitch-cost-lbl">quota max/user/jour (5 pitchs)</div></div>
+  // ── 1. COÛTS DE CONSTRUCTION ───────────────────────────────────────────
+  h += sectionSep('COÛTS DE CONSTRUCTION (SET-UP)', 'Phase temporaire — terminée après le code freeze du 10/03');
+  h += `<p style="font-size:12px;color:#334155;margin:8px 0 12px">Le set-up de l'application comprend l'hébergement pendant la phase de développement et les crédits IA nécessaires au lancement.</p>`;
+  h += `<table style="margin-bottom:12px"><thead><tr><th>Poste</th><th>Coût</th><th>Détail</th></tr></thead><tbody>`;
+  for (const row of C.setup) {
+    h += `<tr>
+      <td><strong>${row.label}</strong><br><span style="color:#9CA3AF;font-size:10px">${row.sub}</span></td>
+      <td style="font-weight:700;white-space:nowrap;color:#051E50">~$${row.cost}</td>
+      <td style="font-size:11px;color:#334155">${row.detail}</td>
+    </tr>`;
+  }
+  h += `<tr style="font-weight:700;background:#F0FDF4;border-top:2px solid #E2E8F0">
+    <td>TOTAL SET-UP</td>
+    <td style="color:#166534">~$${setupUSD}</td>
+    <td style="color:#166534">≈ ${setupEUR}€</td>
+  </tr>`;
+  h += '</tbody></table>';
+
+  // ── 2. COÛTS DE FONCTIONNEMENT ─────────────────────────────────────────
+  h += sectionSep('COÛTS DE FONCTIONNEMENT (RÉCURRENT)', 'À partir d\'avril 2026 — budget mensuel prévisible');
+  h += `<p style="font-size:12px;color:#334155;margin:8px 0 12px">Une fois l'application stabilisée, les coûts mensuels sont faibles et prévisibles.</p>`;
+  h += `<table style="margin-bottom:12px"><thead><tr><th>Poste</th><th>15 users</th><th>66 users</th><th>Détail</th></tr></thead><tbody>`;
+  h += `<tr>
+    <td>Vercel Pro</td>
+    <td>~$${C.running.vercelPro}</td>
+    <td>~$${C.running.vercelPro}</td>
+    <td style="font-size:11px;color:#334155">Coût stable, peu de builds en production</td>
+  </tr>`;
+  h += `<tr>
+    <td>OpenAI API</td>
+    <td>~$${C.running.openaiPer15.toFixed(2)}</td>
+    <td>~$${C.running.openaiPer66.toFixed(2)}</td>
+    <td style="font-size:11px;color:#334155">~$${C.running.costPerPitch} / pitch<br>Base : 5 pitchs/mois / commercial</td>
+  </tr>`;
+  h += `<tr style="font-weight:700;border-top:2px solid #E2E8F0">
+    <td>TOTAL / mois</td>
+    <td>~$${Math.round(t15)}/mois<br><span style="font-size:11px;color:#9CA3AF">(${Math.ceil(t15 * EUR)}€)</span></td>
+    <td>~$${Math.round(t66)}/mois<br><span style="font-size:11px;color:#9CA3AF">(${Math.ceil(t66 * EUR)}€)</span></td>
+    <td></td>
+  </tr>`;
+  h += `<tr>
+    <td style="color:#6B7280">Par commercial</td>
+    <td style="color:#6B7280">~${Math.round(t15 / 15 * EUR * 100) / 100}€</td>
+    <td style="color:#059669;font-weight:700">~0,27€ <span style="font-size:10px">(≈ 0,30€)</span></td>
+    <td></td>
+  </tr>`;
+  h += '</tbody></table>';
+
+  // ── 3. LE CHIFFRE CLÉ ─────────────────────────────────────────────────
+  h += sectionSep('LE CHIFFRE CLÉ', '');
+  h += `<div style="background:#051E50;color:#fff;border-radius:12px;padding:32px 24px;margin:12px 0 20px;text-align:center">
+    <div style="font-size:24px;font-weight:800;margin-bottom:8px">~${setupEUR}€ de set-up</div>
+    <div style="font-size:16px;font-weight:400;margin-bottom:8px">+</div>
+    <div style="font-size:28px;font-weight:800">0,30€ / commercial / mois</div>
+    <div style="font-size:13px;font-weight:400;opacity:.75;margin-top:8px">(base 5 pitchs/mois par commercial)</div>
   </div>`;
 
-  const scenarios = [
-    { label:'Pilote réduit',           users:5,  pitchs:15  },
-    { label:'Session formation (×3)',  users:22, pitchs:66  },
-    { label:'10 ambassadeurs actifs',  users:10, pitchs:30  },
-    { label:'Worst case (quota max 5)', users:22, pitchs:110, hl:true },
-  ];
-  h += `<table><thead><tr><th>Scénario</th><th>Users</th><th>Pitchs/jour</th><th>Coût/jour</th><th>Coût/mois (20j)</th></tr></thead><tbody>`;
-  for (const row of scenarios) {
-    const daily   = (row.pitchs * PITCH_CALLS_PITCH * PITCH_PRICE_CALL * PITCH_EUR_USD).toFixed(2);
-    const monthly = (row.pitchs * 20 * PITCH_CALLS_PITCH * PITCH_PRICE_CALL * PITCH_EUR_USD).toFixed(0);
-    const style   = row.hl ? ' style="background:#FEF9C3"' : '';
-    h += `<tr${style}><td>${row.label}</td><td>${row.users}</td><td>${row.pitchs}</td><td>${daily} €</td><td>${monthly} €</td></tr>`;
+  // ── 4. DÉTAIL OPENAI ──────────────────────────────────────────────────
+  h += sectionSep('DÉTAIL OPENAI', '');
+  h += `<p style="font-size:12px;color:#334155;margin:8px 0 12px">Coût par pitch complet : <strong>~$${C.running.costPerPitch}</strong> (6 appels API) — soit moins de 1 centime par pitch généré.</p>`;
+  h += `<table style="margin-bottom:6px"><thead><tr><th>Scénario</th><th>Pitchs/mois</th><th>Coût OpenAI/mois</th></tr></thead><tbody>`;
+  for (const sc of C.oaiScenarios) {
+    const cost = (sc.pitchs * C.running.costPerPitch).toFixed(2);
+    h += `<tr><td>${sc.label}</td><td>${sc.pitchs}</td><td>~$${cost}</td></tr>`;
   }
-  h += `</tbody></table><div class="note" style="margin-top:10px">Quota recommandé : <strong>5 pitchs/jour/user</strong>. Coûts réels visibles dans platform.openai.com/usage.</div>`;
+  h += '</tbody></table>';
+  h += `<div style="font-size:11px;color:#9CA3AF;margin-bottom:12px">Base : 5 pitchs/mois par commercial.</div>`;
+
+  // ── 5. BUDGET PHASE DE TEST ────────────────────────────────────────────
+  h += sectionSep('BUDGET PHASE DE TEST', '');
+  const testTotal  = C.testBudget.reduce((s, r) => s + r.cost, 0);
+  const testPitchs = C.testBudget.reduce((s, r) => s + r.pitchs, 0);
+  h += `<table style="margin-bottom:8px"><thead><tr><th>Action</th><th>Pitchs</th><th>Coût</th></tr></thead><tbody>`;
+  for (const row of C.testBudget) {
+    h += `<tr><td>${row.label}</td><td>${row.pitchs}</td><td>$${row.cost}</td></tr>`;
+  }
+  h += `<tr style="font-weight:700;border-top:2px solid #E2E8F0">
+    <td>TOTAL phase de test</td><td>${testPitchs}</td><td>$${Math.round(testTotal * 1000) / 1000}</td>
+  </tr>`;
+  h += '</tbody></table>';
+  h += `<div style="font-size:11px;color:#9CA3AF;margin-bottom:12px">(inclus dans le set-up, déjà comptabilisé)</div>`;
+
+  // ── 6. CRÉDITS OPENAI ─────────────────────────────────────────────────
+  h += sectionSep('CRÉDITS OPENAI', '');
+  h += `<div style="font-size:12px;color:#334155;margin-bottom:8px">
+    Crédits chargés : <strong>$${C.openaiCredits.loaded}</strong> (plan Tier 2) &nbsp;|&nbsp;
+    Consommé à date : <strong>~$${C.openaiCredits.consumed}</strong> &nbsp;|&nbsp;
+    Restant : <strong>~$${oaiRem.toFixed(2)}</strong>
+  </div>`;
+  h += `<div class="vercel-prog-bar" style="margin-bottom:4px"><div class="vercel-prog-fill" style="width:${Math.max(1, Math.round(oaiPct))}%;background:#22C55E"></div></div>`;
+  h += `<div style="display:flex;justify-content:space-between;font-size:11px;color:#9CA3AF;margin-bottom:10px">
+    <span>$${C.openaiCredits.consumed} consommé</span>
+    <span>$${C.openaiCredits.loaded}</span>
+  </div>`;
+  h += `<div style="background:#F0FDF4;border-radius:8px;padding:12px;border:1px solid #BBF7D0;font-size:12px;color:#166534">
+    ${oaiPct}% consommé &nbsp;|&nbsp;
+    Au rythme actuel (~$${C.running.openaiPer15}/mois avec 15 users),
+    ces crédits durent <strong>${monthsRem > 24 ? 'plus de ' + Math.floor(monthsRem / 12) + ' ans' : monthsRem + ' mois'}</strong>.
+  </div>`;
+
+  h += '</div>'; // fin carte principale
   html('pitch-couts-widget', h);
 }
 
@@ -1800,12 +2024,120 @@ function initPitchChecklist() {
   updatePitchClProgress();
 }
 
+// ---- Pilote & Transition IT ----
+function renderPitchPilote() {
+  const CRITERES = [
+    { critere:'Adoption',   comment:'% d\'ambassadeurs ayant généré ≥1 pitch', cible:'> 80%' },
+    { critere:'Usage',      comment:'Nombre total de pitchs générés',           cible:'> 100' },
+    { critere:'Stabilité',  comment:'Erreurs 429 ou timeout en production',     cible:'< 5'   },
+    { critere:'Coût réel',  comment:'Facture Vercel + OpenAI sur la période',   cible:'< 50€' },
+    { critere:'Satisfaction', comment:'Feedback qualitatif canal Teams',        cible:'Positif' },
+  ];
+  const TRANSITION = [
+    { composant:'Hébergement',    pilote:'Vercel (compte Claire)',          cible:'URL groupe ou hébergement interne' },
+    { composant:'Compte IA',      pilote:'OpenAI dédié Rubix Digital',      cible:'Azure OpenAI entreprise' },
+    { composant:'Authentification', pilote:'Mot de passe simple → login JSON', cible:'SSO Microsoft' },
+    { composant:'Données matrice', pilote:'Vercel Blob',                   cible:'SharePoint Rubix' },
+    { composant:'Monitoring',     pilote:'Page monitoring manuelle',        cible:'Alertes automatiques IT' },
+    { composant:'Support',        pilote:'Claire seule',                    cible:'IT niveau 1 + Claire niveau 2' },
+  ];
+
+  let h = `<div style="border-left:4px solid #3B82F6;background:#fff;border-radius:8px;border:1px solid #E2E8F0;padding:16px;margin-bottom:16px">`;
+  h += `<div style="font-size:14px;font-weight:800;color:#051E50;margin-bottom:4px">🏁 Pilote & Transition IT</div>`;
+
+  // ── 1. Périmètre pilote ────────────────────────────────────────────────
+  h += sectionSep('PÉRIMÈTRE PILOTE', '');
+  h += `<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:12px">
+    <div style="background:#EFF6FF;border-radius:8px;padding:12px;text-align:center">
+      <div style="font-size:11px;color:#6B7280;margin-bottom:4px">Début pilote</div>
+      <div style="font-size:16px;font-weight:800;color:#1D4ED8">17/03/2026</div>
+      <div style="font-size:11px;color:#6B7280">Session 1</div>
+    </div>
+    <div style="background:#EFF6FF;border-radius:8px;padding:12px;text-align:center">
+      <div style="font-size:11px;color:#6B7280;margin-bottom:4px">Fin pilote</div>
+      <div style="font-size:16px;font-weight:800;color:#1D4ED8">30/04/2026</div>
+      <div style="font-size:11px;color:#6B7280">Bilan GO/NO GO</div>
+    </div>
+    <div style="background:#EFF6FF;border-radius:8px;padding:12px;text-align:center">
+      <div style="font-size:11px;color:#6B7280;margin-bottom:4px">Durée</div>
+      <div style="font-size:16px;font-weight:800;color:#1D4ED8">6 semaines</div>
+      <div style="font-size:11px;color:#6B7280">22 ambassadeurs</div>
+    </div>
+  </div>`;
+  h += `<p style="font-size:12px;color:#334155;margin:0 0 12px;line-height:1.6">L'objectif du pilote est de prouver que l'application fonctionne en conditions réelles, que les commerciaux l'adoptent, et que les coûts sont maîtrisés.</p>`;
+
+  // ── 2. Critères de succès ──────────────────────────────────────────────
+  h += sectionSep('CRITÈRES DE SUCCÈS DU PILOTE', '');
+  h += `<table style="margin-bottom:12px"><thead><tr><th>Critère</th><th>Comment on mesure</th><th>Cible</th></tr></thead><tbody>`;
+  for (const r of CRITERES) {
+    h += `<tr><td style="font-weight:700">${r.critere}</td><td style="font-size:11px;color:#334155">${r.comment}</td><td style="font-weight:700;color:#1D4ED8">${r.cible}</td></tr>`;
+  }
+  h += '</tbody></table>';
+
+  // ── 3. Timeline transition IT ──────────────────────────────────────────
+  h += sectionSep('TIMELINE TRANSITION IT', '');
+  const TL = [
+    { date:'17/03', label:'Session 1', sub:'5 users',      color:'#1D4ED8' },
+    { date:'08/04', label:'Session 3', sub:'15 users',     color:'#1D4ED8' },
+    { date:'30/04', label:'Bilan pilote', sub:'Décision GO/NO GO', color:'#166534' },
+    { date:'Mai',   label:'Cadrage IT',  sub:'',           color:'#6B7280' },
+    { date:'Juin',  label:'Migration infra', sub:'',       color:'#6B7280' },
+    { date:'Juillet', label:'Bascule IT', sub:'',          color:'#6B7280' },
+  ];
+  h += `<div style="overflow-x:auto;margin-bottom:12px"><div style="display:flex;align-items:flex-start;gap:0;min-width:480px;padding:8px 0 4px">`;
+  for (let i = 0; i < TL.length; i++) {
+    const t = TL[i];
+    const isLast = i === TL.length - 1;
+    h += `<div style="display:flex;flex-direction:column;align-items:center;flex:1;position:relative">`;
+    h += `<div style="display:flex;align-items:center;width:100%">`;
+    h += `<div style="width:14px;height:14px;border-radius:50%;background:${t.color};flex-shrink:0;border:2px solid #fff;box-shadow:0 0 0 2px ${t.color}"></div>`;
+    if (!isLast) h += `<div style="flex:1;height:2px;background:#D1D5DB"></div>`;
+    h += `</div>`;
+    h += `<div style="margin-top:6px;text-align:center;padding:0 2px">`;
+    h += `<div style="font-size:11px;font-weight:800;color:${t.color}">${t.date}</div>`;
+    h += `<div style="font-size:11px;font-weight:700;color:#051E50;margin-top:2px">${t.label}</div>`;
+    if (t.sub) h += `<div style="font-size:10px;color:#9CA3AF">${t.sub}</div>`;
+    h += `</div></div>`;
+  }
+  h += `</div></div>`;
+
+  // ── 4. Ce qui change avec l'IT ─────────────────────────────────────────
+  h += sectionSep('CE QUI CHANGE AVEC L\'IT', '');
+  h += `<table style="margin-bottom:12px"><thead><tr><th>Composant</th><th>Pilote (aujourd\'hui)</th><th>Cible IT (industrialisé)</th></tr></thead><tbody>`;
+  for (const r of TRANSITION) {
+    h += `<tr>
+      <td style="font-weight:700">${r.composant}</td>
+      <td style="font-size:11px;color:#6B7280">${r.pilote}</td>
+      <td style="font-size:11px;color:#166534;font-weight:600">${r.cible}</td>
+    </tr>`;
+  }
+  h += '</tbody></table>';
+
+  // ── 5. Statut ──────────────────────────────────────────────────────────
+  h += sectionSep('STATUT', '');
+  h += `<div style="display:flex;gap:16px;align-items:center;flex-wrap:wrap">
+    <div style="background:#EFF6FF;border-radius:8px;padding:10px 16px;border:1px solid #BFDBFE">
+      <span style="font-size:11px;color:#6B7280">Statut pilote : </span>
+      <span style="font-size:12px;font-weight:800;color:#1D4ED8">● EN COURS</span>
+    </div>
+    <div style="background:#F8FAFC;border-radius:8px;padding:10px 16px;border:1px solid #E2E8F0">
+      <span style="font-size:11px;color:#6B7280">Date de bilan : </span>
+      <span style="font-size:12px;font-weight:800;color:#051E50">30/04/2026</span>
+    </div>
+  </div>`;
+
+  h += '</div>'; // fin carte
+  html('pitch-pilote-widget', h);
+}
+
 // ---- Init ----
 let pitchInitialized = false;
+let vercelBillingAPI = null;
 function initPitchSubTabs() {
   renderPitchStatusWidget();
   renderPitchFormations();
   renderPitchCouts();
+  renderPitchPilote();
   initPitchChecklist();
 }
 
@@ -1980,6 +2312,12 @@ const RETRO_DATA = [
     { id:'s10-3', text:'Si Tier 1 → relancer support OpenAI', responsable:'CLAIRE', priority:'blue' },
     { id:'s10-4', text:'Implémenter mode dégradé, monitoring alertes, métriques d\'usage', responsable:'CLAUDE CODE', priority:'orange' },
   ]},
+  // ===== BILAN PILOTE =====
+  { date:'2026-04-30', milestone:'📋 JALON : Bilan pilote', actions:[
+    { id:'s11-1', text:'Bilan pilote : préparer les métriques (adoption, usage, coûts, stabilité)', responsable:'CLAIRE', priority:'blue' },
+    { id:'s11-2', text:'Présenter les résultats au manager + IT', responsable:'CLAIRE', priority:'blue' },
+    { id:'s11-3', text:'Décision GO/NO GO pour la transition IT', responsable:'CLAIRE', priority:'blue' },
+  ]},
 ];
 
 const PRIO_COLORS  = { red:'#EF4444', orange:'#F59E0B', blue:'#3B82F6', green:'#22C55E' };
@@ -2043,55 +2381,91 @@ function getMonday(date) {
 }
 
 function buildRetroCalendar() {
-  // Build map dateStr → entry
   const dateMap = {};
   for (const entry of RETRO_DATA) dateMap[entry.date] = entry;
 
-  // All weekday dates from startMonday to endMonday
-  const allDates = RETRO_DATA.map(e => new Date(e.date));
-  const startMon = getMonday(new Date(Math.min(...allDates)));
-  const endMon   = getMonday(new Date(Math.max(...allDates)));
-  const today0   = new Date(); today0.setHours(0,0,0,0);
-  const todayStr = today0.toISOString().split('T')[0];
+  const allDates  = RETRO_DATA.map(e => new Date(e.date));
+  const startMon  = getMonday(new Date(Math.min(...allDates)));
+  const endMon    = getMonday(new Date(Math.max(...allDates)));
+  const today0    = new Date(); today0.setHours(0,0,0,0);
+  const todayStr  = today0.toISOString().split('T')[0];
+
+  // Dates de début de chaque phase pour déterminer laquelle est courante
+  const phaseDates = RETRO_DATA.filter(e => e.phaseHeader).map(e => new Date(e.date));
 
   let out = '';
+  let phaseIdx  = -1;
+  let inPhase   = false;
+  let weekIdx   = 0;
   let cur = new Date(startMon);
+
   while (cur <= endMon) {
-    // Build week's Mon-Fri
     const weekDays = [];
     for (let i = 0; i < 5; i++) { const d = new Date(cur); d.setDate(cur.getDate() + i); weekDays.push(d); }
-    // Only show week if it has at least one entry
     const hasEntry = weekDays.some(d => dateMap[d.toISOString().split('T')[0]]);
+
     if (hasEntry) {
-      // Phase header : check if any day in this week has a phaseHeader
+      // ── Phase header ──────────────────────────────────────────────────
       const phEntry = weekDays.map(d => dateMap[d.toISOString().split('T')[0]]).find(e => e?.phaseHeader);
       if (phEntry) {
+        if (inPhase) out += `</div>`; // close previous phase body
+        phaseIdx++;
         const ph = phEntry.phaseHeader;
-        out += `<div class="retro-phase-header" style="background:${ph.bg};border-color:${ph.color};color:${ph.color}">${ph.label}</div>`;
+
+        const phStart    = new Date(phEntry.date);
+        const nextPhDate = phaseDates[phaseIdx + 1] || null;
+        const isCurrent  = today0 >= phStart && (!nextPhDate || today0 < nextPhDate);
+        const isPast     = nextPhDate && today0 >= nextPhDate;
+        const savedState = localStorage.getItem(`retro_phase_${phaseIdx}`);
+        const collapsed  = savedState !== null ? savedState === '1' : !isCurrent;
+
+        const badge = isPast ? ' <span style="font-size:10px;opacity:.7">(terminée)</span>'
+                    : isCurrent ? ' <span style="font-size:10px;background:rgba(255,255,255,.3);padding:1px 6px;border-radius:10px">EN COURS</span>'
+                    : ' <span style="font-size:10px;opacity:.7">(à venir)</span>';
+
+        out += `<div class="retro-phase-header" style="background:${ph.bg};border-color:${ph.color};color:${ph.color}" onclick="toggleRetroPhase(${phaseIdx})">
+          <span>${ph.label}${badge}</span>
+          <span class="retro-phase-arrow" id="phase-arrow-${phaseIdx}">${collapsed ? '▸' : '▾'}</span>
+        </div>`;
+        out += `<div id="phase-body-${phaseIdx}" style="display:${collapsed ? 'none' : 'block'}">`;
+        inPhase = true;
       }
+
+      // ── Week ──────────────────────────────────────────────────────────
+      const wid = 'retro-week-' + weekIdx++;
+      const wbid = 'retro-weekbody-' + (weekIdx - 1);
+      const savedWeek = localStorage.getItem(wbid);
+      const weekCollapsed = savedWeek === '1';
+
       const weekLabel = cur.toLocaleDateString('fr-FR', { day:'2-digit', month:'long' }) + ' — ' +
         weekDays[4].toLocaleDateString('fr-FR', { day:'2-digit', month:'long' });
-      out += `<div class="retro-week"><div class="retro-week-label">Semaine du ${weekLabel}</div><div class="retro-days">`;
+      out += `<div class="retro-week" id="${wid}">`;
+      out += `<div class="retro-week-label">
+        <span>Semaine du ${weekLabel}</span>
+        <button class="retro-week-toggle" onclick="toggleRetroWeek('${wbid}')" title="${weekCollapsed ? 'Déplier' : 'Replier'}" id="wtoggle-${wbid}">${weekCollapsed ? '▸' : '▾'}</button>
+      </div>`;
+      out += `<div id="${wbid}" style="display:${weekCollapsed ? 'none' : 'block'}">`;
+      out += `<div class="retro-days">`;
+
       for (const day of weekDays) {
         const ds    = day.toISOString().split('T')[0];
         const entry = dateMap[ds];
-        if (!entry) { out += `<div class="retro-day" style="min-width:60px;flex-shrink:0"><div style="height:40px"></div></div>`; continue; }
+        if (!entry) { out += `<div class="retro-day" style="min-width:50px;flex-shrink:0"></div>`; continue; }
+
         const isToday = ds === todayStr;
         const isPast  = day < today0;
         const allDone = isPast && entry.actions.every(a => getRS(a.id) === 'done');
         let cls = 'retro-day'; if (isToday) cls += ' today'; if (isPast && allDone) cls += ' past-all';
         const idAttr = isToday ? ' id="retro-today"' : '';
         out += `<div class="${cls}" id="rday-${ds}"${idAttr}>`;
-        // Milestone
+
         if (entry.milestone) {
           const ms = getMilestoneStyle(entry.milestone);
           out += `<div class="retro-milestone-banner" style="background:${ms.bg};border-color:${ms.border};color:${ms.color}">${entry.milestone}</div>`;
         }
-        // Header
         const dn = day.toLocaleDateString('fr-FR', { weekday:'short' });
         const dm = day.toLocaleDateString('fr-FR', { day:'2-digit', month:'2-digit' });
         out += `<div class="retro-day-header"><div class="retro-day-date">${dm}</div><div class="retro-day-name">${dn}</div></div>`;
-        // Cards
         out += `<div class="retro-cards">`;
         for (const a of entry.actions) {
           const status  = getRS(a.id);
@@ -2108,11 +2482,47 @@ function buildRetroCalendar() {
         }
         out += `</div></div>`;
       }
-      out += `</div></div>`;
+      out += `</div></div></div>`; // retro-days + weekbody + retro-week
     }
     cur.setDate(cur.getDate() + 7);
   }
+  if (inPhase) out += `</div>`; // close last phase body
   return out;
+}
+
+function toggleRetroPhase(idx) {
+  const body  = $('phase-body-' + idx);
+  const arrow = $('phase-arrow-' + idx);
+  if (!body) return;
+  const willCollapse = body.style.display !== 'none';
+  body.style.display = willCollapse ? 'none' : 'block';
+  if (arrow) arrow.textContent = willCollapse ? '▸' : '▾';
+  localStorage.setItem(`retro_phase_${idx}`, willCollapse ? '1' : '0');
+}
+
+function toggleRetroWeek(wbid) {
+  const body   = $(wbid);
+  const toggle = $('wtoggle-' + wbid);
+  if (!body) return;
+  const willCollapse = body.style.display !== 'none';
+  body.style.display = willCollapse ? 'none' : 'block';
+  if (toggle) toggle.textContent = willCollapse ? '▸' : '▾';
+  if (toggle) toggle.title       = willCollapse ? 'Déplier' : 'Replier';
+  localStorage.setItem(wbid, willCollapse ? '1' : '0');
+}
+
+function scrollToToday() {
+  const el = $('retro-today');
+  if (!el) return;
+  // Ensure the phase containing today is open
+  const phBodies = document.querySelectorAll('[id^="phase-body-"]');
+  phBodies.forEach(pb => {
+    if (pb.contains(el) && pb.style.display === 'none') {
+      const idx = pb.id.replace('phase-body-', '');
+      toggleRetroPhase(+idx);
+    }
+  });
+  setTimeout(() => el.scrollIntoView({ behavior:'smooth', block:'nearest' }), 50);
 }
 
 function isRetroVisible(a) {
@@ -2149,8 +2559,14 @@ function updateRetroProgress() {
   el.innerHTML = `
     <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px;margin-bottom:6px">
       <span style="font-weight:700;color:#051E50;font-size:13px">Progression : ${done} / ${total} actions terminées (${pct}%)</span>
-      <span style="font-size:11px;color:#64748B">${nxt}</span>
+      <div style="display:flex;gap:6px;flex-wrap:wrap">
+        <button onclick="scrollToToday()" style="font-size:11px;font-weight:700;padding:4px 10px;border-radius:16px;border:1px solid #3B82F6;background:#EFF6FF;color:#1D4ED8;cursor:pointer">📍 Aujourd'hui</button>
+        <button onclick="retroCompactToggle(this)" style="font-size:11px;font-weight:700;padding:4px 10px;border-radius:16px;border:1px solid #E2E8F0;background:#F1F5F9;color:#374151;cursor:pointer" id="retro-compact-btn">${document.body.classList.contains('retro-compact') ? '⊞ Normal' : '⊟ Compact'}</button>
+        <button onclick="retroCollapseAll()" style="font-size:11px;font-weight:700;padding:4px 10px;border-radius:16px;border:1px solid #E2E8F0;background:#F1F5F9;color:#374151;cursor:pointer">−− Tout replier</button>
+        <button onclick="retroExpandAll()" style="font-size:11px;font-weight:700;padding:4px 10px;border-radius:16px;border:1px solid #E2E8F0;background:#F1F5F9;color:#374151;cursor:pointer">++ Tout déplier</button>
+      </div>
     </div>
+    <div style="font-size:11px;color:#64748B;margin-bottom:6px">${nxt}</div>
     <div class="retro-prog-bar-bg"><div class="retro-prog-bar-fill" style="width:${pct}%"></div></div>
     <div class="retro-prog-stats">
       <span>🔴 Bloquants restants : <strong>${redRem}</strong></span>
@@ -2184,7 +2600,40 @@ function renderRetroFilters() {
 function setRetroResp(val) { retroFilterResp = val; renderRetroFilters(); applyRetroFilters(); }
 function setRetroPrio(val) { retroFilterPrio = val; renderRetroFilters(); applyRetroFilters(); }
 
+function retroCompactToggle(btn) {
+  document.body.classList.toggle('retro-compact');
+  const isCompact = document.body.classList.contains('retro-compact');
+  if (btn) btn.textContent = isCompact ? '⊞ Normal' : '⊟ Compact';
+  localStorage.setItem('retro_compact', isCompact ? '1' : '0');
+}
+
+function retroCollapseAll() {
+  document.querySelectorAll('[id^="phase-body-"]').forEach(el => {
+    const idx = el.id.replace('phase-body-', '');
+    if (el.style.display !== 'none') toggleRetroPhase(+idx);
+  });
+}
+
+function retroExpandAll() {
+  document.querySelectorAll('[id^="phase-body-"]').forEach(el => {
+    const idx = el.id.replace('phase-body-', '');
+    if (el.style.display === 'none') toggleRetroPhase(+idx);
+  });
+  // Also expand weeks inside visible phases
+  document.querySelectorAll('[id^="retro-weekbody-"]').forEach(el => {
+    if (el.style.display === 'none') {
+      const wbid = el.id;
+      el.style.display = 'block';
+      const toggle = $('wtoggle-' + wbid);
+      if (toggle) { toggle.textContent = '▾'; toggle.title = 'Replier'; }
+      localStorage.removeItem(wbid);
+    }
+  });
+}
+
 function initRetro() {
+  // Restore compact mode preference
+  if (localStorage.getItem('retro_compact') === '1') document.body.classList.add('retro-compact');
   renderDemandes();
   $('retro-calendar').innerHTML = buildRetroCalendar();
   renderRetroFilters();

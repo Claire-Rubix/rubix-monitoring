@@ -79,6 +79,9 @@ module.exports = async (req, res) => {
       };
     }
 
+    // ── Coûts Vercel en $ ────────────────────────────────────────────────────
+    const vercelBilling = calcVercelBilling(billing, daysElapsed, totalDays, billingFrom, billingEnd);
+
     const fmtDate = d => `${pad(d.getDate())}/${pad(d.getMonth() + 1)}/${d.getFullYear()}`;
 
     return res.json({
@@ -89,7 +92,7 @@ module.exports = async (req, res) => {
         daysElapsed:   r(daysElapsed, 1),
         daysRemaining: r(daysRemaining, 1),
       },
-      vercel:      { proj, deploys },
+      vercel:      { proj, deploys, billing: vercelBilling },
       openai,
       generatedAt: now.toISOString(),
     });
@@ -180,6 +183,57 @@ async function fetchOpenAI(headers, projectId, sinceUnix, sinceDate) {
     requests:          totalRequests,
     costPerPrompt,
     monthlyProjected,
+  };
+}
+
+// ── Vercel Coûts en $ ─────────────────────────────────────────────────────────
+function calcVercelBilling(billingData, daysElapsed, totalDays, billingFrom, billingEnd) {
+  const PLAN_FEE = 20;
+  const OVERAGE = {
+    'Build Minutes':        { free: 6000,    rate: 0.02        },
+    'Fast Data Transfer':   { free: 1000,    rate: 0.15        },
+    'Function Invocations': { free: 1000000, rate: 0.60 / 1e6 },
+    'Function Duration':    { free: 1000,    rate: 0.18        },
+  };
+
+  let currentOverage = 0;
+  let projectedOverage = 0;
+  const breakdown = {};
+
+  for (const [svc, cfg] of Object.entries(OVERAGE)) {
+    const used        = billingData[svc]?.total ?? 0;
+    const dailyRate   = used / Math.max(daysElapsed, 1);
+    const projected   = dailyRate * totalDays;
+
+    const curExcess   = Math.max(0, used - cfg.free);
+    const projExcess  = Math.max(0, projected - cfg.free);
+    const currentCost   = r(curExcess * cfg.rate, 4);
+    const projectedCost = r(projExcess * cfg.rate, 4);
+
+    currentOverage   += currentCost;
+    projectedOverage += projectedCost;
+
+    breakdown[svc] = {
+      used:         r(used, 3),
+      free:         cfg.free,
+      currentExcess:  r(curExcess, 3),
+      currentCost,
+      projectedCost,
+    };
+  }
+
+  return {
+    planFee:          PLAN_FEE,
+    creditIncluded:   PLAN_FEE,
+    cycleStart:       billingFrom.toISOString().slice(0, 10),
+    cycleEnd:         billingEnd.toISOString().slice(0, 10),
+    joursEcoules:     r(daysElapsed, 1),
+    totalJours:       r(totalDays, 1),
+    currentOverage:   r(currentOverage, 2),
+    projectedOverage: r(projectedOverage, 2),
+    currentTotal:     r(PLAN_FEE + currentOverage, 2),
+    projectedTotal:   r(PLAN_FEE + projectedOverage, 2),
+    breakdown,
   };
 }
 
