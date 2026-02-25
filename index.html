@@ -50,26 +50,28 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#EEF2FF;color:#0F172
 .section-body{padding:0 20px 16px;display:none}
 .section-body.open{display:block}
 
-/* Badges */
-.badge{font-size:9px;padding:2px 8px;border-radius:20px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;display:inline-block}
-.bv{background:#DBEAFE;color:#1D4ED8}
-.bo{background:#ECFDF5;color:#059669}
-.bg{background:#DBEAFE;color:#1D4ED8}
+/* Badges — all neutral gray, only .bd-crit for critical */
+.badge{font-size:9px;padding:2px 8px;border-radius:20px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;display:inline-block;background:#F1F5F9;color:#64748B}
+.bd-crit{background:#FEE2E2;color:#DC2626}
+/* keep legacy aliases pointing to neutral */
+.bv,.bo,.bg,.bi,.bw{background:#F1F5F9;color:#64748B}
 .bd{background:#FEE2E2;color:#DC2626}
-.bw{background:#FEFCE8;color:#92400E}
-.bi{background:#EFF6FF;color:#1D4ED8}
 
 /* Alert grid */
 .alert-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:6px}
-.alert-block{border-radius:12px;border:1px solid #DBEAFE;overflow:hidden;background:#fff;box-shadow:0 1px 6px rgba(5,30,80,.07)}
-.alert-block-head{padding:11px 16px;border-bottom:1px solid #EFF6FF;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.alert-block{border-radius:10px;border:1px solid #E2E8F0;overflow:hidden;background:#fff}
+.alert-block-head{padding:10px 16px;border-bottom:1px solid #F1F5F9;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 .alert-block-head h3{font-size:13px;font-weight:700;color:#051E50;flex:1;white-space:nowrap}
 .alert-block-body{padding:10px 14px 12px}
-.alert-row{display:flex;align-items:flex-start;gap:8px;padding:6px 10px;border-radius:6px;margin-bottom:4px;font-size:11px;line-height:1.5}
+.alert-row{display:flex;align-items:flex-start;gap:8px;padding:6px 10px;border-radius:6px;margin-bottom:4px;font-size:11px;line-height:1.5;color:#334155}
+.alert-row.ar-crit{background:#FEF2F2;color:#991B1B}
+.alert-row.ar-warn{background:#FFFBEB;color:#92400E}
+.alert-row.ar-info{background:#F8FAFC;color:#475569}
+.alert-row.ar-ok{background:#F8FAFC;color:#475569}
 .alert-row:last-of-type{margin-bottom:0}
 .alert-icon{font-size:13px;flex-shrink:0;margin-top:1px}
-.detail-link{display:block;text-align:right;font-size:11px;font-weight:600;color:#1D4ED8;text-decoration:none;padding:8px 0 0;border-top:1px solid #EFF6FF;margin-top:8px;cursor:pointer}
-.detail-link:hover{text-decoration:underline}
+.detail-link{display:block;text-align:right;font-size:11px;font-weight:600;color:#64748B;text-decoration:none;padding:8px 0 0;border-top:1px solid #F1F5F9;margin-top:8px;cursor:pointer}
+.detail-link:hover{color:#051E50;text-decoration:underline}
 
 /* Capacity cards */
 .summary{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px}
@@ -326,120 +328,115 @@ th{color:#1D4ED8;font-weight:600;font-size:10px;text-transform:uppercase;letter-
   <div class="page active" id="page-alertes">
   <div class="container">
     <div class="section-title">
-      <div class="st-bar" style="background:#EF4444"></div>
+      <div class="st-bar" style="background:#051E50"></div>
       Alertes et blockers
-      <span class="badge bd" id="count-danger">0 CRITIQUE</span>
-      <span class="badge bw" id="count-warn">0 ATTENTION</span>
+      <span class="badge bd-crit" id="count-danger">0 CRITIQUE</span>
+      <span class="badge" id="count-warn">0 ATTENTION</span>
     </div>
 
     <div class="alert-grid">
 
-      <div class="alert-block" style="border-top:3px solid #FFD700">
+      <div class="alert-block">
         <div class="alert-block-head">
-          <div style="width:10px;height:10px;border-radius:50%;background:#FFD700;flex-shrink:0"></div>
-          <h3>Pôle Acquisition</h3>
-          <span class="badge bg">GEMINI FREE TIER</span>
-          <span class="badge bd">BLOCKER #1</span>
+          <h3>Pole Acquisition</h3>
+          <span class="badge">GEMINI FREE TIER</span>
+          <span class="badge bd-crit">BLOCKER</span>
         </div>
         <div class="alert-block-body">
-          <div class="alert-row" style="background:#FEE2E2">
-            <span class="alert-icon" style="color:#DC2626">&#9888;</span>
-            <span style="color:#DC2626">FREE TIER bloqué à 5+ users simultanées (15 appels/min). Migrer vers GCP billing pour scaler.</span>
+          <div class="alert-row ar-crit">
+            <span class="alert-icon">&#9888;</span>
+            <span>FREE TIER bloque a 5+ users simultanees (15 appels/min). Migrer vers GCP billing pour scaler.</span>
           </div>
-          <div class="alert-row" style="background:#F0F4FF">
-            <span class="alert-icon" style="color:#3B82F6">&#9432;</span>
-            <span style="color:#3B82F6">Quota jour : 1 500 appels/jour = max 150 users/jour (limite fixée à 10 appels/user/jour)</span>
+          <div class="alert-row ar-info">
+            <span class="alert-icon">&#9432;</span>
+            <span>Quota jour : 1 500 appels/jour = max 150 users/jour (limite fixee a 10 appels/user/jour)</span>
           </div>
-          <a class="detail-link" onclick="showTab('pole')">Voir détails Pôle Acquisition</a>
+          <a class="detail-link" onclick="showTab('pole')">Voir details &rarr;</a>
         </div>
       </div>
 
-      <div class="alert-block" style="border-top:3px solid #8B5CF6">
+      <div class="alert-block">
         <div class="alert-block-head">
-          <div style="width:10px;height:10px;border-radius:50%;background:#8B5CF6;flex-shrink:0"></div>
           <h3>Pitch Generator</h3>
-          <span class="badge bo">OPENAI TIER 1</span>
+          <span class="badge">OPENAI TIER 1</span>
         </div>
         <div class="alert-block-body">
-          <div class="alert-row" style="background:#FEFCE8">
-            <span class="alert-icon" style="color:#D97706">&#9888;</span>
-            <span style="color:#D97706">6+ appels OpenAI par pitch (5 priorisations + 1 génération) paralléliser avec Promise.all</span>
+          <div class="alert-row ar-warn">
+            <span class="alert-icon">&#9888;</span>
+            <span>6+ appels OpenAI par pitch (5 priorisations + 1 generation) paralleliser avec Promise.all</span>
           </div>
-          <div class="alert-row" style="background:#FEFCE8">
-            <span class="alert-icon" style="color:#D97706">&#9888;</span>
-            <span style="color:#D97706">Polling Assistant API ~55s frôle le timeout 60s Vercel. Risque d'échec sur pitchs complexes.</span>
+          <div class="alert-row ar-warn">
+            <span class="alert-icon">&#9888;</span>
+            <span>Polling Assistant API ~55s frole le timeout 60s Vercel. Risque d'echec sur pitchs complexes.</span>
           </div>
-          <a class="detail-link" onclick="showTab('pitch')">Voir détails Pitch Generator</a>
+          <a class="detail-link" onclick="showTab('pitch')">Voir details &rarr;</a>
         </div>
       </div>
 
-      <div class="alert-block" style="border-top:3px solid #00D26A">
+      <div class="alert-block">
         <div class="alert-block-head">
-          <div style="width:10px;height:10px;border-radius:50%;background:#00D26A;flex-shrink:0"></div>
           <h3>Smart Content</h3>
-          <span class="badge bg">GEMINI GCP</span>
+          <span class="badge">GEMINI GCP</span>
         </div>
         <div class="alert-block-body">
-          <div class="alert-row" style="background:#FEFCE8">
-            <span class="alert-icon" style="color:#D97706">&#9888;</span>
-            <span style="color:#D97706">Crédits promo GCP : ~50 contenus couverts. Surveiller la console GCP avant épuisement.</span>
+          <div class="alert-row ar-warn">
+            <span class="alert-icon">&#9888;</span>
+            <span>Credits promo GCP : ~50 contenus couverts. Surveiller la console GCP avant epuisement.</span>
           </div>
-          <div class="alert-row" style="background:#ECFDF5">
-            <span class="alert-icon" style="color:#059669">&#10003;</span>
-            <span style="color:#059669">Streaming + retry/backoff 429 déjà en place pas de risque de timeout Vercel</span>
+          <div class="alert-row ar-ok">
+            <span class="alert-icon">&#10003;</span>
+            <span>Streaming + retry/backoff 429 deja en place, pas de risque de timeout Vercel</span>
           </div>
-          <a class="detail-link" onclick="showTab('smart')">Voir détails Smart Content</a>
+          <a class="detail-link" onclick="showTab('smart')">Voir details &rarr;</a>
         </div>
       </div>
 
-      <div class="alert-block" style="border-top:3px solid #CBD5E1">
+      <div class="alert-block">
         <div class="alert-block-head">
-          <div style="width:10px;height:10px;border-radius:50%;background:#94A3B8;flex-shrink:0"></div>
           <h3>Global Vercel &amp; Claude</h3>
-          <span class="badge bv">PARTAGE</span>
+          <span class="badge">PARTAGE</span>
         </div>
         <div class="alert-block-body">
           <div id="global-dyn-alerts"></div>
-          <div class="alert-row" style="background:#F0F4FF">
-            <span class="alert-icon" style="color:#3B82F6">&#9432;</span>
-            <span style="color:#3B82F6">Concurrent Builds : 1 seul build à la fois, les 3 apps partagent la queue</span>
+          <div class="alert-row ar-info">
+            <span class="alert-icon">&#9432;</span>
+            <span>Concurrent Builds : 1 seul build a la fois, les 3 apps partagent la queue</span>
           </div>
-          <div class="alert-row" style="background:#FEFCE8">
-            <span class="alert-icon" style="color:#D97706">&#9432;</span>
-            <span style="color:#D97706">Claude Code Max 5x : fenêtre glissante 5h + plafond hebdo non documenté, pas d'API quota</span>
+          <div class="alert-row ar-warn">
+            <span class="alert-icon">&#9432;</span>
+            <span>Claude Code Max 5x : fenetre glissante 5h + plafond hebdo non documente, pas d'API quota</span>
           </div>
           <div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap">
-            <a href="https://claude.ai/settings/usage" target="_blank" class="btn btn-g">Vérifier quota Claude</a>
+            <a href="https://claude.ai/settings/usage" target="_blank" class="btn btn-g">Verifier quota Claude</a>
             <a href="https://claude.ai" target="_blank" class="btn btn-v">Claude en ligne (secours)</a>
           </div>
         </div>
       </div>
 
-      <div class="alert-block" style="border-top:3px solid #EF4444;grid-column:1/-1">
+      <div class="alert-block" style="grid-column:1/-1">
         <div class="alert-block-head">
-          <div style="width:10px;height:10px;border-radius:50%;background:#EF4444;flex-shrink:0"></div>
-          <h3>Bug lié à l'environnement Rubix</h3>
-          <span class="badge bd">PROXY ENTREPRISE</span>
-          <span class="badge bd">RESEAU</span>
+          <h3>Bug lie a l'environnement Rubix</h3>
+          <span class="badge bd-crit">PROXY</span>
+          <span class="badge bd-crit">RESEAU</span>
         </div>
         <div class="alert-block-body">
-          <div class="alert-row" style="background:#FEE2E2">
-            <span class="alert-icon" style="color:#DC2626">&#9888;</span>
-            <span style="color:#DC2626"><strong>Claude Code bloqué sur réseau Rubix</strong> : proxy / pare-feu bloque les connexions API (ConnectionRefused, timeout). VS Code fonctionne, mais Claude Code ne peut pas contacter les serveurs Claude. Contournement : utiliser Claude dans le navigateur au bureau.</span>
+          <div class="alert-row ar-crit">
+            <span class="alert-icon">&#9888;</span>
+            <span><strong>Claude Code bloque sur reseau Rubix</strong> : proxy / pare-feu bloque les connexions API (ConnectionRefused, timeout). Contournement : utiliser Claude dans le navigateur au bureau.</span>
           </div>
-          <div class="alert-row" style="background:#FEE2E2">
-            <span class="alert-icon" style="color:#DC2626">&#9888;</span>
-            <span style="color:#DC2626"><strong>ERR_CERT_COMMON_NAME_INVALID</strong> : le proxy SSL d'entreprise (Zscaler) intercepte et re-scelle les connexions HTTPS. Le certificat recus ne correspond pas au site contacte.</span>
+          <div class="alert-row ar-crit">
+            <span class="alert-icon">&#9888;</span>
+            <span><strong>ERR_CERT_COMMON_NAME_INVALID</strong> : le proxy SSL d'entreprise (Zscaler) intercepte et re-scelle les connexions HTTPS.</span>
           </div>
-          <div class="alert-row" style="background:#FEE2E2">
-            <span class="alert-icon" style="color:#DC2626">&#9888;</span>
-            <span style="color:#DC2626"><strong>ERR_NETWORK_CHANGED / ERR_INTERNET_DISCONNECTED</strong> : bascule VPN, changement de WiFi ou mise en veille coupe la connexion en cours de génération (90 a 180s). L'article reste bloqué en PROCESSING dans Google Sheets.</span>
+          <div class="alert-row ar-crit">
+            <span class="alert-icon">&#9888;</span>
+            <span><strong>ERR_NETWORK_CHANGED</strong> : bascule VPN / WiFi / mise en veille coupe la connexion en cours de generation.</span>
           </div>
-          <div class="alert-row" style="background:#FEFCE8">
-            <span class="alert-icon" style="color:#D97706">&#9888;</span>
-            <span style="color:#D97706">Solution : déplacer la génération côté serveur Vercel. Le navigateur ne fait qu'un seul appel court, Vercel gère les appels Gemini en interne (serveur à serveur, sans proxy).</span>
+          <div class="alert-row ar-info">
+            <span class="alert-icon">&#10140;</span>
+            <span>Solution : deplacer la generation cote serveur Vercel (serveur a serveur, sans proxy).</span>
           </div>
-          <a class="detail-link" onclick="showTab('smart')">Voir le plan d'action dans Smart Content</a>
+          <a class="detail-link" onclick="showTab('smart')">Voir le plan d'action &rarr;</a>
         </div>
       </div>
 
@@ -1478,14 +1475,14 @@ function renderGlobalAlerts(proj) {
   const build = proj['Build Minutes'];
   const fnInv = proj['Function Invocations'];
   if (build?.risk === 'danger') {
-    h += `<div class="alert-row" style="background:#FEE2E2"><span class="alert-icon" style="color:#DC2626">&#9888;</span><span style="color:#DC2626">Build Minutes : projection ${Math.round(build.projected)} / 6 000 min (${build.projPct}%) risque de dépassement</span></div>`;
+    h += `<div class="alert-row ar-crit"><span class="alert-icon">&#9888;</span><span>Build Minutes : projection ${Math.round(build.projected)} / 6 000 min (${build.projPct}%) risque de depassement</span></div>`;
   } else if (build?.risk === 'warn') {
-    h += `<div class="alert-row" style="background:#FEFCE8"><span class="alert-icon" style="color:#D97706">&#9888;</span><span style="color:#D97706">Build Minutes : projection ${Math.round(build.projected)} / 6 000 min (${build.projPct}%) a surveiller</span></div>`;
+    h += `<div class="alert-row ar-warn"><span class="alert-icon">&#9888;</span><span>Build Minutes : projection ${Math.round(build.projected)} / 6 000 min (${build.projPct}%) a surveiller</span></div>`;
   }
   if (fnInv?.risk === 'danger') {
-    h += `<div class="alert-row" style="background:#FEE2E2"><span class="alert-icon" style="color:#DC2626">&#9888;</span><span style="color:#DC2626">Function Invocations : projection ${fmtN(Math.round(fnInv.projected))} / 1M risque de dépassement</span></div>`;
+    h += `<div class="alert-row ar-crit"><span class="alert-icon">&#9888;</span><span>Function Invocations : projection ${fmtN(Math.round(fnInv.projected))} / 1M risque de depassement</span></div>`;
   } else if (fnInv?.risk === 'warn') {
-    h += `<div class="alert-row" style="background:#FEFCE8"><span class="alert-icon" style="color:#D97706">&#9888;</span><span style="color:#D97706">Function Invocations : projection ${fmtN(Math.round(fnInv.projected))} / 1M a surveiller</span></div>`;
+    h += `<div class="alert-row ar-warn"><span class="alert-icon">&#9888;</span><span>Function Invocations : projection ${fmtN(Math.round(fnInv.projected))} / 1M a surveiller</span></div>`;
   }
   html('global-dyn-alerts', h);
 }
