@@ -172,6 +172,7 @@ th{color:#1D4ED8;font-weight:600;font-size:10px;text-transform:uppercase;letter-
 .retro-week-label{font-size:11px;font-weight:700;color:#64748B;text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid #E2E8F0}
 .retro-days{display:flex;gap:10px;overflow-x:auto;padding-bottom:10px}
 .retro-day{min-width:200px;flex-shrink:0}
+.retro-phase-header{font-size:13px;font-weight:800;padding:10px 18px;border-radius:8px;border:2px solid;text-align:center;margin:20px 0 6px;letter-spacing:.4px}
 .retro-milestone-banner{font-size:10px;font-weight:700;padding:4px 8px;border-radius:6px 6px 0 0;text-align:center;border:1px solid;border-bottom:none}
 .retro-day-header{background:#F8FAFC;border:1px solid #E2E8F0;border-bottom:none;padding:7px 10px;text-align:center;border-radius:7px 7px 0 0}
 .retro-day.today .retro-day-header{border:2px solid #FFD700;border-bottom:none;background:#FFFBEB}
@@ -1171,8 +1172,8 @@ function renderGlobalAlerts(proj) {
 // ====================== RÉTROPLANNING ======================
 
 const RETRO_DATA = [
-  // SEMAINE 1 — Fondations
-  { date:'2026-02-25', milestone:null, actions:[
+  // ===== PHASE 1 — Prêt pour la formation (25/02 → 17/03) =====
+  { date:'2026-02-25', phaseHeader:{ label:'⚡ Phase 1 — Prêt pour la formation  ·  25/02 → 17/03', color:'#1D4ED8', bg:'#DBEAFE' }, milestone:null, actions:[
     { id:'s1-1', text:'Créer compte OpenAI dédié Rubix Pitch', responsable:'CLAIRE', priority:'red' },
     { id:'s1-2', text:'Charger 50$ de crédits sur le nouveau compte', responsable:'CLAIRE', priority:'red' },
     { id:'s1-3', text:'Mettre à jour OPENAI_API_KEY dans Vercel', responsable:'CLAIRE', priority:'red' },
@@ -1185,12 +1186,11 @@ const RETRO_DATA = [
     { id:'s1-8', text:'Corriger tendances disparues étape 3', responsable:'CLAUDE CODE', priority:'red' },
     { id:'s1-9', text:'Corriger crédibilité incomplète étape 3', responsable:'CLAUDE CODE', priority:'red' },
   ]},
+  // 27/02 (Ven) — fusionné avec 28/02 (Samedi → déplacé)
   { date:'2026-02-27', milestone:null, actions:[
     { id:'s1-10', text:'Implémenter messages d\'erreur UX (timeout, 429, 500, JSON)', responsable:'CLAUDE CODE', priority:'red' },
     { id:'s1-11', text:'Implémenter bouton "Réessayer" sans perte de données saisies', responsable:'CLAUDE CODE', priority:'red' },
     { id:'s1-12', text:'Implémenter timeout frontend 58s (couper avant le 60s Vercel)', responsable:'CLAUDE CODE', priority:'red' },
-  ]},
-  { date:'2026-02-28', milestone:null, actions:[
     { id:'s1-13', text:'Implémenter retry exponential backoff (api/generate-pitch.js)', responsable:'CLAUDE CODE', priority:'red' },
     { id:'s1-14', text:'Implémenter retry exponential backoff (api/generate-fusion.js)', responsable:'CLAUDE CODE', priority:'red' },
     { id:'s1-15', text:'Ajouter bouton "Signaler un problème" → lien canal Teams', responsable:'CLAUDE CODE', priority:'orange' },
@@ -1198,7 +1198,7 @@ const RETRO_DATA = [
     { id:'s1-17', text:'Créer fichier users.json sur Vercel Blob (liste utilisateurs avec champ "actif")', responsable:'CLAUDE CODE', priority:'orange' },
     { id:'s1-18', text:'Tester parcours complet — vérifier corrections bugs', responsable:'CLAIRE', priority:'green' },
   ]},
-  // SEMAINE 2 — Matrice + Stabilisation
+  // Semaine 2 — Matrice + Stabilisation (02/03 → 06/03)
   { date:'2026-03-02', milestone:'📦 Réception nouvelle matrice', actions:[
     { id:'s2-1', text:'Réceptionner la nouvelle matrice', responsable:'CLAIRE', priority:'red' },
     { id:'s2-2', text:'Vérifier les 7 onglets (format, colonnes, données cohérentes)', responsable:'CLAIRE', priority:'red' },
@@ -1228,39 +1228,36 @@ const RETRO_DATA = [
     { id:'s2-18', text:'Confirmer liste testeurs (noms reçus du point manager)', responsable:'CLAIRE', priority:'blue' },
     { id:'s2-19', text:'Préparer users.json avec les 66 participants', responsable:'CLAIRE', priority:'blue' },
   ]},
-  // SEMAINE 3 — Beta test + Test de charge
-  { date:'2026-03-07', milestone:null, actions:[
+  // Semaine 3 — Bêta test + Simulations (09/03 → 13/03)
+  // 07/03 (Sam) + 08/03 (Dim) → déplacés semaine du 09/03
+  { date:'2026-03-09', milestone:null, actions:[
     { id:'s3-1', text:'Envoyer accès app aux testeurs + consignes canal Teams', responsable:'CLAIRE', priority:'blue' },
     { id:'s3-2', text:'Corriger bugs remontés par testeurs (au fil de l\'eau)', responsable:'CLAUDE CODE', priority:'orange' },
-  ]},
-  { date:'2026-03-08', milestone:null, actions:[
-    { id:'s3-3', text:'Corrections bugs testeurs', responsable:'CLAUDE CODE', priority:'orange' },
-    { id:'s3-4', text:'Vérifier logs Vercel + retours canal Teams', responsable:'CLAIRE', priority:'green' },
-  ]},
-  { date:'2026-03-09', milestone:null, actions:[
-    { id:'s3-5', text:'Dernières corrections bugs testeurs', responsable:'CLAUDE CODE', priority:'orange' },
     { id:'s3-6', text:'🧪 Simulation formation : 22 pitchs / 5 vagues / 3s — Coût : $0.18', responsable:'CLAIRE', priority:'green' },
-    { id:'s3-7', text:'🧪 Simulation stress : 35 pitchs / 7 vagues / 3s — Coût : $0.28', responsable:'CLAIRE', priority:'green' },
   ]},
   { date:'2026-03-10', milestone:'🔒 Code freeze', actions:[
+    { id:'s3-3', text:'Corrections bugs testeurs', responsable:'CLAUDE CODE', priority:'orange' },
+    { id:'s3-4', text:'Vérifier logs Vercel + retours canal Teams', responsable:'CLAIRE', priority:'green' },
+    { id:'s3-7', text:'🧪 Simulation stress : 35 pitchs / 7 vagues / 3s — Coût : $0.28', responsable:'CLAIRE', priority:'green' },
     { id:'s3-8', text:'Analyser résultats simulations : taux succès, temps moyen, erreurs', responsable:'CLAIRE', priority:'green' },
-    { id:'s3-9', text:'Fix critique uniquement si simulation révèle un problème bloquant', responsable:'CLAUDE CODE', priority:'red' },
-    { id:'s3-10', text:'🧪 Retest formation (22 pitchs) si debug effectué — Coût : $0.18', responsable:'CLAIRE', priority:'green' },
     { id:'s3-11', text:'DÉCISION : code freeze si tests OK (reporté 11/03 max si debug)', responsable:'CLAIRE', priority:'green' },
   ]},
   { date:'2026-03-11', milestone:null, actions:[
+    { id:'s3-5', text:'Dernières corrections bugs testeurs', responsable:'CLAUDE CODE', priority:'orange' },
+    { id:'s3-9', text:'Fix critique uniquement si simulation révèle un problème bloquant', responsable:'CLAUDE CODE', priority:'red' },
+    { id:'s3-10', text:'🧪 Retest formation (22 pitchs) si debug effectué — Coût : $0.18', responsable:'CLAIRE', priority:'green' },
+  ]},
+  { date:'2026-03-12', milestone:null, actions:[
     { id:'s3-12', text:'Uploader fichier users.json final sur Vercel Blob', responsable:'CLAIRE', priority:'blue' },
     { id:'s3-13', text:'Générer 3 pitchs de démo PDF (Agro/Achats, Industrie/Maint, Élec/Prod)', responsable:'CLAIRE', priority:'green' },
     { id:'s3-14', text:'Préparer document "Guide formateur" pour le créneau app', responsable:'CLAIRE', priority:'blue' },
     { id:'s3-15', text:'Bilan testeurs : recueillir feedback final', responsable:'CLAIRE', priority:'green' },
   ]},
-  // SEMAINE 4 — Dernière ligne droite
-  { date:'2026-03-14', milestone:null, actions:[
+  // 13/03 (Ven) — fusionné avec 14/03 (Sam) + 15/03 (Dim)
+  { date:'2026-03-13', milestone:null, actions:[
     { id:'s4-1', text:'Test quotidien : générer 1 pitch, vérifier résultat — Coût : $0.008', responsable:'CLAIRE', priority:'green' },
     { id:'s4-2', text:'Confirmer salle + matériel formation 17/03', responsable:'CLAIRE', priority:'blue' },
     { id:'s4-3', text:'Relire guide formateur, valider déroulé créneau app', responsable:'FORMATEUR', priority:'blue' },
-  ]},
-  { date:'2026-03-15', milestone:null, actions:[
     { id:'s4-4', text:'Test quotidien — Coût : $0.008', responsable:'CLAIRE', priority:'green' },
     { id:'s4-5', text:'Identifier les 5 ambassadeurs session 1 (parmi les 22 participants)', responsable:'CLAIRE', priority:'blue' },
     { id:'s4-6', text:'Activer les 5 ambassadeurs dans users.json (actif: true)', responsable:'CLAIRE', priority:'blue' },
@@ -1282,8 +1279,8 @@ const RETRO_DATA = [
     { id:'s4-18', text:'17h30 : Vérifier les logs — erreurs 429 ? Timeouts ?', responsable:'CLAIRE', priority:'green' },
     { id:'s4-19', text:'17h30 : Confirmer les 5 ambassadeurs → leur partager lien + canal Teams', responsable:'CLAIRE', priority:'blue' },
   ]},
-  // SEMAINE 5 — Observation pilote 5 users
-  { date:'2026-03-18', milestone:null, actions:[
+  // ===== PHASE 2 — App solide pour 10 utilisateurs (18/03 → 25/03) =====
+  { date:'2026-03-18', phaseHeader:{ label:'🌱 Phase 2 — App solide pour 10 utilisateurs  ·  18/03 → 25/03', color:'#166534', bg:'#DCFCE7' }, milestone:null, actions:[
     { id:'s5-1', text:'Vérifier logs Vercel : les ambassadeurs utilisent l\'app ?', responsable:'CLAIRE', priority:'green' },
     { id:'s5-2', text:'Vérifier canal Teams : bugs remontés ?', responsable:'CLAIRE', priority:'green' },
   ]},
@@ -1291,11 +1288,11 @@ const RETRO_DATA = [
     { id:'s5-3', text:'Point rapide ambassadeurs : "Ça marche ? Des soucis ?"', responsable:'CLAIRE', priority:'green' },
     { id:'s5-4', text:'Corriger bugs remontés si besoin', responsable:'CLAUDE CODE', priority:'orange' },
   ]},
-  { date:'2026-03-21', milestone:null, actions:[
+  // 20/03 (Ven) — fusionné avec 21/03 (Samedi → déplacé)
+  { date:'2026-03-20', milestone:null, actions:[
     { id:'s5-5', text:'Bilan semaine pilote : logs, feedback ambassadeurs, décision suite', responsable:'CLAIRE', priority:'green' },
     { id:'s5-6', text:'Si KO → identifier et corriger avant le 25/03', responsable:'CLAIRE', priority:'green' },
   ]},
-  // SEMAINE 6 — Session 2
   { date:'2026-03-24', milestone:'📋 Veille formation 2', actions:[
     { id:'s6-1', text:'Checklist veille complète (même que 16/03)', responsable:'CLAIRE', priority:'green' },
     { id:'s6-2', text:'Vérifier corrections post-session 1 en place', responsable:'CLAIRE', priority:'green' },
@@ -1307,8 +1304,8 @@ const RETRO_DATA = [
     { id:'s6-6', text:'17h30 : Vérifier logs', responsable:'CLAIRE', priority:'green' },
     { id:'s6-7', text:'17h30 : Confirmer 5 nouveaux ambassadeurs (total : 10 actifs)', responsable:'CLAIRE', priority:'blue' },
   ]},
-  // SEMAINES 7-8 — Observation 10 users
-  { date:'2026-03-30', milestone:null, actions:[
+  // ===== PHASE 3 — Robustesse + ouverture progressive (30/03 → 08/04+) =====
+  { date:'2026-03-30', phaseHeader:{ label:'🚀 Phase 3 — Robustesse + ouverture progressive  ·  30/03 → 08/04+', color:'#92400E', bg:'#FEF9C3' }, milestone:null, actions:[
     { id:'s7-1', text:'Vérifier logs 2×/semaine (lundi + jeudi)', responsable:'CLAIRE', priority:'green' },
     { id:'s7-2', text:'Surveiller canal Teams', responsable:'CLAIRE', priority:'green' },
     { id:'s7-3', text:'Implémenter cache priorisations (préparer ouverture large)', responsable:'CLAUDE CODE', priority:'orange' },
@@ -1319,7 +1316,6 @@ const RETRO_DATA = [
     { id:'s7-6', text:'Si Tier 2 → planifier ouverture large après session 3', responsable:'CLAIRE', priority:'blue' },
     { id:'s7-7', text:'Si Tier 1 → rester sur +5 users après session 3', responsable:'CLAIRE', priority:'blue' },
   ]},
-  // SEMAINE 9 — Session 3
   { date:'2026-04-07', milestone:'📋 Veille formation 3', actions:[
     { id:'s9-1', text:'Checklist veille complète', responsable:'CLAIRE', priority:'green' },
     { id:'s9-2', text:'Activer 5 nouveaux ambassadeurs dans users.json', responsable:'CLAIRE', priority:'blue' },
@@ -1330,7 +1326,7 @@ const RETRO_DATA = [
     { id:'s9-5', text:'17h30 : Vérifier logs + confirmer 5 ambassadeurs (total : 15 actifs)', responsable:'CLAIRE', priority:'green' },
     { id:'s9-6', text:'Bilan global : 15 users actifs, Tier 1 ou 2, erreurs cumulées', responsable:'CLAIRE', priority:'green' },
   ]},
-  // POST-FORMATION
+  // Post-formation
   { date:'2026-04-14', milestone:null, actions:[
     { id:'s10-1', text:'Bilan 15 users → décision ouverture 30 users', responsable:'CLAIRE', priority:'green' },
   ]},
@@ -1422,6 +1418,12 @@ function buildRetroCalendar() {
     // Only show week if it has at least one entry
     const hasEntry = weekDays.some(d => dateMap[d.toISOString().split('T')[0]]);
     if (hasEntry) {
+      // Phase header : check if any day in this week has a phaseHeader
+      const phEntry = weekDays.map(d => dateMap[d.toISOString().split('T')[0]]).find(e => e?.phaseHeader);
+      if (phEntry) {
+        const ph = phEntry.phaseHeader;
+        out += `<div class="retro-phase-header" style="background:${ph.bg};border-color:${ph.color};color:${ph.color}">${ph.label}</div>`;
+      }
       const weekLabel = cur.toLocaleDateString('fr-FR', { day:'2-digit', month:'long' }) + ' — ' +
         weekDays[4].toLocaleDateString('fr-FR', { day:'2-digit', month:'long' });
       out += `<div class="retro-week"><div class="retro-week-label">Semaine du ${weekLabel}</div><div class="retro-days">`;
