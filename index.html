@@ -161,28 +161,55 @@ th{color:#1D4ED8;font-weight:600;font-size:10px;text-transform:uppercase;letter-
   .container{padding:16px 12px}
 }
 
-/* ====================== RÉTROPLANNING ====================== */
+/* ====================== RÉTROPLANNING ROADMAP ====================== */
 .retro-prog-wrap{background:#F8FAFC;border:1px solid #DBEAFE;border-radius:10px;padding:14px 18px;margin-bottom:14px}
 .retro-prog-bar-bg{background:#E2E8F0;border-radius:4px;height:8px;margin:8px 0}
 .retro-prog-bar-fill{background:linear-gradient(90deg,#051E50,#3B82F6);border-radius:4px;height:8px;transition:width .5s}
 .retro-prog-stats{display:flex;gap:16px;flex-wrap:wrap;font-size:11px;color:#64748B}
 .retro-filter-btn{font-size:11px;font-weight:600;padding:4px 12px;border-radius:20px;border:1px solid #E2E8F0;cursor:pointer;transition:all .15s;white-space:nowrap}
 .retro-filter-btn:hover{border-color:#051E50}
-.retro-week{margin-bottom:16px}
-.retro-week-label{font-size:11px;font-weight:700;color:#64748B;text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px;padding-bottom:4px;border-bottom:1px solid #E2E8F0;display:flex;align-items:center;justify-content:space-between}
-.retro-week-toggle{background:none;border:none;cursor:pointer;font-size:13px;color:#94A3B8;padding:0 0 0 8px;line-height:1}
-.retro-week-toggle:hover{color:#051E50}
-.retro-days{display:flex;gap:8px;overflow-x:auto;padding-bottom:8px}
-.retro-day{min-width:190px;flex-shrink:0}
-.retro-phase-header{font-size:13px;font-weight:800;padding:10px 16px;border-radius:8px;border:2px solid;margin:16px 0 4px;letter-spacing:.3px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none}
-.retro-phase-header:hover{filter:brightness(.95)}
-.retro-phase-arrow{font-size:16px;flex-shrink:0;margin-left:8px}
-/* Compact mode */
-body.retro-compact .retro-card-text{font-size:11px;margin-bottom:3px}
-body.retro-compact .retro-card{padding:5px 7px 4px;margin-bottom:3px}
-body.retro-compact .retro-tag{display:none}
-body.retro-compact .retro-days{gap:6px}
-body.retro-compact .retro-day{min-width:160px}
+/* Roadmap grid */
+.rm-milestones{display:flex;gap:0;overflow-x:auto;margin-bottom:6px;padding-bottom:2px;position:relative}
+.rm-ms{font-size:9px;font-weight:700;padding:3px 6px;border-radius:4px;text-align:center;white-space:nowrap;border:1px solid;flex:1;min-width:0}
+.rm-grid-wrap{overflow-x:auto;padding-bottom:8px}
+.rm-grid{display:grid;gap:0;min-width:600px}
+.rm-corner{background:#F8FAFC;border:1px solid #E2E8F0;padding:6px;font-size:10px;font-weight:700;color:#6B7280;text-transform:uppercase;position:sticky;left:0;z-index:2}
+.rm-wk-hdr{background:#F8FAFC;border:1px solid #E2E8F0;padding:4px 2px;text-align:center;cursor:pointer;user-select:none;transition:background .15s}
+.rm-wk-hdr:hover{background:#EFF6FF}
+.rm-wk-hdr.rm-wk-today{background:#FFFBEB;border-color:#FFD700}
+.rm-wk-hdr-date{font-size:10px;font-weight:700;color:#051E50}
+.rm-wk-hdr-ms{font-size:8px;margin-top:1px;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rm-swim-label{background:#F8FAFC;border:1px solid #E2E8F0;padding:6px 8px;font-size:11px;font-weight:700;writing-mode:horizontal-tb;display:flex;align-items:center;gap:4px;position:sticky;left:0;z-index:2}
+.rm-swim-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.rm-cell{border:1px solid #E2E8F0;padding:3px;min-height:32px;vertical-align:top;position:relative}
+.rm-cell.rm-phase-1{background:#fff}
+.rm-cell.rm-phase-2{background:#F9FAFB}
+.rm-cell.rm-phase-3{background:#F3F4F6}
+.rm-pill{font-size:9px;line-height:1.3;padding:2px 4px;border-radius:4px;border-left:3px solid;margin-bottom:2px;cursor:pointer;display:flex;align-items:center;gap:3px;background:#fff;transition:all .15s}
+.rm-pill:hover{filter:brightness(.95);box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.rm-pill.done-card{opacity:.5;text-decoration:line-through}
+.rm-pill-text{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#334155}
+.rm-pill-text[contenteditable="true"]{white-space:normal;outline:1px solid #3B82F6;border-radius:2px;padding:1px 2px;background:#fff}
+.rm-pill-status{flex-shrink:0;cursor:pointer;font-size:12px;line-height:1}
+.rm-pill.hidden{display:none}
+.rm-count{font-size:9px;font-weight:700;color:#fff;padding:1px 5px;border-radius:8px;display:inline-block;margin-right:2px}
+/* Detail panel (expanded week) */
+.rm-detail-overlay{position:fixed;inset:0;background:rgba(0,0,0,.3);z-index:100;display:flex;align-items:center;justify-content:center}
+.rm-detail-panel{background:#fff;border-radius:12px;box-shadow:0 8px 30px rgba(0,0,0,.18);max-width:800px;width:95%;max-height:85vh;overflow-y:auto;padding:20px}
+.rm-detail-day{margin-bottom:16px}
+.rm-detail-day-hdr{font-size:13px;font-weight:800;color:#051E50;margin-bottom:8px;padding-bottom:4px;border-bottom:1px solid #E2E8F0}
+.rm-detail-card{background:#fff;border-radius:7px;border:1px solid #E5E7EB;border-left:4px solid;padding:8px 10px 6px;margin-bottom:5px}
+.rm-detail-card.done-card{opacity:.55}
+.rm-detail-card-text{font-size:12px;color:#374151;line-height:1.4;margin-bottom:5px}
+.rm-detail-card-text[contenteditable="true"]{outline:1px solid #3B82F6;border-radius:2px;padding:2px 4px;background:#FEFCE8}
+.rm-detail-bottom{display:flex;align-items:center;justify-content:space-between;gap:4px}
+.rm-detail-tag{font-size:9px;font-weight:700;padding:2px 7px;border-radius:10px;white-space:nowrap}
+.rm-detail-status-btn{width:24px;height:24px;border:none;background:none;cursor:pointer;font-size:16px;line-height:1;padding:0;flex-shrink:0}
+@media(max-width:768px){
+  .rm-grid{min-width:unset!important}
+  .rm-swim-label{writing-mode:horizontal-tb;position:relative;left:auto;z-index:auto}
+  .rm-corner{position:relative;left:auto;z-index:auto}
+}
 /* Sub-tabs (Pitch Generator) */
 .sub-tabs-nav{display:flex;gap:0;flex-wrap:wrap;margin-bottom:16px;border-bottom:2px solid #E2E8F0}
 .sub-tab-btn{padding:7px 13px;border:1px solid transparent;border-bottom:none;border-radius:6px 6px 0 0;font-size:11px;font-weight:600;cursor:pointer;background:none;color:#64748B;transition:all .15s;margin-bottom:-2px;white-space:nowrap}
@@ -236,23 +263,7 @@ body.retro-compact .retro-day{min-width:160px}
 .vercel-proj-bar{height:12px;background:#E2E8F0;border-radius:6px;overflow:hidden;margin-top:6px;position:relative}
 .vercel-proj-covered{height:100%;display:inline-block;border-radius:6px 0 0 6px}
 .vercel-proj-surplus{height:100%;display:inline-block;border-radius:0 6px 6px 0}
-.retro-milestone-banner{font-size:10px;font-weight:700;padding:4px 8px;border-radius:6px 6px 0 0;text-align:center;border:1px solid;border-bottom:none}
-.retro-day-header{background:#F8FAFC;border:1px solid #E2E8F0;border-bottom:none;padding:7px 10px;text-align:center;border-radius:7px 7px 0 0}
-.retro-day.today .retro-day-header{border:2px solid #FFD700;border-bottom:none;background:#FFFBEB}
-.retro-day.past-all .retro-day-header{opacity:.55}
-.retro-day-date{font-size:12px;font-weight:700;color:#051E50}
-.retro-day-name{font-size:10px;color:#94A3B8;text-transform:capitalize}
-.retro-cards{border:1px solid #E2E8F0;border-top:none;border-radius:0 0 7px 7px;padding:8px;min-height:50px;background:#fff}
-.retro-day.today .retro-cards{border:2px solid #FFD700;border-top:none}
-.retro-day.past-all .retro-cards{opacity:.55}
-.retro-card{background:#fff;border-radius:7px;border:1px solid #E5E7EB;border-left:4px solid;padding:9px 9px 7px;margin-bottom:6px;transition:opacity .2s}
-.retro-card.hidden{display:none}
-.retro-card.done-card{opacity:.55}
-.retro-card-text{font-size:12px;color:#374151;line-height:1.4;margin-bottom:7px}
-.retro-card-bottom{display:flex;align-items:center;justify-content:space-between;gap:4px}
-.retro-tag{font-size:9px;font-weight:700;padding:2px 7px;border-radius:10px;white-space:nowrap}
-.retro-status-btn{width:22px;height:22px;border:none;background:none;cursor:pointer;font-size:14px;line-height:1;padding:0;flex-shrink:0}
-.retro-empty{color:#CBD5E1;font-size:11px;text-align:center;padding:14px 0}
+/* Old vertical layout removed — now using rm-* roadmap classes */
 </style>
 </head>
 <body>
@@ -1271,12 +1282,13 @@ body.retro-compact .retro-day{min-width:160px}
   <!-- RETROPLANNING -->
   <div class="page" id="page-retro">
     <div class="container">
-      <div class="section-title" style="margin-top:20px"><span class="st-bar" style="background:#051E50"></span>📆 Rétroplanning — Actions jour par jour</div>
-      <div style="font-size:12px;color:#64748B;margin:6px 0 14px">Cliquez sur l'icône statut pour avancer : ⬜ À faire → 🔄 En cours → ✅ Fait → ❌ Bloqué. Sauvegardé automatiquement.</div>
+      <div class="section-title" style="margin-top:20px"><span class="st-bar" style="background:#051E50"></span>📆 Rétroplanning — Vue Roadmap</div>
+      <div style="font-size:12px;color:#64748B;margin:6px 0 14px">Cliquez sur une semaine pour voir le détail jour par jour. Icônes : ⬜ → 🔄 → ✅ → ❌. Double-cliquez sur un texte pour l'éditer.</div>
       <div id="retro-demandes-wrap" class="demandes-wrap"></div>
       <div id="retro-prog-wrap" class="retro-prog-wrap"></div>
       <div id="retro-filters-wrap" style="margin-bottom:14px"></div>
       <div id="retro-calendar"></div>
+      <div id="retro-detail-container"></div>
     </div>
   </div>
 
@@ -2341,29 +2353,13 @@ function clickRetroStatus(id) {
   const cur  = getRS(id);
   const next = S_CYCLE[(S_CYCLE.indexOf(cur) + 1) % S_CYCLE.length];
   setRS(id, next);
-  const btn  = $('rb-' + id); if (btn) { btn.textContent = S_ICONS[next]; btn.title = S_LABELS[next]; }
-  const card = $('rc-' + id);
-  if (card) { next === 'done' ? card.classList.add('done-card') : card.classList.remove('done-card'); }
+  // Update pills in roadmap
+  document.querySelectorAll(`[data-aid="${id}"] .rm-pill-status`).forEach(b => { b.textContent = S_ICONS[next]; b.title = S_LABELS[next]; });
+  document.querySelectorAll(`[data-aid="${id}"]`).forEach(el => { next === 'done' ? el.classList.add('done-card') : el.classList.remove('done-card'); });
+  // Update detail panel buttons
+  const db = $('rb-' + id); if (db) { db.textContent = S_ICONS[next]; db.title = S_LABELS[next]; }
+  const dc = $('rc-' + id); if (dc) { next === 'done' ? dc.classList.add('done-card') : dc.classList.remove('done-card'); }
   updateRetroProgress();
-  // Re-check if day is all done (update grayout)
-  recheckDayDone(id);
-}
-
-function recheckDayDone(actionId) {
-  // Find which day contains this action
-  for (const entry of RETRO_DATA) {
-    if (entry.actions.some(a => a.id === actionId)) {
-      const dayEl = $('rday-' + entry.date);
-      if (!dayEl) return;
-      const allDone = entry.actions.every(a => getRS(a.id) === 'done');
-      const today0 = new Date(); today0.setHours(0,0,0,0);
-      const entryDate = new Date(entry.date); entryDate.setHours(0,0,0,0);
-      if (entryDate < today0) {
-        allDone ? dayEl.classList.add('past-all') : dayEl.classList.remove('past-all');
-      }
-      return;
-    }
-  }
 }
 
 function getMilestoneStyle(m) {
@@ -2372,6 +2368,7 @@ function getMilestoneStyle(m) {
   if (m.includes('freeze'))   return { bg:'#FEF2F2', border:'#EF4444', color:'#DC2626' };
   if (m.includes('manager'))  return { bg:'#F5F3FF', border:'#7C3AED', color:'#6D28D9' };
   if (m.includes('matrice'))  return { bg:'#F0FDF4', border:'#22C55E', color:'#166534' };
+  if (m.includes('Bilan'))    return { bg:'#EFF6FF', border:'#3B82F6', color:'#1D4ED8' };
   return { bg:'#EFF6FF', border:'#3B82F6', color:'#1D4ED8' };
 }
 
@@ -2380,149 +2377,216 @@ function getMonday(date) {
   d.setDate(d.getDate() + (day === 0 ? -6 : 1 - day)); d.setHours(0,0,0,0); return d;
 }
 
-function buildRetroCalendar() {
+// ── Build weeks data structure ──────────────────────────────────────────────
+function buildWeeks() {
   const dateMap = {};
   for (const entry of RETRO_DATA) dateMap[entry.date] = entry;
+  const allDates = RETRO_DATA.map(e => new Date(e.date));
+  const startMon = getMonday(new Date(Math.min(...allDates)));
+  const endMon   = getMonday(new Date(Math.max(...allDates)));
+  const phaseDates = RETRO_DATA.filter(e => e.phaseHeader).map(e => e.date);
 
-  const allDates  = RETRO_DATA.map(e => new Date(e.date));
-  const startMon  = getMonday(new Date(Math.min(...allDates)));
-  const endMon    = getMonday(new Date(Math.max(...allDates)));
-  const today0    = new Date(); today0.setHours(0,0,0,0);
-  const todayStr  = today0.toISOString().split('T')[0];
-
-  // Dates de début de chaque phase pour déterminer laquelle est courante
-  const phaseDates = RETRO_DATA.filter(e => e.phaseHeader).map(e => new Date(e.date));
-
-  let out = '';
-  let phaseIdx  = -1;
-  let inPhase   = false;
-  let weekIdx   = 0;
+  const weeks = [];
   let cur = new Date(startMon);
-
   while (cur <= endMon) {
-    const weekDays = [];
-    for (let i = 0; i < 5; i++) { const d = new Date(cur); d.setDate(cur.getDate() + i); weekDays.push(d); }
-    const hasEntry = weekDays.some(d => dateMap[d.toISOString().split('T')[0]]);
+    const days = [];
+    for (let i = 0; i < 5; i++) { const d = new Date(cur); d.setDate(cur.getDate() + i); days.push(d); }
+    const entries = days.map(d => dateMap[d.toISOString().split('T')[0]]).filter(Boolean);
+    if (entries.length > 0) {
+      const mon = new Date(cur);
+      const fri = days[4];
+      const label = mon.toLocaleDateString('fr-FR',{day:'2-digit',month:'short'}) + '–' + fri.toLocaleDateString('fr-FR',{day:'2-digit',month:'short'});
 
-    if (hasEntry) {
-      // ── Phase header ──────────────────────────────────────────────────
-      const phEntry = weekDays.map(d => dateMap[d.toISOString().split('T')[0]]).find(e => e?.phaseHeader);
-      if (phEntry) {
-        if (inPhase) out += `</div>`; // close previous phase body
-        phaseIdx++;
-        const ph = phEntry.phaseHeader;
-
-        const phStart    = new Date(phEntry.date);
-        const nextPhDate = phaseDates[phaseIdx + 1] || null;
-        const isCurrent  = today0 >= phStart && (!nextPhDate || today0 < nextPhDate);
-        const isPast     = nextPhDate && today0 >= nextPhDate;
-        const savedState = localStorage.getItem(`retro_phase_${phaseIdx}`);
-        const collapsed  = savedState !== null ? savedState === '1' : !isCurrent;
-
-        const badge = isPast ? ' <span style="font-size:10px;opacity:.7">(terminée)</span>'
-                    : isCurrent ? ' <span style="font-size:10px;background:rgba(255,255,255,.3);padding:1px 6px;border-radius:10px">EN COURS</span>'
-                    : ' <span style="font-size:10px;opacity:.7">(à venir)</span>';
-
-        out += `<div class="retro-phase-header" style="background:${ph.bg};border-color:${ph.color};color:${ph.color}" onclick="toggleRetroPhase(${phaseIdx})">
-          <span>${ph.label}${badge}</span>
-          <span class="retro-phase-arrow" id="phase-arrow-${phaseIdx}">${collapsed ? '▸' : '▾'}</span>
-        </div>`;
-        out += `<div id="phase-body-${phaseIdx}" style="display:${collapsed ? 'none' : 'block'}">`;
-        inPhase = true;
+      // Determine phase for this week
+      let phase = 0;
+      for (let p = phaseDates.length - 1; p >= 0; p--) {
+        if (mon >= new Date(phaseDates[p])) { phase = p; break; }
       }
 
-      // ── Week ──────────────────────────────────────────────────────────
-      const wid = 'retro-week-' + weekIdx++;
-      const wbid = 'retro-weekbody-' + (weekIdx - 1);
-      const savedWeek = localStorage.getItem(wbid);
-      const weekCollapsed = savedWeek === '1';
-
-      const weekLabel = cur.toLocaleDateString('fr-FR', { day:'2-digit', month:'long' }) + ' — ' +
-        weekDays[4].toLocaleDateString('fr-FR', { day:'2-digit', month:'long' });
-      out += `<div class="retro-week" id="${wid}">`;
-      out += `<div class="retro-week-label">
-        <span>Semaine du ${weekLabel}</span>
-        <button class="retro-week-toggle" onclick="toggleRetroWeek('${wbid}')" title="${weekCollapsed ? 'Déplier' : 'Replier'}" id="wtoggle-${wbid}">${weekCollapsed ? '▸' : '▾'}</button>
-      </div>`;
-      out += `<div id="${wbid}" style="display:${weekCollapsed ? 'none' : 'block'}">`;
-      out += `<div class="retro-days">`;
-
-      for (const day of weekDays) {
-        const ds    = day.toISOString().split('T')[0];
-        const entry = dateMap[ds];
-        if (!entry) { out += `<div class="retro-day" style="min-width:50px;flex-shrink:0"></div>`; continue; }
-
-        const isToday = ds === todayStr;
-        const isPast  = day < today0;
-        const allDone = isPast && entry.actions.every(a => getRS(a.id) === 'done');
-        let cls = 'retro-day'; if (isToday) cls += ' today'; if (isPast && allDone) cls += ' past-all';
-        const idAttr = isToday ? ' id="retro-today"' : '';
-        out += `<div class="${cls}" id="rday-${ds}"${idAttr}>`;
-
-        if (entry.milestone) {
-          const ms = getMilestoneStyle(entry.milestone);
-          out += `<div class="retro-milestone-banner" style="background:${ms.bg};border-color:${ms.border};color:${ms.color}">${entry.milestone}</div>`;
-        }
-        const dn = day.toLocaleDateString('fr-FR', { weekday:'short' });
-        const dm = day.toLocaleDateString('fr-FR', { day:'2-digit', month:'2-digit' });
-        out += `<div class="retro-day-header"><div class="retro-day-date">${dm}</div><div class="retro-day-name">${dn}</div></div>`;
-        out += `<div class="retro-cards">`;
+      // Collect milestones and actions by responsable
+      const milestones = entries.filter(e => e.milestone).map(e => e.milestone);
+      const actionsByResp = { 'CLAIRE':[], 'CLAUDE CODE':[], 'FORMATEUR':[] };
+      for (const entry of entries) {
         for (const a of entry.actions) {
-          const status  = getRS(a.id);
-          const bc      = PRIO_COLORS[a.priority] || '#94A3B8';
-          const rs      = RESP_STYLES[a.responsable] || { bg:'#F1F5F9', color:'#334155' };
-          const hidden  = !isRetroVisible(a) ? ' hidden' : '';
-          const doneCls = status === 'done' ? ' done-card' : '';
-          out += `<div class="retro-card${hidden}${doneCls}" id="rc-${a.id}" style="border-left-color:${bc}" data-resp="${a.responsable}" data-prio="${a.priority}">`;
-          out += `<div class="retro-card-text">${a.text}</div>`;
-          out += `<div class="retro-card-bottom">`;
-          out += `<span class="retro-tag" style="background:${rs.bg};color:${rs.color}">${a.responsable}</span>`;
-          out += `<button class="retro-status-btn" id="rb-${a.id}" onclick="clickRetroStatus('${a.id}')" title="${S_LABELS[status]}">${S_ICONS[status]}</button>`;
-          out += `</div></div>`;
+          if (actionsByResp[a.responsable]) actionsByResp[a.responsable].push(a);
+          else actionsByResp[a.responsable] = [a];
         }
-        out += `</div></div>`;
       }
-      out += `</div></div></div>`; // retro-days + weekbody + retro-week
+      weeks.push({ mon, fri, label, phase, milestones, actionsByResp, entries, days });
     }
     cur.setDate(cur.getDate() + 7);
   }
-  if (inPhase) out += `</div>`; // close last phase body
-  return out;
+  return weeks;
 }
 
-function toggleRetroPhase(idx) {
-  const body  = $('phase-body-' + idx);
-  const arrow = $('phase-arrow-' + idx);
-  if (!body) return;
-  const willCollapse = body.style.display !== 'none';
-  body.style.display = willCollapse ? 'none' : 'block';
-  if (arrow) arrow.textContent = willCollapse ? '▸' : '▾';
-  localStorage.setItem(`retro_phase_${idx}`, willCollapse ? '1' : '0');
-}
+// ── Build horizontal roadmap grid ───────────────────────────────────────────
+function buildRetroCalendar() {
+  const weeks = buildWeeks();
+  if (!weeks.length) return '';
+  const today0  = new Date(); today0.setHours(0,0,0,0);
+  const resps   = ['CLAIRE','CLAUDE CODE','FORMATEUR'];
+  const respLbl = { 'CLAIRE':'Claire', 'CLAUDE CODE':'Claude Code', 'FORMATEUR':'Formateur' };
+  const respDot = { 'CLAIRE':'#051E50', 'CLAUDE CODE':'#1E40AF', 'FORMATEUR':'#166534' };
+  const nWeeks  = weeks.length;
+  const colW    = `minmax(80px,1fr)`;
 
-function toggleRetroWeek(wbid) {
-  const body   = $(wbid);
-  const toggle = $('wtoggle-' + wbid);
-  if (!body) return;
-  const willCollapse = body.style.display !== 'none';
-  body.style.display = willCollapse ? 'none' : 'block';
-  if (toggle) toggle.textContent = willCollapse ? '▸' : '▾';
-  if (toggle) toggle.title       = willCollapse ? 'Déplier' : 'Replier';
-  localStorage.setItem(wbid, willCollapse ? '1' : '0');
-}
+  let h = '';
 
-function scrollToToday() {
-  const el = $('retro-today');
-  if (!el) return;
-  // Ensure the phase containing today is open
-  const phBodies = document.querySelectorAll('[id^="phase-body-"]');
-  phBodies.forEach(pb => {
-    if (pb.contains(el) && pb.style.display === 'none') {
-      const idx = pb.id.replace('phase-body-', '');
-      toggleRetroPhase(+idx);
+  // Grid: columns = label + weeks
+  h += `<div class="rm-grid-wrap"><div class="rm-grid" style="grid-template-columns:100px repeat(${nWeeks},${colW})">`;
+
+  // ── Row 0: Header (corner + week labels) ──────────────────────────────
+  h += `<div class="rm-corner">Semaine →</div>`;
+  for (let w = 0; w < nWeeks; w++) {
+    const wk = weeks[w];
+    const isNow = today0 >= wk.mon && today0 <= wk.fri;
+    const nowCls = isNow ? ' rm-wk-today' : '';
+    const msHtml = wk.milestones.map(m => {
+      const ms = getMilestoneStyle(m);
+      return `<div class="rm-wk-hdr-ms" style="color:${ms.color}">${m}</div>`;
+    }).join('');
+    h += `<div class="rm-wk-hdr${nowCls}" onclick="openWeekDetail(${w})">
+      <div class="rm-wk-hdr-date">${wk.label}</div>${msHtml}
+    </div>`;
+  }
+
+  // ── Rows 1-3: Swimlanes ──────────────────────────────────────────────
+  for (const resp of resps) {
+    // Swimlane label
+    h += `<div class="rm-swim-label"><span class="rm-swim-dot" style="background:${respDot[resp]}"></span>${respLbl[resp]}</div>`;
+
+    for (let w = 0; w < nWeeks; w++) {
+      const wk = weeks[w];
+      const phaseCls = `rm-phase-${wk.phase + 1}`;
+      const actions = (wk.actionsByResp[resp] || []).filter(a => isRetroVisible(a));
+      const total   = actions.length;
+      const done    = actions.filter(a => getRS(a.id) === 'done').length;
+
+      h += `<div class="rm-cell ${phaseCls}" onclick="openWeekDetail(${w})">`;
+      if (total > 0) {
+        // Show condensed pills (max 3, then count)
+        const show = actions.slice(0, 3);
+        for (const a of show) {
+          const status  = getRS(a.id);
+          const bc      = PRIO_COLORS[a.priority] || '#94A3B8';
+          const doneCls = status === 'done' ? ' done-card' : '';
+          const hidCls  = !isRetroVisible(a) ? ' hidden' : '';
+          h += `<div class="rm-pill${doneCls}${hidCls}" data-aid="${a.id}" style="border-left-color:${bc}" data-resp="${a.responsable}" data-prio="${a.priority}">
+            <span class="rm-pill-text" title="${a.text.replace(/"/g,'&quot;')}">${a.text}</span>
+            <span class="rm-pill-status" onclick="event.stopPropagation();clickRetroStatus('${a.id}')" title="${S_LABELS[status]}">${S_ICONS[status]}</span>
+          </div>`;
+        }
+        if (total > 3) {
+          h += `<div style="font-size:9px;color:#94A3B8;text-align:center;padding:1px 0">+${total - 3} de plus…</div>`;
+        }
+        // Count badge
+        if (done > 0) {
+          h += `<div style="text-align:right;margin-top:1px"><span class="rm-count" style="background:${done === total ? '#22C55E' : '#94A3B8'}">${done}/${total}</span></div>`;
+        }
+      }
+      h += `</div>`;
     }
-  });
-  setTimeout(() => el.scrollIntoView({ behavior:'smooth', block:'nearest' }), 50);
+  }
+
+  h += `</div></div>`; // close grid + wrap
+  return h;
+}
+
+// ── Week detail panel (modal) ───────────────────────────────────────────────
+let _weeksCache = null;
+function openWeekDetail(wIdx) {
+  if (!_weeksCache) _weeksCache = buildWeeks();
+  const wk = _weeksCache[wIdx];
+  if (!wk) return;
+  const container = $('retro-detail-container');
+  if (!container) return;
+
+  let h = `<div class="rm-detail-overlay" onclick="if(event.target===this)closeWeekDetail()">`;
+  h += `<div class="rm-detail-panel">`;
+  h += `<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+    <div>
+      <div style="font-size:16px;font-weight:800;color:#051E50">Semaine du ${wk.label}</div>
+      ${wk.milestones.length ? `<div style="font-size:11px;margin-top:4px">${wk.milestones.map(m => { const ms = getMilestoneStyle(m); return `<span style="display:inline-block;background:${ms.bg};color:${ms.color};border:1px solid ${ms.border};padding:2px 8px;border-radius:12px;font-weight:700;font-size:10px;margin-right:4px">${m}</span>`; }).join('')}</div>` : ''}
+    </div>
+    <div style="display:flex;gap:6px;align-items:center">
+      ${wIdx > 0 ? `<button onclick="openWeekDetail(${wIdx-1})" style="padding:4px 10px;border-radius:6px;border:1px solid #E2E8F0;background:#fff;cursor:pointer;font-size:13px" title="Semaine précédente">◀</button>` : ''}
+      ${wIdx < (_weeksCache.length-1) ? `<button onclick="openWeekDetail(${wIdx+1})" style="padding:4px 10px;border-radius:6px;border:1px solid #E2E8F0;background:#fff;cursor:pointer;font-size:13px" title="Semaine suivante">▶</button>` : ''}
+      <button onclick="closeWeekDetail()" style="padding:4px 10px;border-radius:6px;border:1px solid #E2E8F0;background:#fff;cursor:pointer;font-size:13px;font-weight:700" title="Fermer">✕</button>
+    </div>
+  </div>`;
+
+  // Group by day
+  for (const day of wk.days) {
+    const ds = day.toISOString().split('T')[0];
+    const entry = wk.entries.find(e => e.date === ds);
+    if (!entry) continue;
+
+    const dn = day.toLocaleDateString('fr-FR', { weekday:'long', day:'2-digit', month:'long' });
+    const today0 = new Date(); today0.setHours(0,0,0,0);
+    const isToday = ds === today0.toISOString().split('T')[0];
+    const todayBadge = isToday ? ' <span style="background:#FFD700;color:#92400E;padding:1px 8px;border-radius:10px;font-size:10px;font-weight:700;margin-left:6px">AUJOURD\'HUI</span>' : '';
+    const msBadge = entry.milestone ? (() => { const ms = getMilestoneStyle(entry.milestone); return ` <span style="background:${ms.bg};color:${ms.color};border:1px solid ${ms.border};padding:1px 8px;border-radius:10px;font-size:10px;font-weight:700;margin-left:6px">${entry.milestone}</span>`; })() : '';
+
+    h += `<div class="rm-detail-day">`;
+    h += `<div class="rm-detail-day-hdr">${dn}${todayBadge}${msBadge}</div>`;
+
+    for (const a of entry.actions) {
+      if (!isRetroVisible(a)) continue;
+      const status  = getRS(a.id);
+      const bc      = PRIO_COLORS[a.priority] || '#94A3B8';
+      const rs      = RESP_STYLES[a.responsable] || { bg:'#F1F5F9', color:'#334155' };
+      const doneCls = status === 'done' ? ' done-card' : '';
+      h += `<div class="rm-detail-card${doneCls}" id="rc-${a.id}" style="border-left-color:${bc}">`;
+      h += `<div class="rm-detail-card-text" contenteditable="false" ondblclick="this.contentEditable='true';this.focus()" onblur="saveRetroEdit(this,'${a.id}')" data-aid="${a.id}">${a.text}</div>`;
+      h += `<div class="rm-detail-bottom">`;
+      h += `<span class="rm-detail-tag" style="background:${rs.bg};color:${rs.color}">${a.responsable}</span>`;
+      h += `<button class="rm-detail-status-btn" id="rb-${a.id}" onclick="clickRetroStatus('${a.id}')" title="${S_LABELS[status]}">${S_ICONS[status]}</button>`;
+      h += `</div></div>`;
+    }
+    h += `</div>`;
+  }
+
+  h += `</div></div>`;
+  container.innerHTML = h;
+}
+
+function closeWeekDetail() {
+  const c = $('retro-detail-container'); if (c) c.innerHTML = '';
+  // Refresh roadmap to reflect status changes
+  _weeksCache = null;
+  $('retro-calendar').innerHTML = buildRetroCalendar();
+}
+
+// ── Inline edit ─────────────────────────────────────────────────────────────
+function saveRetroEdit(el, actionId) {
+  el.contentEditable = 'false';
+  const newText = el.textContent.trim();
+  if (!newText) return;
+  // Update RETRO_DATA in memory
+  for (const entry of RETRO_DATA) {
+    const a = entry.actions.find(x => x.id === actionId);
+    if (a && a.text !== newText) {
+      a.text = newText;
+      // Save edits to localStorage
+      const edits = JSON.parse(localStorage.getItem('retro_edits') || '{}');
+      edits[actionId] = newText;
+      localStorage.setItem('retro_edits', JSON.stringify(edits));
+      // Update pill text in roadmap
+      document.querySelectorAll(`[data-aid="${actionId}"] .rm-pill-text`).forEach(p => { p.textContent = newText; p.title = newText; });
+      break;
+    }
+  }
+}
+
+// Restore edits on load
+function restoreRetroEdits() {
+  const edits = JSON.parse(localStorage.getItem('retro_edits') || '{}');
+  for (const [id, text] of Object.entries(edits)) {
+    for (const entry of RETRO_DATA) {
+      const a = entry.actions.find(x => x.id === id);
+      if (a) { a.text = text; break; }
+    }
+  }
 }
 
 function isRetroVisible(a) {
@@ -2531,11 +2595,8 @@ function isRetroVisible(a) {
 }
 
 function applyRetroFilters() {
-  document.querySelectorAll('.retro-card').forEach(card => {
-    const v = (retroFilterResp === 'all' || card.dataset.resp === retroFilterResp) &&
-              (retroFilterPrio === 'all' || card.dataset.prio === retroFilterPrio);
-    card.classList.toggle('hidden', !v);
-  });
+  _weeksCache = null;
+  $('retro-calendar').innerHTML = buildRetroCalendar();
 }
 
 function updateRetroProgress() {
@@ -2558,19 +2619,13 @@ function updateRetroProgress() {
   const el = $('retro-prog-wrap'); if (!el) return;
   el.innerHTML = `
     <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px;margin-bottom:6px">
-      <span style="font-weight:700;color:#051E50;font-size:13px">Progression : ${done} / ${total} actions terminées (${pct}%)</span>
-      <div style="display:flex;gap:6px;flex-wrap:wrap">
-        <button onclick="scrollToToday()" style="font-size:11px;font-weight:700;padding:4px 10px;border-radius:16px;border:1px solid #3B82F6;background:#EFF6FF;color:#1D4ED8;cursor:pointer">📍 Aujourd'hui</button>
-        <button onclick="retroCompactToggle(this)" style="font-size:11px;font-weight:700;padding:4px 10px;border-radius:16px;border:1px solid #E2E8F0;background:#F1F5F9;color:#374151;cursor:pointer" id="retro-compact-btn">${document.body.classList.contains('retro-compact') ? '⊞ Normal' : '⊟ Compact'}</button>
-        <button onclick="retroCollapseAll()" style="font-size:11px;font-weight:700;padding:4px 10px;border-radius:16px;border:1px solid #E2E8F0;background:#F1F5F9;color:#374151;cursor:pointer">−− Tout replier</button>
-        <button onclick="retroExpandAll()" style="font-size:11px;font-weight:700;padding:4px 10px;border-radius:16px;border:1px solid #E2E8F0;background:#F1F5F9;color:#374151;cursor:pointer">++ Tout déplier</button>
-      </div>
+      <span style="font-weight:700;color:#051E50;font-size:13px">Progression : ${done} / ${total} actions (${pct}%)</span>
+      <span style="font-size:11px;color:#64748B">${nxt}</span>
     </div>
-    <div style="font-size:11px;color:#64748B;margin-bottom:6px">${nxt}</div>
     <div class="retro-prog-bar-bg"><div class="retro-prog-bar-fill" style="width:${pct}%"></div></div>
     <div class="retro-prog-stats">
-      <span>🔴 Bloquants restants : <strong>${redRem}</strong></span>
-      <span>🟠 Importants restants : <strong>${orangeRem}</strong></span>
+      <span>🔴 Bloquants : <strong>${redRem}</strong></span>
+      <span>🟠 Importants : <strong>${orangeRem}</strong></span>
       <span>✅ Terminés : <strong>${done}</strong></span>
     </div>`;
 }
@@ -2581,7 +2636,7 @@ function renderRetroFilters() {
   const prioOpts = ['all','red','orange','blue','green'];
   const prioLbls = { all:'Toutes priorités', red:'🔴 Bloquant', orange:'🟠 Important', blue:'🔵 Préparation', green:'🟢 Validation' };
 
-  let h = `<div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-bottom:8px">
+  let h = `<div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-bottom:6px">
     <span style="font-size:10px;font-weight:700;color:#94A3B8;text-transform:uppercase;letter-spacing:.5px;min-width:80px">Responsable</span>`;
   for (const r of respOpts) {
     const act = retroFilterResp === r;
@@ -2600,41 +2655,10 @@ function renderRetroFilters() {
 function setRetroResp(val) { retroFilterResp = val; renderRetroFilters(); applyRetroFilters(); }
 function setRetroPrio(val) { retroFilterPrio = val; renderRetroFilters(); applyRetroFilters(); }
 
-function retroCompactToggle(btn) {
-  document.body.classList.toggle('retro-compact');
-  const isCompact = document.body.classList.contains('retro-compact');
-  if (btn) btn.textContent = isCompact ? '⊞ Normal' : '⊟ Compact';
-  localStorage.setItem('retro_compact', isCompact ? '1' : '0');
-}
-
-function retroCollapseAll() {
-  document.querySelectorAll('[id^="phase-body-"]').forEach(el => {
-    const idx = el.id.replace('phase-body-', '');
-    if (el.style.display !== 'none') toggleRetroPhase(+idx);
-  });
-}
-
-function retroExpandAll() {
-  document.querySelectorAll('[id^="phase-body-"]').forEach(el => {
-    const idx = el.id.replace('phase-body-', '');
-    if (el.style.display === 'none') toggleRetroPhase(+idx);
-  });
-  // Also expand weeks inside visible phases
-  document.querySelectorAll('[id^="retro-weekbody-"]').forEach(el => {
-    if (el.style.display === 'none') {
-      const wbid = el.id;
-      el.style.display = 'block';
-      const toggle = $('wtoggle-' + wbid);
-      if (toggle) { toggle.textContent = '▾'; toggle.title = 'Replier'; }
-      localStorage.removeItem(wbid);
-    }
-  });
-}
-
 function initRetro() {
-  // Restore compact mode preference
-  if (localStorage.getItem('retro_compact') === '1') document.body.classList.add('retro-compact');
+  restoreRetroEdits();
   renderDemandes();
+  _weeksCache = null;
   $('retro-calendar').innerHTML = buildRetroCalendar();
   renderRetroFilters();
   updateRetroProgress();
