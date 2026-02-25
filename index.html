@@ -281,8 +281,13 @@ th{color:#64748B;font-weight:600;font-size:10px;text-transform:uppercase;letter-
             <span class="alert-icon" style="color:#D97706">&#9432;</span>
             <span style="color:#D97706">Claude Code Max 5x : fenetre glissante 5h + plafond hebdo non documente pas d'API quota</span>
           </div>
-          <div style="margin-top:8px">
+          <div class="alert-row" style="background:#FEE2E2">
+            <span class="alert-icon" style="color:#DC2626">&#9888;</span>
+            <span style="color:#DC2626"><strong>Claude Code bloque sur reseau entreprise</strong> : proxy / pare-feu bloque les connexions API (ConnectionRefused, timeout). VS Code fonctionne, mais Claude Code ne peut pas contacter les serveurs Claude. Contournement : utiliser Claude dans le navigateur au bureau.</span>
+          </div>
+          <div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap">
             <a href="https://claude.ai/settings/usage" target="_blank" class="btn btn-g">Verifier quota Claude</a>
+            <a href="https://claude.ai" target="_blank" class="btn btn-v">Claude en ligne (secours)</a>
           </div>
         </div>
       </div>
@@ -754,7 +759,14 @@ th{color:#64748B;font-weight:600;font-size:10px;text-transform:uppercase;letter-
           <table>
             <thead><tr><th>Outil</th><th>Cout</th><th>Role</th></tr></thead>
             <tbody>
-              <tr><td style="font-weight:600">Claude Code</td><td style="font-weight:700">$100/mois</td><td style="color:#64748B">Max 5x plan — inclus dans l'abonnement Claude — developement et iteration rapide sur les 3 apps</td></tr>
+              <tr>
+                <td style="font-weight:600">Claude Code</td>
+                <td style="font-weight:700">$100/mois</td>
+                <td style="color:#64748B">
+                  Max 5x plan, inclus dans l'abonnement Claude, developpement et iteration rapide sur les 3 apps.<br>
+                  <span style="color:#DC2626;font-weight:600">Limite reseau bureau :</span> <span style="color:#64748B">proxy/pare-feu bloque l'acces API depuis VS Code. VS Code fonctionne mais Claude Code ne peut pas contacter les serveurs Claude. Solution : utiliser <a href="https://claude.ai" target="_blank" style="color:#3B82F6">claude.ai dans le navigateur</a> au bureau, ou demander a l'IT une allowlist des domaines API Anthropic.</span>
+                </td>
+              </tr>
             </tbody>
           </table>
         </div>
