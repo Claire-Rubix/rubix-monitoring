@@ -217,11 +217,11 @@ th{color:#64748B;font-weight:600;font-size:10px;text-transform:uppercase;letter-
         <div class="alert-block-body">
           <div class="alert-row" style="background:#FEE2E2">
             <span class="alert-icon" style="color:#DC2626">&#9888;</span>
-            <span style="color:#DC2626">FREE TIER bloqué a 5+ users simultanées (15 RPM). Migrer vers GCP billing pour scaler.</span>
+            <span style="color:#DC2626">FREE TIER bloqué à 5+ users simultanées (15 appels/min). Migrer vers GCP billing pour scaler.</span>
           </div>
           <div class="alert-row" style="background:#F0F4FF">
             <span class="alert-icon" style="color:#3B82F6">&#9432;</span>
-            <span style="color:#3B82F6">Quota jour : 1 500 RPD = max 300 users/jour (5 actions/user)</span>
+            <span style="color:#3B82F6">Quota jour : 1 500 appels/jour = max 150 users/jour (limite fixée à 10 appels/user/jour)</span>
           </div>
           <a class="detail-link" onclick="showTab('pole')">Voir détails Pôle Acquisition</a>
         </div>
@@ -240,7 +240,7 @@ th{color:#64748B;font-weight:600;font-size:10px;text-transform:uppercase;letter-
           </div>
           <div class="alert-row" style="background:#FEF3C7">
             <span class="alert-icon" style="color:#D97706">&#9888;</span>
-            <span style="color:#D97706">Polling Assistant API ~55s frole le timeout 60s Vercel. Risque d'echec sur pitchs complexes.</span>
+            <span style="color:#D97706">Polling Assistant API ~55s frôle le timeout 60s Vercel. Risque d'échec sur pitchs complexes.</span>
           </div>
           <a class="detail-link" onclick="showTab('pitch')">Voir détails Pitch Generator</a>
         </div>
@@ -255,7 +255,7 @@ th{color:#64748B;font-weight:600;font-size:10px;text-transform:uppercase;letter-
         <div class="alert-block-body">
           <div class="alert-row" style="background:#FEF3C7">
             <span class="alert-icon" style="color:#D97706">&#9888;</span>
-            <span style="color:#D97706">Credits promo GCP : ~50 contenus couverts. Surveiller la console GCP avant épuisement.</span>
+            <span style="color:#D97706">Crédits promo GCP : ~50 contenus couverts. Surveiller la console GCP avant épuisement.</span>
           </div>
           <div class="alert-row" style="background:#ECFDF5">
             <span class="alert-icon" style="color:#059669">&#10003;</span>
@@ -275,15 +275,11 @@ th{color:#64748B;font-weight:600;font-size:10px;text-transform:uppercase;letter-
           <div id="global-dyn-alerts"></div>
           <div class="alert-row" style="background:#F0F4FF">
             <span class="alert-icon" style="color:#3B82F6">&#9432;</span>
-            <span style="color:#3B82F6">Concurrent Builds : 1 seul build a la fois les 3 apps partagent la queue</span>
+            <span style="color:#3B82F6">Concurrent Builds : 1 seul build à la fois, les 3 apps partagent la queue</span>
           </div>
           <div class="alert-row" style="background:#FFF7ED">
             <span class="alert-icon" style="color:#D97706">&#9432;</span>
-            <span style="color:#D97706">Claude Code Max 5x : fenêtre glissante 5h + plafond hebdo non documente pas d'API quota</span>
-          </div>
-          <div class="alert-row" style="background:#FEE2E2">
-            <span class="alert-icon" style="color:#DC2626">&#9888;</span>
-            <span style="color:#DC2626"><strong>Claude Code bloqué sur réseau entreprise</strong> : proxy / pare-feu bloqué les connexions API (ConnectionRefused, timeout). VS Code fonctionne, mais Claude Code ne peut pas contacter les serveurs Claude. Contournement : utiliser Claude dans le navigateur au bureau.</span>
+            <span style="color:#D97706">Claude Code Max 5x : fenêtre glissante 5h + plafond hebdo non documenté, pas d'API quota</span>
           </div>
           <div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap">
             <a href="https://claude.ai/settings/usage" target="_blank" class="btn btn-g">Vérifier quota Claude</a>
@@ -295,11 +291,15 @@ th{color:#64748B;font-weight:600;font-size:10px;text-transform:uppercase;letter-
       <div class="alert-block" style="border-top:3px solid #EF4444;grid-column:1/-1">
         <div class="alert-block-head">
           <div style="width:10px;height:10px;border-radius:50%;background:#EF4444;flex-shrink:0"></div>
-          <h3>Bugs environnement externe</h3>
+          <h3>Bug lié à l'environnement Rubix</h3>
           <span class="badge bd">PROXY ENTREPRISE</span>
           <span class="badge bd">RESEAU</span>
         </div>
         <div class="alert-block-body">
+          <div class="alert-row" style="background:#FEE2E2">
+            <span class="alert-icon" style="color:#DC2626">&#9888;</span>
+            <span style="color:#DC2626"><strong>Claude Code bloqué sur réseau Rubix</strong> : proxy / pare-feu bloque les connexions API (ConnectionRefused, timeout). VS Code fonctionne, mais Claude Code ne peut pas contacter les serveurs Claude. Contournement : utiliser Claude dans le navigateur au bureau.</span>
+          </div>
           <div class="alert-row" style="background:#FEE2E2">
             <span class="alert-icon" style="color:#DC2626">&#9888;</span>
             <span style="color:#DC2626"><strong>ERR_CERT_COMMON_NAME_INVALID</strong> : le proxy SSL d'entreprise (Zscaler) intercepte et re-scelle les connexions HTTPS. Le certificat recus ne correspond pas au site contacte.</span>
@@ -310,7 +310,7 @@ th{color:#64748B;font-weight:600;font-size:10px;text-transform:uppercase;letter-
           </div>
           <div class="alert-row" style="background:#FEF3C7">
             <span class="alert-icon" style="color:#D97706">&#9888;</span>
-            <span style="color:#D97706">Solution : déplacer la génération cote serveur Vercel. Le navigateur ne fait qu'un seul appel court, Vercel gere les appels Gemini en interne (serveur a serveur, sans proxy).</span>
+            <span style="color:#D97706">Solution : déplacer la génération côté serveur Vercel. Le navigateur ne fait qu'un seul appel court, Vercel gère les appels Gemini en interne (serveur à serveur, sans proxy).</span>
           </div>
           <a class="detail-link" onclick="showTab('smart')">Voir le plan d'action dans Smart Content</a>
         </div>
@@ -362,17 +362,17 @@ th{color:#64748B;font-weight:600;font-size:10px;text-transform:uppercase;letter-
         </table>
 
         <div class="thr-d">
-          <h4>Seuils de blocage Free tier AI Studio : 15 RPM / 1 500 RPD</h4>
+          <h4>Seuils de blocage Free tier AI Studio : 15 appels/min / 1 500 appels/jour</h4>
           <table>
-            <thead><tr><th>Users simultanées</th><th>Appels IA/min</th><th>vs Limite 15 RPM</th><th>Statut</th></tr></thead>
+            <thead><tr><th>Users simultanées</th><th>Appels IA/min</th><th>vs Limite 15 appels/min</th><th>Statut</th></tr></thead>
             <tbody>
-              <tr><td>1 a 3 users</td><td>3 a 9 RPM</td><td style="color:#059669">OK (60%)</td><td><span class="proj-badge proj-ok">OK</span></td></tr>
-              <tr><td>5 users</td><td>10 a 15 RPM</td><td style="color:#D97706">Limite (100%)</td><td><span class="proj-badge proj-warn">RISQUE</span></td></tr>
-              <tr><td>10+ users</td><td>20 a 30+ RPM</td><td style="color:#DC2626;font-weight:700">DÉPASSÉ (200%+)</td><td><span class="proj-badge proj-danger">BLOQUÉ</span></td></tr>
+              <tr><td>1 a 3 users</td><td>3 a 9 appels/min</td><td style="color:#059669">OK (60%)</td><td><span class="proj-badge proj-ok">OK</span></td></tr>
+              <tr><td>5 users</td><td>10 a 15 appels/min</td><td style="color:#D97706">Limite (100%)</td><td><span class="proj-badge proj-warn">RISQUE</span></td></tr>
+              <tr><td>10+ users</td><td>20 a 30+ appels/min</td><td style="color:#DC2626;font-weight:700">DÉPASSÉ (200%+)</td><td><span class="proj-badge proj-danger">BLOQUÉ</span></td></tr>
             </tbody>
           </table>
           <div style="font-size:11px;color:#DC2626;margin-top:6px">
-            <strong>Quota jour :</strong> 1 500 RPD. Si chaque user fait 5 actions = max 300 users/jour. Si 10 actions/user = max 150 users/jour.
+            <strong>Quota jour :</strong> 1 500 appels/jour. Limite fixée à <strong>10 appels/user/jour</strong> = max 150 users/jour.
           </div>
         </div>
 
@@ -388,8 +388,8 @@ th{color:#64748B;font-weight:600;font-size:10px;text-transform:uppercase;letter-
           <h4>Recommandations pour scaler</h4>
           <p>1. <strong>Batcher les appels grounding</strong> : combiner infos entreprise + matcher + fournisseur en 1 seul appel multi-tool (divise par 3)</p>
           <p>2. <strong>Cacher les resultats</strong> : même entreprise = meme recherche, cacher 24h (Redis / KV Vercel)</p>
-          <p>3. <strong>Migrer vers GCP billing</strong> a partir de 5 users : 1 500 RPM au lieu de 15 RPM (x100)</p>
-          <p>4. <strong>Queue + rate limiter cote serveur</strong> : limiter a 10 RPM et mettre les requêtes en file d'attente</p>
+          <p>3. <strong>Migrer vers GCP billing</strong> à partir de 5 users : 1 500 appels/min au lieu de 15 (x100)</p>
+          <p>4. <strong>Queue + rate limiter côté serveur</strong> : limiter à 10 appels/min et mettre les requêtes en file d'attente</p>
         </div>
 
         <div class="mini-metrics">
@@ -437,6 +437,20 @@ th{color:#64748B;font-weight:600;font-size:10px;text-transform:uppercase;letter-
           </div>
         </div>
 
+        <div style="margin-bottom:14px;padding:12px 14px;background:#FEF3C7;border-radius:8px;border:1px solid #F59E0B">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+            <span style="font-size:13px;font-weight:700;color:#92400E">⚠️ Compte OpenAI partagé — aucun budget dédié</span>
+            <span class="proj-badge proj-danger">RISQUE</span>
+          </div>
+          <div style="font-size:12px;color:#78350F;line-height:1.6">
+            Rubix Pitch est rattaché au compte OpenAI de <strong>Smart Spec</strong> (pas de compte séparé).<br>
+            Si Smart Spec consomme tous les crédits, <strong>Pitch Generator s'arrête immédiatement</strong> sans préavis.
+          </div>
+          <div style="margin-top:8px;padding:8px;background:#FFFBEB;border-radius:6px;font-size:11px;color:#334155">
+            <strong style="color:#D97706">Action à faire :</strong> Créer un compte OpenAI dédié pour Rubix Pitch avec un budget séparé. Mettre à jour la variable d'environnement <code style="background:#F1F5F9;padding:1px 4px;border-radius:3px">OPENAI_API_KEY</code> dans Vercel.
+          </div>
+        </div>
+
         <table>
           <thead><tr><th>Action utilisateur</th><th>Appels IA</th><th>Modele</th><th>Detail pipeline</th></tr></thead>
           <tbody>
@@ -454,13 +468,13 @@ th{color:#64748B;font-weight:600;font-size:10px;text-transform:uppercase;letter-
         </table>
 
         <div class="thr-i">
-          <h4>Seuils de blocage OpenAI Tier 1 : 500 RPM / 200K TPM</h4>
+          <h4>Seuils de blocage OpenAI Tier 1 : 500 appels/min / 200 000 tokens/min</h4>
           <table>
-            <thead><tr><th>Users simultanées</th><th>Appels IA/min</th><th>vs Limite 500 RPM</th><th>Statut</th></tr></thead>
+            <thead><tr><th>Users simultanées</th><th>Appels IA/min</th><th>vs Limite 500 appels/min</th><th>Statut</th></tr></thead>
             <tbody>
-              <tr><td>1 a 10 users</td><td>6 a 60 RPM</td><td style="color:#059669">OK (12%)</td><td><span class="proj-badge proj-ok">OK</span></td></tr>
-              <tr><td>50 users</td><td>300 RPM</td><td style="color:#D97706">Attention (60%)</td><td><span class="proj-badge proj-warn">SURVEILLER</span></td></tr>
-              <tr><td>80+ users</td><td>480+ RPM</td><td style="color:#DC2626;font-weight:700">Limite (96%+)</td><td><span class="proj-badge proj-danger">RISQUE</span></td></tr>
+              <tr><td>1 a 10 users</td><td>6 a 60 appels/min</td><td style="color:#059669">OK (12%)</td><td><span class="proj-badge proj-ok">OK</span></td></tr>
+              <tr><td>50 users</td><td>300 appels/min</td><td style="color:#D97706">Attention (60%)</td><td><span class="proj-badge proj-warn">SURVEILLER</span></td></tr>
+              <tr><td>80+ users</td><td>480+ appels/min</td><td style="color:#DC2626;font-weight:700">Limite (96%+)</td><td><span class="proj-badge proj-danger">RISQUE</span></td></tr>
             </tbody>
           </table>
           <div style="font-size:11px;color:#3B82F6;margin-top:6px" id="pitch-cost-detail">Chargement des couts...</div>
@@ -482,16 +496,16 @@ th{color:#64748B;font-weight:600;font-size:10px;text-transform:uppercase;letter-
           </table>
           <div style="margin-top:10px;font-size:12px;font-weight:700;color:#051E50;margin-bottom:6px">Modifications a faire pour atteindre sécurité haute</div>
           <div style="padding:8px;background:#FFF7ED;border-radius:6px;margin-bottom:6px;font-size:11px;color:#334155">
-            <strong style="color:#D97706">Etape 1 (rapide) :</strong> Paralléliser les 5 priorisations avec <code style="background:#F1F5F9;padding:1px 4px;border-radius:3px">Promise.all()</code> dans <strong>useContentGénération.js</strong>. Passe de 55s a 25-30s. Sécurité moyenne.</div>
+            <strong style="color:#D97706">Étape 1 (rapide) :</strong> Paralléliser les 5 priorisations avec <code style="background:#F1F5F9;padding:1px 4px;border-radius:3px">Promise.all()</code> dans <strong>useContentGénération.js</strong>. Passe de 55s à 25-30s. Sécurité moyenne.</div>
           <div style="padding:8px;background:#ECFDF5;border-radius:6px;font-size:11px;color:#334155">
-            <strong style="color:#059669">Etape 2 (sécurité haute) :</strong> Remplacer le polling <code style="background:#F1F5F9;padding:1px 4px;border-radius:3px">assistants.runs.retrieve()</code> par <code style="background:#F1F5F9;padding:1px 4px;border-radius:3px">stream()</code> de l'API OpenAI. Le streaming garde la connexion vivante, le timeout de 60s ne s'applique plus. Fichier a modifiér : <strong>api/generate-pitch.js</strong> (ou equivalent backend).</div>
+            <strong style="color:#059669">Étape 2 (sécurité haute) :</strong> Remplacer le polling <code style="background:#F1F5F9;padding:1px 4px;border-radius:3px">assistants.runs.retrieve()</code> par <code style="background:#F1F5F9;padding:1px 4px;border-radius:3px">stream()</code> de l'API OpenAI. Le streaming garde la connexion vivante, le timeout de 60s ne s'applique plus. Fichier à modifier : <strong>api/generate-pitch.js</strong> (ou équivalent backend).</div>
         </div>
 
         <div class="reco">
           <h4>Recommandations pour scaler</h4>
           <p>1. <strong>Paralléliser les 5 priorisations</strong> : Promise.all() au lieu de sequentiel (divise le temps par 5, même nombre d'appels)</p>
-          <p>2. <strong>Remplacer polling par streaming</strong> : utiliser stream() de l'API OpenAI Assistants a la place de runs.retrieve() — sécurité haute</p>
-          <p>3. <strong>Monter de tier OpenAI</strong> : Tier 2 = 5 000 RPM (x10). Automatique apres 50$ dépenses + 7 jours</p>
+          <p>2. <strong>Remplacer polling par streaming</strong> : utiliser stream() de l'API OpenAI Assistants à la place de runs.retrieve() — sécurité haute</p>
+          <p>3. <strong>Monter de tier OpenAI</strong> : Tier 2 = 5 000 appels/min (x10). Automatique apres 50$ dépenses + 7 jours</p>
           <p>4. <strong>Cacher la matrice enrichie</strong> : les priorisations pour un même secteur/fonction sont identiques, cacher 1h</p>
         </div>
 
@@ -550,17 +564,17 @@ th{color:#64748B;font-weight:600;font-size:10px;text-transform:uppercase;letter-
         </table>
 
         <div class="thr-w">
-          <h4>Seuils de blocage GCP : 1 500 RPM mais credits limites</h4>
+          <h4>Seuils de blocage GCP : 1 500 appels/min mais credits limites</h4>
           <table>
             <thead><tr><th>Users simultanées</th><th>Appels IA/min</th><th>Coût/mois estime</th><th>Statut</th></tr></thead>
             <tbody>
-              <tr><td>1 a 5 users</td><td>2 a 10 RPM</td><td>3 a 15 EUR</td><td><span class="proj-badge proj-ok">OK</span></td></tr>
-              <tr><td>10 users</td><td>10 a 20 RPM</td><td>30 EUR</td><td><span class="proj-badge proj-warn">CREDITS ?</span></td></tr>
-              <tr><td>50+ users</td><td>50 a 100 RPM</td><td>150+ EUR</td><td><span class="proj-badge proj-danger">PAYANT</span></td></tr>
+              <tr><td>1 a 5 users</td><td>2 a 10 appels/min</td><td>3 a 15 EUR</td><td><span class="proj-badge proj-ok">OK</span></td></tr>
+              <tr><td>10 users</td><td>10 a 20 appels/min</td><td>30 EUR</td><td><span class="proj-badge proj-warn">CREDITS ?</span></td></tr>
+              <tr><td>50+ users</td><td>50 a 100 appels/min</td><td>150+ EUR</td><td><span class="proj-badge proj-danger">PAYANT</span></td></tr>
             </tbody>
           </table>
           <div style="font-size:11px;color:#D97706;margin-top:6px">
-            <strong>Blocker principal :</strong> pas le RPM (1 500 = large) mais le <strong>cout</strong> quand les credits promo GCP seront épuisés.
+            <strong>Blocker principal :</strong> pas le nombre d'appels/min (1 500 = large) mais le <strong>cout</strong> quand les credits promo GCP seront épuisés.
             Actuellement 2.98 EUR brut / 50 contenus = 0.06 EUR/contenu.
           </div>
         </div>
@@ -568,7 +582,7 @@ th{color:#64748B;font-weight:600;font-size:10px;text-transform:uppercase;letter-
         <div class="reco">
           <h4>Recommandations pour scaler</h4>
           <p>1. <strong>Streaming déjà en place</strong> : evite les timeouts Vercel 60s sur contenus longs, ne pas toucher</p>
-          <p>2. <strong>Retry + backoff 429 déjà en place</strong> : gestion des rate limits cote serveur, ne pas toucher</p>
+          <p>2. <strong>Retry + backoff 429 déjà en place</strong> : gestion des rate limits côté serveur, ne pas toucher</p>
           <p>3. <strong>Surveiller les credits GCP</strong> : quand épuisés, 0.06 EUR/contenu en production</p>
           <p>4. <strong>Batching intentions</strong> : générer les 10 intentions en 1 seul appel plutot que 2 (possible vu la taille du prompt)</p>
         </div>
@@ -581,16 +595,16 @@ th{color:#64748B;font-weight:600;font-size:10px;text-transform:uppercase;letter-
         </div>
 
         <div class="links">
-          <a href="https://console.cloud.google.com/billing?project=n8n-landing-pages" target="_blank" class="btn btn-g">Credits GCP restants</a>
+          <a href="https://console.cloud.google.com/billing?project=n8n-landing-pages" target="_blank" class="btn btn-g">Crédits GCP restants</a>
           <a href="https://console.cloud.google.com/apis/dashboard?project=n8n-landing-pages" target="_blank" class="btn btn-g">GCP Dashboard</a>
         </div>
       </div>
     </div>
 
-    <!-- Section bugs environnement externe -->
+    <!-- Section bugs lié à l'environnement Rubix -->
     <div class="section-title" style="margin-top:28px">
       <div class="st-bar" style="background:#EF4444"></div>
-      Bugs environnement externe
+      Bug lié à l'environnement Rubix
       <span class="badge bd">EN COURS DE CORRECTION</span>
     </div>
 
@@ -649,7 +663,7 @@ th{color:#64748B;font-weight:600;font-size:10px;text-transform:uppercase;letter-
               <span style="font-size:12px;font-weight:700;color:#059669">Fix immédiat (5 min, zero code)</span>
               <span class="proj-badge proj-ok">FAISABLE MAINTENANT</span>
             </div>
-            <div style="font-size:11px;color:#334155">Débloquer les articles coincés en PROCESSING.<br>Dans Google Sheets, onglet <strong>_meta</strong>, colonne L : chercher les cellules contenant <strong>PROCESSING:...</strong> et les remplacer par <strong>QUEUED</strong>. Ils seront re-générés a la prochaine tentative.</div>
+            <div style="font-size:11px;color:#334155">Débloquer les articles coincés en PROCESSING.<br>Dans Google Sheets, onglet <strong>_meta</strong>, colonne L : chercher les cellules contenant <strong>PROCESSING:...</strong> et les remplacer par <strong>QUEUED</strong>. Ils seront re-générés à la prochaine tentative.</div>
           </div>
 
           <div style="padding:10px;background:#FEF3C7;border-radius:7px;border:1px solid #FDE68A;margin-bottom:8px">
@@ -664,10 +678,10 @@ th{color:#64748B;font-weight:600;font-size:10px;text-transform:uppercase;letter-
           <div style="padding:10px;background:#F0F4FF;border-radius:7px;border:1px solid #BFDBFE">
             <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
               <span class="badge bi">CHANTIER 3</span>
-              <span style="font-size:12px;font-weight:700;color:#3B82F6">Génération cote serveur (2 a 3h de code)</span>
+              <span style="font-size:12px;font-weight:700;color:#3B82F6">Génération côté serveur (2 à 3h de code)</span>
               <span class="proj-badge proj-warn">EN COURS</span>
             </div>
-            <div style="font-size:11px;color:#334155">La vraie solution. Créer une nouvelle route dans <strong>api/index.js</strong> qui fait les 3 appels Gemini en interne, et simplifiér <strong>useContentGénération.js</strong> cote frontend. Approche : batch 1 par 1 (lancer un article, attendre qu'il finisse, passer au suivant).<br><br><strong>Risque :</strong> Vercel Pro = timeout 300s par fonction. Un article prend 90 a 180s, ca passe normalement. Si Gemini est lent, le backend remet l'article en QUEUED automatiquement.</div>
+            <div style="font-size:11px;color:#334155">La vraie solution. Créer une nouvelle route dans <strong>api/index.js</strong> qui fait les 3 appels Gemini en interne, et simplifier <strong>useContentGénération.js</strong> côté frontend. Approche : batch 1 par 1 (lancer un article, attendre qu'il finisse, passer au suivant).<br><br><strong>Risque :</strong> Vercel Pro = timeout 300s par fonction. Un article prend 90 à 180s, ça passe normalement. Si Gemini est lent, le backend remet l'article en QUEUED automatiquement.</div>
           </div>
         </div>
 
@@ -720,24 +734,28 @@ th{color:#64748B;font-weight:600;font-size:10px;text-transform:uppercase;letter-
             <div class="limit-label"><span>Build Minutes <span class="proj-badge" id="build-pbadge"></span></span><span id="build-used"></span></div>
             <div class="limit-bar"><div class="limit-fill fill-ok" id="build-bar" style="width:.5%"></div></div>
             <div class="limit-detail" id="build-proj"></div>
+            <div style="font-size:10px;color:#64748B;margin-top:3px">Combien de minutes Vercel a passé à compiler et déployer les apps</div>
             <div id="build-perapp"></div>
           </div>
           <div class="limit-item">
             <div class="limit-label"><span>Bandwidth <span class="proj-badge" id="bw-pbadge"></span></span><span id="bw-used"></span></div>
             <div class="limit-bar"><div class="limit-fill fill-ok" id="bw-bar" style="width:.5%"></div></div>
             <div class="limit-detail" id="bw-proj"></div>
+            <div style="font-size:10px;color:#64748B;margin-top:3px">Combien de données ont été envoyées aux utilisateurs (pages, images, réponses API)</div>
             <div id="bw-perapp"></div>
           </div>
           <div class="limit-item">
             <div class="limit-label"><span>Function Invocations <span class="proj-badge" id="fninv-pbadge"></span></span><span id="fninv-used"></span></div>
             <div class="limit-bar"><div class="limit-fill fill-ok" id="fninv-bar" style="width:.5%"></div></div>
             <div class="limit-detail" id="fninv-proj"></div>
+            <div style="font-size:10px;color:#64748B;margin-top:3px">Combien de fois une fonction a été appelée — total tous projets confondus (Pôle + Pitch + Smart Content)</div>
             <div id="fninv-perapp"></div>
           </div>
           <div class="limit-item">
             <div class="limit-label"><span>Function Duration <span class="proj-badge" id="fndur-pbadge"></span></span><span id="fndur-used"></span></div>
             <div class="limit-bar"><div class="limit-fill fill-ok" id="fndur-bar" style="width:.5%"></div></div>
             <div class="limit-detail" id="fndur-proj"></div>
+            <div style="font-size:10px;color:#64748B;margin-top:3px">Combien de temps ces fonctions ont tourné au total — <strong>non critique</strong> pour nos apps (limite 1 000 GB-h très difficile à atteindre)</div>
             <div id="fndur-perapp"></div>
           </div>
         </div>
@@ -746,7 +764,6 @@ th{color:#64748B;font-weight:600;font-size:10px;text-transform:uppercase;letter-
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;font-size:11px;color:#64748B">
             <div><strong>Concurrent Builds :</strong> 1 seul (les autres en queue)</div>
             <div><strong>Serverless Timeout :</strong> 60s par defaut, 300s max (configurer maxDuration dans vercel.json)</div>
-            <div><strong>Edge Function :</strong> 30s max / body 4 MB</div>
             <div><strong>Deployments :</strong> 100/jour (soft limit)</div>
           </div>
           <div style="margin-top:8px;font-size:11px;color:#64748B">
@@ -894,7 +911,7 @@ function renderOpenAI(oa) {
   html('pitch-cost-per-pitch', `<strong>~$${cpp6}</strong> &nbsp;(6 x $${oa.costPerPrompt}/appel)`);
   html('pitch-cost-detail', `<strong>Coût/pitch complet :</strong> ~$${oa.costPerPrompt} x 6 appels = ~$${cpp6}/pitch &nbsp;|&nbsp; A $${oa.monthlyProjected}/mois (rythme actuel depuis jan. 2026)`);
   html('openai-cost',   `<strong>$${oa.totalCost}</strong>`);
-  html('openai-detail', `${fmtN(oa.requests)} req. | $${oa.costPerPrompt}/prompt | Rubix Pitch uniquement`);
+  html('openai-detail', `${fmtN(oa.requests)} req. | $${oa.costPerPrompt}/prompt | OpenAI Rubix Pitch`);
   const total = Math.round((20 + oa.totalCost) * 100) / 100;
   html('total-cost',  `$${total}`);
   html('total-badge', `$${total} TOTAL`);
@@ -907,7 +924,9 @@ function renderVercelCapacity(proj, period) {
     { svc:'Function Invocations', id:'fninv', fmtV: v => fmtN(Math.round(v)),    fmtU: v => fmtN(Math.round(v))+' / 1M',    overage:'$0.60/M'    },
     { svc:'Function Duration',    id:'fndur', fmtV: v => v.toFixed(1)+' GB-h',   fmtU: v => v.toFixed(2)+' / 1 000 GB-h',  overage:'$0.18/GB-h' },
   ];
-  let dangerC = 0, warnC = 0;
+  // Alertes statiques toujours présentes
+  let dangerC = 1; // FREE TIER Pôle bloqué à 5+ users
+  let warnC   = 3; // Pitch : 6+ appels + polling ~55s / Smart : crédits promo GCP
   for (const { svc, id, fmtV, fmtU, overage } of METRICS) {
     const p = proj[svc]; if (!p) continue;
     const pct = Math.round(p.used / p.limit * 1000) / 10;
