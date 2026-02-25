@@ -376,6 +376,14 @@ th{color:#64748B;font-weight:600;font-size:10px;text-transform:uppercase;letter-
           </div>
         </div>
 
+        <div style="margin-top:10px;padding:10px;background:#ECFDF5;border-radius:7px;border:1px solid #A7F3D0">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+            <span style="font-size:12px;font-weight:700;color:#059669">Securite timeout Vercel</span>
+            <span class="proj-badge proj-ok">HAUTE</span>
+          </div>
+          <div style="font-size:11px;color:#334155">Chaque appel Gemini repond en 2 a 8s. Largement sous le timeout de 60s.<br>Marge de securite : 90%+ — aucune modification necessaire.</div>
+        </div>
+
         <div class="reco">
           <h4>Recommandations pour scaler</h4>
           <p>1. <strong>Batcher les appels grounding</strong> : combiner infos entreprise + matcher + fournisseur en 1 seul appel multi-tool (divise par 3)</p>
@@ -458,10 +466,31 @@ th{color:#64748B;font-weight:600;font-size:10px;text-transform:uppercase;letter-
           <div style="font-size:11px;color:#3B82F6;margin-top:6px" id="pitch-cost-detail">Chargement des couts...</div>
         </div>
 
+        <div style="margin-top:10px;padding:10px;background:#FEE2E2;border-radius:7px;border:1px solid #FECACA">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+            <span style="font-size:12px;font-weight:700;color:#DC2626">Securite timeout Vercel</span>
+            <span class="proj-badge proj-danger">FAIBLE</span>
+            <span style="font-size:11px;color:#64748B">55s / 60s = 92% de la limite</span>
+          </div>
+          <table>
+            <thead><tr><th>Situation</th><th>Temps</th><th>Limite</th><th>Marge</th><th>Securite</th></tr></thead>
+            <tbody>
+              <tr><td style="font-weight:600">Polling Assistant API (actuel)</td><td style="color:#DC2626;font-weight:700">~55s</td><td>60s</td><td style="color:#DC2626;font-weight:700">5s</td><td><span class="proj-badge proj-danger">FAIBLE</span></td></tr>
+              <tr><td style="font-weight:600">Priorisations paralleles (Promise.all)</td><td style="color:#D97706;font-weight:700">~25-30s</td><td>60s</td><td style="color:#D97706">30s</td><td><span class="proj-badge proj-warn">MOYENNE</span></td></tr>
+              <tr><td style="font-weight:600">Streaming natif OpenAI (cible)</td><td style="color:#059669;font-weight:700">connexion maintenue</td><td>N/A</td><td style="color:#059669">illimitee</td><td><span class="proj-badge proj-ok">HAUTE</span></td></tr>
+            </tbody>
+          </table>
+          <div style="margin-top:10px;font-size:12px;font-weight:700;color:#051E50;margin-bottom:6px">Modifications a faire pour atteindre securite haute</div>
+          <div style="padding:8px;background:#FFF7ED;border-radius:6px;margin-bottom:6px;font-size:11px;color:#334155">
+            <strong style="color:#D97706">Etape 1 (rapide) :</strong> Paralleliser les 5 priorisations avec <code style="background:#F1F5F9;padding:1px 4px;border-radius:3px">Promise.all()</code> dans <strong>useContentGeneration.js</strong>. Passe de 55s a 25-30s. Securite moyenne.</div>
+          <div style="padding:8px;background:#ECFDF5;border-radius:6px;font-size:11px;color:#334155">
+            <strong style="color:#059669">Etape 2 (securite haute) :</strong> Remplacer le polling <code style="background:#F1F5F9;padding:1px 4px;border-radius:3px">assistants.runs.retrieve()</code> par <code style="background:#F1F5F9;padding:1px 4px;border-radius:3px">stream()</code> de l'API OpenAI. Le streaming garde la connexion vivante, le timeout de 60s ne s'applique plus. Fichier a modifier : <strong>api/generate-pitch.js</strong> (ou equivalent backend).</div>
+        </div>
+
         <div class="reco">
           <h4>Recommandations pour scaler</h4>
           <p>1. <strong>Paralleliser les 5 priorisations</strong> : Promise.all() au lieu de sequentiel (divise le temps par 5, meme nombre d'appels)</p>
-          <p>2. <strong>Timeout 55s Vercel</strong> : le polling Assistant API frole la limite, envisager mode streaming natif</p>
+          <p>2. <strong>Remplacer polling par streaming</strong> : utiliser stream() de l'API OpenAI Assistants a la place de runs.retrieve() — securite haute</p>
           <p>3. <strong>Monter de tier OpenAI</strong> : Tier 2 = 5 000 RPM (x10). Automatique apres 50$ depenses + 7 jours</p>
           <p>4. <strong>Cacher la matrice enrichie</strong> : les priorisations pour un meme secteur/fonction sont identiques, cacher 1h</p>
         </div>
