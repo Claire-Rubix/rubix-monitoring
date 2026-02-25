@@ -160,6 +160,35 @@ th{color:#1D4ED8;font-weight:600;font-size:10px;text-transform:uppercase;letter-
   .header{padding:12px 16px}
   .container{padding:16px 12px}
 }
+
+/* ====================== RÉTROPLANNING ====================== */
+.retro-prog-wrap{background:#F8FAFC;border:1px solid #DBEAFE;border-radius:10px;padding:14px 18px;margin-bottom:14px}
+.retro-prog-bar-bg{background:#E2E8F0;border-radius:4px;height:8px;margin:8px 0}
+.retro-prog-bar-fill{background:linear-gradient(90deg,#051E50,#3B82F6);border-radius:4px;height:8px;transition:width .5s}
+.retro-prog-stats{display:flex;gap:16px;flex-wrap:wrap;font-size:11px;color:#64748B}
+.retro-filter-btn{font-size:11px;font-weight:600;padding:4px 12px;border-radius:20px;border:1px solid #E2E8F0;cursor:pointer;transition:all .15s;white-space:nowrap}
+.retro-filter-btn:hover{border-color:#051E50}
+.retro-week{margin-bottom:24px}
+.retro-week-label{font-size:11px;font-weight:700;color:#64748B;text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid #E2E8F0}
+.retro-days{display:flex;gap:10px;overflow-x:auto;padding-bottom:10px}
+.retro-day{min-width:200px;flex-shrink:0}
+.retro-milestone-banner{font-size:10px;font-weight:700;padding:4px 8px;border-radius:6px 6px 0 0;text-align:center;border:1px solid;border-bottom:none}
+.retro-day-header{background:#F8FAFC;border:1px solid #E2E8F0;border-bottom:none;padding:7px 10px;text-align:center;border-radius:7px 7px 0 0}
+.retro-day.today .retro-day-header{border:2px solid #FFD700;border-bottom:none;background:#FFFBEB}
+.retro-day.past-all .retro-day-header{opacity:.55}
+.retro-day-date{font-size:12px;font-weight:700;color:#051E50}
+.retro-day-name{font-size:10px;color:#94A3B8;text-transform:capitalize}
+.retro-cards{border:1px solid #E2E8F0;border-top:none;border-radius:0 0 7px 7px;padding:8px;min-height:50px;background:#fff}
+.retro-day.today .retro-cards{border:2px solid #FFD700;border-top:none}
+.retro-day.past-all .retro-cards{opacity:.55}
+.retro-card{background:#fff;border-radius:7px;border:1px solid #E5E7EB;border-left:4px solid;padding:9px 9px 7px;margin-bottom:6px;transition:opacity .2s}
+.retro-card.hidden{display:none}
+.retro-card.done-card{opacity:.55}
+.retro-card-text{font-size:12px;color:#374151;line-height:1.4;margin-bottom:7px}
+.retro-card-bottom{display:flex;align-items:center;justify-content:space-between;gap:4px}
+.retro-tag{font-size:9px;font-weight:700;padding:2px 7px;border-radius:10px;white-space:nowrap}
+.retro-status-btn{width:22px;height:22px;border:none;background:none;cursor:pointer;font-size:14px;line-height:1;padding:0;flex-shrink:0}
+.retro-empty{color:#CBD5E1;font-size:11px;text-align:center;padding:14px 0}
 </style>
 </head>
 <body>
@@ -184,6 +213,7 @@ th{color:#1D4ED8;font-weight:600;font-size:10px;text-transform:uppercase;letter-
   <a onclick="showTab('smart')">Smart Content</a>
   <a onclick="showTab('vercel')">Capacité Vercel</a>
   <a onclick="showTab('couts')">Coûts</a>
+  <a onclick="showTab('retro')">📆 Rétroplanning</a>
 </nav>
 
 <!-- LOADING -->
@@ -955,6 +985,17 @@ th{color:#1D4ED8;font-weight:600;font-size:10px;text-transform:uppercase;letter-
   </div>
   </div>
 
+  <!-- RETROPLANNING -->
+  <div class="page" id="page-retro">
+    <div class="container">
+      <div class="section-title" style="margin-top:20px"><span class="st-bar" style="background:#051E50"></span>📆 Rétroplanning — Actions jour par jour</div>
+      <div style="font-size:12px;color:#64748B;margin:6px 0 14px">Cliquez sur l'icône statut pour avancer : ⬜ À faire → 🔄 En cours → ✅ Fait → ❌ Bloqué. Sauvegardé automatiquement.</div>
+      <div id="retro-prog-wrap" class="retro-prog-wrap"></div>
+      <div id="retro-filters-wrap" style="margin-bottom:14px"></div>
+      <div id="retro-calendar"></div>
+    </div>
+  </div>
+
 </div><!-- /main -->
 
 <div class="footer" id="footer">Rubix Monitoring</div>
@@ -965,11 +1006,17 @@ function showTab(id) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.nav a').forEach(a => a.classList.remove('active'));
   document.getElementById('page-' + id).classList.add('active');
-  const tabs = ['alertes','pole','pitch','smart','vercel','couts'];
+  const tabs = ['alertes','pole','pitch','smart','vercel','couts','retro'];
   const idx = tabs.indexOf(id);
   if (idx >= 0) document.querySelectorAll('.nav a')[idx].classList.add('active');
+  if (id === 'retro') {
+    if (!retroInitialized) { retroInitialized = true; initRetro(); }
+    else { updateRetroProgress(); }
+    setTimeout(() => { const el = $('retro-today'); if (el) el.scrollIntoView({block:'nearest',inline:'center'}); }, 80);
+  }
   window.scrollTo(0, 0);
 }
+let retroInitialized = false;
 
 // Collapsible sections
 function toggle(head) {
@@ -1119,6 +1166,381 @@ function renderGlobalAlerts(proj) {
     h += `<div class="alert-row" style="background:#FEFCE8"><span class="alert-icon" style="color:#D97706">&#9888;</span><span style="color:#D97706">Function Invocations : projection ${fmtN(Math.round(fnInv.projected))} / 1M a surveiller</span></div>`;
   }
   html('global-dyn-alerts', h);
+}
+
+// ====================== RÉTROPLANNING ======================
+
+const RETRO_DATA = [
+  // SEMAINE 1 — Fondations
+  { date:'2026-02-25', milestone:null, actions:[
+    { id:'s1-1', text:'Créer compte OpenAI dédié Rubix Pitch', responsable:'CLAIRE', priority:'red' },
+    { id:'s1-2', text:'Charger 50$ de crédits sur le nouveau compte', responsable:'CLAIRE', priority:'red' },
+    { id:'s1-3', text:'Mettre à jour OPENAI_API_KEY dans Vercel', responsable:'CLAIRE', priority:'red' },
+    { id:'s1-4', text:'Tester que l\'app fonctionne avec la nouvelle clé', responsable:'CLAIRE', priority:'red' },
+    { id:'s1-5', text:'Créer canal Teams "Rubix Pitch — Retours & Support"', responsable:'CLAIRE', priority:'blue' },
+  ]},
+  { date:'2026-02-26', milestone:null, actions:[
+    { id:'s1-6', text:'Corriger bug API Fusion (solutions_selectionnees = [])', responsable:'CLAUDE CODE', priority:'red' },
+    { id:'s1-7', text:'Corriger bug API Fusion (tendances_selectionnees = [])', responsable:'CLAUDE CODE', priority:'red' },
+    { id:'s1-8', text:'Corriger tendances disparues étape 3', responsable:'CLAUDE CODE', priority:'red' },
+    { id:'s1-9', text:'Corriger crédibilité incomplète étape 3', responsable:'CLAUDE CODE', priority:'red' },
+  ]},
+  { date:'2026-02-27', milestone:null, actions:[
+    { id:'s1-10', text:'Implémenter messages d\'erreur UX (timeout, 429, 500, JSON)', responsable:'CLAUDE CODE', priority:'red' },
+    { id:'s1-11', text:'Implémenter bouton "Réessayer" sans perte de données saisies', responsable:'CLAUDE CODE', priority:'red' },
+    { id:'s1-12', text:'Implémenter timeout frontend 58s (couper avant le 60s Vercel)', responsable:'CLAUDE CODE', priority:'red' },
+  ]},
+  { date:'2026-02-28', milestone:null, actions:[
+    { id:'s1-13', text:'Implémenter retry exponential backoff (api/generate-pitch.js)', responsable:'CLAUDE CODE', priority:'red' },
+    { id:'s1-14', text:'Implémenter retry exponential backoff (api/generate-fusion.js)', responsable:'CLAUDE CODE', priority:'red' },
+    { id:'s1-15', text:'Ajouter bouton "Signaler un problème" → lien canal Teams', responsable:'CLAUDE CODE', priority:'orange' },
+    { id:'s1-16', text:'Implémenter login individuel (identifiant + code) → remplacer le mot de passe unique', responsable:'CLAUDE CODE', priority:'orange' },
+    { id:'s1-17', text:'Créer fichier users.json sur Vercel Blob (liste utilisateurs avec champ "actif")', responsable:'CLAUDE CODE', priority:'orange' },
+    { id:'s1-18', text:'Tester parcours complet — vérifier corrections bugs', responsable:'CLAIRE', priority:'green' },
+  ]},
+  // SEMAINE 2 — Matrice + Stabilisation
+  { date:'2026-03-02', milestone:'📦 Réception nouvelle matrice', actions:[
+    { id:'s2-1', text:'Réceptionner la nouvelle matrice', responsable:'CLAIRE', priority:'red' },
+    { id:'s2-2', text:'Vérifier les 7 onglets (format, colonnes, données cohérentes)', responsable:'CLAIRE', priority:'red' },
+    { id:'s2-3', text:'Uploader nouvelle matrice sur Vercel Blob', responsable:'CLAUDE CODE', priority:'red' },
+    { id:'s2-4', text:'Garder ancienne matrice en backup (ne pas supprimer)', responsable:'CLAUDE CODE', priority:'red' },
+    { id:'s2-5', text:'Si Tier 2 pas automatique → contacter support OpenAI', responsable:'CLAIRE', priority:'blue' },
+  ]},
+  { date:'2026-03-03', milestone:null, actions:[
+    { id:'s2-6', text:'🧪 Simulation unitaire × 3 combos avec nouvelle matrice (Coût : $0.024)', responsable:'CLAIRE', priority:'green' },
+    { id:'s2-7', text:'Corriger régressions si nouvelle matrice casse quelque chose', responsable:'CLAUDE CODE', priority:'red' },
+    { id:'s2-8', text:'Implémenter sauvegarde historique multi-device (Vercel Blob par utilisateur)', responsable:'CLAUDE CODE', priority:'orange' },
+  ]},
+  { date:'2026-03-04', milestone:null, actions:[
+    { id:'s2-9', text:'Implémenter parallélisation Promise.all() (useContentGeneration.js)', responsable:'CLAUDE CODE', priority:'orange' },
+    { id:'s2-10', text:'🧪 Simulation petit groupe × 5 pitchs ($0.04) — vérifier Promise.all()', responsable:'CLAIRE', priority:'green' },
+    { id:'s2-11', text:'Implémenter logging structuré des appels API (console.log JSON)', responsable:'CLAUDE CODE', priority:'orange' },
+  ]},
+  { date:'2026-03-05', milestone:'💜 Point manager', actions:[
+    { id:'s2-12', text:'Point manager : présenter la page /monitoring', responsable:'CLAIRE', priority:'blue' },
+    { id:'s2-13', text:'Demander 3-5 testeurs commerciaux volontaires (2 RVE + 1 DE + 1 non-tech)', responsable:'CLAIRE', priority:'blue' },
+    { id:'s2-14', text:'Créer endpoint /api/health (test OpenAI + Blob)', responsable:'CLAUDE CODE', priority:'orange' },
+  ]},
+  { date:'2026-03-06', milestone:'📋 Point d\'étape', actions:[
+    { id:'s2-15', text:'Point d\'étape : démo parcours complet sans bug', responsable:'CLAIRE', priority:'green' },
+    { id:'s2-16', text:'Vérifier statut Tier 2 (automatique ? réponse support ?)', responsable:'CLAIRE', priority:'green' },
+    { id:'s2-17', text:'Décision : plan 5+5+5 (Tier 1) ou ouverture totale (Tier 2)', responsable:'CLAIRE', priority:'green' },
+    { id:'s2-18', text:'Confirmer liste testeurs (noms reçus du point manager)', responsable:'CLAIRE', priority:'blue' },
+    { id:'s2-19', text:'Préparer users.json avec les 66 participants', responsable:'CLAIRE', priority:'blue' },
+  ]},
+  // SEMAINE 3 — Beta test + Test de charge
+  { date:'2026-03-07', milestone:null, actions:[
+    { id:'s3-1', text:'Envoyer accès app aux testeurs + consignes canal Teams', responsable:'CLAIRE', priority:'blue' },
+    { id:'s3-2', text:'Corriger bugs remontés par testeurs (au fil de l\'eau)', responsable:'CLAUDE CODE', priority:'orange' },
+  ]},
+  { date:'2026-03-08', milestone:null, actions:[
+    { id:'s3-3', text:'Corrections bugs testeurs', responsable:'CLAUDE CODE', priority:'orange' },
+    { id:'s3-4', text:'Vérifier logs Vercel + retours canal Teams', responsable:'CLAIRE', priority:'green' },
+  ]},
+  { date:'2026-03-09', milestone:null, actions:[
+    { id:'s3-5', text:'Dernières corrections bugs testeurs', responsable:'CLAUDE CODE', priority:'orange' },
+    { id:'s3-6', text:'🧪 Simulation formation : 22 pitchs / 5 vagues / 3s — Coût : $0.18', responsable:'CLAIRE', priority:'green' },
+    { id:'s3-7', text:'🧪 Simulation stress : 35 pitchs / 7 vagues / 3s — Coût : $0.28', responsable:'CLAIRE', priority:'green' },
+  ]},
+  { date:'2026-03-10', milestone:'🔒 Code freeze', actions:[
+    { id:'s3-8', text:'Analyser résultats simulations : taux succès, temps moyen, erreurs', responsable:'CLAIRE', priority:'green' },
+    { id:'s3-9', text:'Fix critique uniquement si simulation révèle un problème bloquant', responsable:'CLAUDE CODE', priority:'red' },
+    { id:'s3-10', text:'🧪 Retest formation (22 pitchs) si debug effectué — Coût : $0.18', responsable:'CLAIRE', priority:'green' },
+    { id:'s3-11', text:'DÉCISION : code freeze si tests OK (reporté 11/03 max si debug)', responsable:'CLAIRE', priority:'green' },
+  ]},
+  { date:'2026-03-11', milestone:null, actions:[
+    { id:'s3-12', text:'Uploader fichier users.json final sur Vercel Blob', responsable:'CLAIRE', priority:'blue' },
+    { id:'s3-13', text:'Générer 3 pitchs de démo PDF (Agro/Achats, Industrie/Maint, Élec/Prod)', responsable:'CLAIRE', priority:'green' },
+    { id:'s3-14', text:'Préparer document "Guide formateur" pour le créneau app', responsable:'CLAIRE', priority:'blue' },
+    { id:'s3-15', text:'Bilan testeurs : recueillir feedback final', responsable:'CLAIRE', priority:'green' },
+  ]},
+  // SEMAINE 4 — Dernière ligne droite
+  { date:'2026-03-14', milestone:null, actions:[
+    { id:'s4-1', text:'Test quotidien : générer 1 pitch, vérifier résultat — Coût : $0.008', responsable:'CLAIRE', priority:'green' },
+    { id:'s4-2', text:'Confirmer salle + matériel formation 17/03', responsable:'CLAIRE', priority:'blue' },
+    { id:'s4-3', text:'Relire guide formateur, valider déroulé créneau app', responsable:'FORMATEUR', priority:'blue' },
+  ]},
+  { date:'2026-03-15', milestone:null, actions:[
+    { id:'s4-4', text:'Test quotidien — Coût : $0.008', responsable:'CLAIRE', priority:'green' },
+    { id:'s4-5', text:'Identifier les 5 ambassadeurs session 1 (parmi les 22 participants)', responsable:'CLAIRE', priority:'blue' },
+    { id:'s4-6', text:'Activer les 5 ambassadeurs dans users.json (actif: true)', responsable:'CLAIRE', priority:'blue' },
+  ]},
+  { date:'2026-03-16', milestone:'📋 Veille formation', actions:[
+    { id:'s4-7', text:'/api/health → tout vert', responsable:'CLAIRE', priority:'green' },
+    { id:'s4-8', text:'Vérifier solde crédits OpenAI (platform.openai.com)', responsable:'CLAIRE', priority:'green' },
+    { id:'s4-9', text:'Générer 1 pitch test complet → résultat cohérent — Coût : $0.008', responsable:'CLAIRE', priority:'green' },
+    { id:'s4-10', text:'Tester depuis un téléphone en 4G (backup wifi)', responsable:'CLAIRE', priority:'green' },
+    { id:'s4-11', text:'Vérifier pitchs PDF fallback prêts et accessibles', responsable:'CLAIRE', priority:'green' },
+    { id:'s4-12', text:'Vérifier canal Teams accessible par les participants', responsable:'CLAIRE', priority:'green' },
+    { id:'s4-13', text:'Vérifier page /monitoring → connaître les points orange/rouge restants', responsable:'CLAIRE', priority:'green' },
+  ]},
+  { date:'2026-03-17', milestone:'🎯 SESSION 1', actions:[
+    { id:'s4-14', text:'8h00 : Ouvrir l\'app + générer 1 pitch pour chauffer', responsable:'CLAIRE', priority:'green' },
+    { id:'s4-15', text:'8h00 : Ouvrir logs Vercel dans un onglet', responsable:'CLAIRE', priority:'green' },
+    { id:'s4-16', text:'Créneau app (~1h) : guider les 22 participants', responsable:'FORMATEUR', priority:'blue' },
+    { id:'s4-17', text:'Si bug en live → montrer le pitch PDF de fallback', responsable:'FORMATEUR', priority:'blue' },
+    { id:'s4-18', text:'17h30 : Vérifier les logs — erreurs 429 ? Timeouts ?', responsable:'CLAIRE', priority:'green' },
+    { id:'s4-19', text:'17h30 : Confirmer les 5 ambassadeurs → leur partager lien + canal Teams', responsable:'CLAIRE', priority:'blue' },
+  ]},
+  // SEMAINE 5 — Observation pilote 5 users
+  { date:'2026-03-18', milestone:null, actions:[
+    { id:'s5-1', text:'Vérifier logs Vercel : les ambassadeurs utilisent l\'app ?', responsable:'CLAIRE', priority:'green' },
+    { id:'s5-2', text:'Vérifier canal Teams : bugs remontés ?', responsable:'CLAIRE', priority:'green' },
+  ]},
+  { date:'2026-03-19', milestone:null, actions:[
+    { id:'s5-3', text:'Point rapide ambassadeurs : "Ça marche ? Des soucis ?"', responsable:'CLAIRE', priority:'green' },
+    { id:'s5-4', text:'Corriger bugs remontés si besoin', responsable:'CLAUDE CODE', priority:'orange' },
+  ]},
+  { date:'2026-03-21', milestone:null, actions:[
+    { id:'s5-5', text:'Bilan semaine pilote : logs, feedback ambassadeurs, décision suite', responsable:'CLAIRE', priority:'green' },
+    { id:'s5-6', text:'Si KO → identifier et corriger avant le 25/03', responsable:'CLAIRE', priority:'green' },
+  ]},
+  // SEMAINE 6 — Session 2
+  { date:'2026-03-24', milestone:'📋 Veille formation 2', actions:[
+    { id:'s6-1', text:'Checklist veille complète (même que 16/03)', responsable:'CLAIRE', priority:'green' },
+    { id:'s6-2', text:'Vérifier corrections post-session 1 en place', responsable:'CLAIRE', priority:'green' },
+    { id:'s6-3', text:'Activer 5 nouveaux ambassadeurs dans users.json', responsable:'CLAIRE', priority:'blue' },
+  ]},
+  { date:'2026-03-25', milestone:'🎯 SESSION 2', actions:[
+    { id:'s6-4', text:'8h00 : Chauffer l\'app + logs ouverts', responsable:'CLAIRE', priority:'green' },
+    { id:'s6-5', text:'Créneau app avec 22 participants', responsable:'FORMATEUR', priority:'blue' },
+    { id:'s6-6', text:'17h30 : Vérifier logs', responsable:'CLAIRE', priority:'green' },
+    { id:'s6-7', text:'17h30 : Confirmer 5 nouveaux ambassadeurs (total : 10 actifs)', responsable:'CLAIRE', priority:'blue' },
+  ]},
+  // SEMAINES 7-8 — Observation 10 users
+  { date:'2026-03-30', milestone:null, actions:[
+    { id:'s7-1', text:'Vérifier logs 2×/semaine (lundi + jeudi)', responsable:'CLAIRE', priority:'green' },
+    { id:'s7-2', text:'Surveiller canal Teams', responsable:'CLAIRE', priority:'green' },
+    { id:'s7-3', text:'Implémenter cache priorisations (préparer ouverture large)', responsable:'CLAUDE CODE', priority:'orange' },
+  ]},
+  { date:'2026-04-03', milestone:null, actions:[
+    { id:'s7-4', text:'Bilan 10 users : stable ? erreurs ? temps de génération ?', responsable:'CLAIRE', priority:'green' },
+    { id:'s7-5', text:'Vérifier statut Tier 2', responsable:'CLAIRE', priority:'green' },
+    { id:'s7-6', text:'Si Tier 2 → planifier ouverture large après session 3', responsable:'CLAIRE', priority:'blue' },
+    { id:'s7-7', text:'Si Tier 1 → rester sur +5 users après session 3', responsable:'CLAIRE', priority:'blue' },
+  ]},
+  // SEMAINE 9 — Session 3
+  { date:'2026-04-07', milestone:'📋 Veille formation 3', actions:[
+    { id:'s9-1', text:'Checklist veille complète', responsable:'CLAIRE', priority:'green' },
+    { id:'s9-2', text:'Activer 5 nouveaux ambassadeurs dans users.json', responsable:'CLAIRE', priority:'blue' },
+  ]},
+  { date:'2026-04-08', milestone:'🎯 SESSION 3', actions:[
+    { id:'s9-3', text:'8h00 : Chauffer l\'app + logs', responsable:'CLAIRE', priority:'green' },
+    { id:'s9-4', text:'Créneau app avec 22 participants', responsable:'FORMATEUR', priority:'blue' },
+    { id:'s9-5', text:'17h30 : Vérifier logs + confirmer 5 ambassadeurs (total : 15 actifs)', responsable:'CLAIRE', priority:'green' },
+    { id:'s9-6', text:'Bilan global : 15 users actifs, Tier 1 ou 2, erreurs cumulées', responsable:'CLAIRE', priority:'green' },
+  ]},
+  // POST-FORMATION
+  { date:'2026-04-14', milestone:null, actions:[
+    { id:'s10-1', text:'Bilan 15 users → décision ouverture 30 users', responsable:'CLAIRE', priority:'green' },
+  ]},
+  { date:'2026-04-21', milestone:null, actions:[
+    { id:'s10-2', text:'Si Tier 2 → ouverture 66 users', responsable:'CLAIRE', priority:'green' },
+    { id:'s10-3', text:'Si Tier 1 → relancer support OpenAI', responsable:'CLAIRE', priority:'blue' },
+    { id:'s10-4', text:'Implémenter mode dégradé, monitoring alertes, métriques d\'usage', responsable:'CLAUDE CODE', priority:'orange' },
+  ]},
+];
+
+const PRIO_COLORS  = { red:'#EF4444', orange:'#F59E0B', blue:'#3B82F6', green:'#22C55E' };
+const PRIO_LABELS  = { red:'🔴 Bloquant', orange:'🟠 Important', blue:'🔵 Préparation', green:'🟢 Validation' };
+const RESP_STYLES  = {
+  'CLAIRE':     { bg:'#FFF9E6', color:'#051E50' },
+  'CLAUDE CODE':{ bg:'#EFF6FF', color:'#1E40AF' },
+  'FORMATEUR':  { bg:'#F0FDF4', color:'#166534' },
+};
+const S_CYCLE  = ['', 'inprogress', 'done', 'blocked'];
+const S_ICONS  = { '':'⬜', inprogress:'🔄', done:'✅', blocked:'❌' };
+const S_LABELS = { '':'À faire', inprogress:'En cours', done:'Fait', blocked:'Bloqué' };
+
+let retroFilterResp = 'all';
+let retroFilterPrio = 'all';
+
+function getRS(id)      { return localStorage.getItem('retro_' + id) || ''; }
+function setRS(id, val) { val === '' ? localStorage.removeItem('retro_' + id) : localStorage.setItem('retro_' + id, val); }
+
+function clickRetroStatus(id) {
+  const cur  = getRS(id);
+  const next = S_CYCLE[(S_CYCLE.indexOf(cur) + 1) % S_CYCLE.length];
+  setRS(id, next);
+  const btn  = $('rb-' + id); if (btn) { btn.textContent = S_ICONS[next]; btn.title = S_LABELS[next]; }
+  const card = $('rc-' + id);
+  if (card) { next === 'done' ? card.classList.add('done-card') : card.classList.remove('done-card'); }
+  updateRetroProgress();
+  // Re-check if day is all done (update grayout)
+  recheckDayDone(id);
+}
+
+function recheckDayDone(actionId) {
+  // Find which day contains this action
+  for (const entry of RETRO_DATA) {
+    if (entry.actions.some(a => a.id === actionId)) {
+      const dayEl = $('rday-' + entry.date);
+      if (!dayEl) return;
+      const allDone = entry.actions.every(a => getRS(a.id) === 'done');
+      const today0 = new Date(); today0.setHours(0,0,0,0);
+      const entryDate = new Date(entry.date); entryDate.setHours(0,0,0,0);
+      if (entryDate < today0) {
+        allDone ? dayEl.classList.add('past-all') : dayEl.classList.remove('past-all');
+      }
+      return;
+    }
+  }
+}
+
+function getMilestoneStyle(m) {
+  if (!m) return null;
+  if (m.includes('SESSION'))  return { bg:'#FFF9E6', border:'#FFD500', color:'#92400E' };
+  if (m.includes('freeze'))   return { bg:'#FEF2F2', border:'#EF4444', color:'#DC2626' };
+  if (m.includes('manager'))  return { bg:'#F5F3FF', border:'#7C3AED', color:'#6D28D9' };
+  if (m.includes('matrice'))  return { bg:'#F0FDF4', border:'#22C55E', color:'#166534' };
+  return { bg:'#EFF6FF', border:'#3B82F6', color:'#1D4ED8' };
+}
+
+function getMonday(date) {
+  const d = new Date(date); const day = d.getDay();
+  d.setDate(d.getDate() + (day === 0 ? -6 : 1 - day)); d.setHours(0,0,0,0); return d;
+}
+
+function buildRetroCalendar() {
+  // Build map dateStr → entry
+  const dateMap = {};
+  for (const entry of RETRO_DATA) dateMap[entry.date] = entry;
+
+  // All weekday dates from startMonday to endMonday
+  const allDates = RETRO_DATA.map(e => new Date(e.date));
+  const startMon = getMonday(new Date(Math.min(...allDates)));
+  const endMon   = getMonday(new Date(Math.max(...allDates)));
+  const today0   = new Date(); today0.setHours(0,0,0,0);
+  const todayStr = today0.toISOString().split('T')[0];
+
+  let out = '';
+  let cur = new Date(startMon);
+  while (cur <= endMon) {
+    // Build week's Mon-Fri
+    const weekDays = [];
+    for (let i = 0; i < 5; i++) { const d = new Date(cur); d.setDate(cur.getDate() + i); weekDays.push(d); }
+    // Only show week if it has at least one entry
+    const hasEntry = weekDays.some(d => dateMap[d.toISOString().split('T')[0]]);
+    if (hasEntry) {
+      const weekLabel = cur.toLocaleDateString('fr-FR', { day:'2-digit', month:'long' }) + ' — ' +
+        weekDays[4].toLocaleDateString('fr-FR', { day:'2-digit', month:'long' });
+      out += `<div class="retro-week"><div class="retro-week-label">Semaine du ${weekLabel}</div><div class="retro-days">`;
+      for (const day of weekDays) {
+        const ds    = day.toISOString().split('T')[0];
+        const entry = dateMap[ds];
+        if (!entry) { out += `<div class="retro-day" style="min-width:60px;flex-shrink:0"><div style="height:40px"></div></div>`; continue; }
+        const isToday = ds === todayStr;
+        const isPast  = day < today0;
+        const allDone = isPast && entry.actions.every(a => getRS(a.id) === 'done');
+        let cls = 'retro-day'; if (isToday) cls += ' today'; if (isPast && allDone) cls += ' past-all';
+        const idAttr = isToday ? ' id="retro-today"' : '';
+        out += `<div class="${cls}" id="rday-${ds}"${idAttr}>`;
+        // Milestone
+        if (entry.milestone) {
+          const ms = getMilestoneStyle(entry.milestone);
+          out += `<div class="retro-milestone-banner" style="background:${ms.bg};border-color:${ms.border};color:${ms.color}">${entry.milestone}</div>`;
+        }
+        // Header
+        const dn = day.toLocaleDateString('fr-FR', { weekday:'short' });
+        const dm = day.toLocaleDateString('fr-FR', { day:'2-digit', month:'2-digit' });
+        out += `<div class="retro-day-header"><div class="retro-day-date">${dm}</div><div class="retro-day-name">${dn}</div></div>`;
+        // Cards
+        out += `<div class="retro-cards">`;
+        for (const a of entry.actions) {
+          const status  = getRS(a.id);
+          const bc      = PRIO_COLORS[a.priority] || '#94A3B8';
+          const rs      = RESP_STYLES[a.responsable] || { bg:'#F1F5F9', color:'#334155' };
+          const hidden  = !isRetroVisible(a) ? ' hidden' : '';
+          const doneCls = status === 'done' ? ' done-card' : '';
+          out += `<div class="retro-card${hidden}${doneCls}" id="rc-${a.id}" style="border-left-color:${bc}" data-resp="${a.responsable}" data-prio="${a.priority}">`;
+          out += `<div class="retro-card-text">${a.text}</div>`;
+          out += `<div class="retro-card-bottom">`;
+          out += `<span class="retro-tag" style="background:${rs.bg};color:${rs.color}">${a.responsable}</span>`;
+          out += `<button class="retro-status-btn" id="rb-${a.id}" onclick="clickRetroStatus('${a.id}')" title="${S_LABELS[status]}">${S_ICONS[status]}</button>`;
+          out += `</div></div>`;
+        }
+        out += `</div></div>`;
+      }
+      out += `</div></div>`;
+    }
+    cur.setDate(cur.getDate() + 7);
+  }
+  return out;
+}
+
+function isRetroVisible(a) {
+  return (retroFilterResp === 'all' || a.responsable === retroFilterResp) &&
+         (retroFilterPrio === 'all' || a.priority === retroFilterPrio);
+}
+
+function applyRetroFilters() {
+  document.querySelectorAll('.retro-card').forEach(card => {
+    const v = (retroFilterResp === 'all' || card.dataset.resp === retroFilterResp) &&
+              (retroFilterPrio === 'all' || card.dataset.prio === retroFilterPrio);
+    card.classList.toggle('hidden', !v);
+  });
+}
+
+function updateRetroProgress() {
+  let total = 0, done = 0, redRem = 0, orangeRem = 0;
+  let nextMilestone = null;
+  const today0 = new Date(); today0.setHours(0,0,0,0);
+  for (const entry of RETRO_DATA) {
+    for (const a of entry.actions) {
+      total++;
+      if (getRS(a.id) === 'done') done++;
+      else { if (a.priority === 'red') redRem++; if (a.priority === 'orange') orangeRem++; }
+    }
+    if (entry.milestone && !nextMilestone && new Date(entry.date) >= today0)
+      nextMilestone = { label: entry.milestone, date: entry.date };
+  }
+  const pct  = total > 0 ? Math.round(done / total * 100) : 0;
+  const nxt  = nextMilestone
+    ? `Prochain jalon : <strong>${nextMilestone.label}</strong> (${new Date(nextMilestone.date).toLocaleDateString('fr-FR',{day:'2-digit',month:'short'})})`
+    : 'Tous les jalons passés';
+  const el = $('retro-prog-wrap'); if (!el) return;
+  el.innerHTML = `
+    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px;margin-bottom:6px">
+      <span style="font-weight:700;color:#051E50;font-size:13px">Progression : ${done} / ${total} actions terminées (${pct}%)</span>
+      <span style="font-size:11px;color:#64748B">${nxt}</span>
+    </div>
+    <div class="retro-prog-bar-bg"><div class="retro-prog-bar-fill" style="width:${pct}%"></div></div>
+    <div class="retro-prog-stats">
+      <span>🔴 Bloquants restants : <strong>${redRem}</strong></span>
+      <span>🟠 Importants restants : <strong>${orangeRem}</strong></span>
+      <span>✅ Terminés : <strong>${done}</strong></span>
+    </div>`;
+}
+
+function renderRetroFilters() {
+  const respOpts = ['all','CLAIRE','CLAUDE CODE','FORMATEUR'];
+  const respLbls = { all:'Tous', 'CLAIRE':'Claire', 'CLAUDE CODE':'Claude Code', 'FORMATEUR':'Formateur' };
+  const prioOpts = ['all','red','orange','blue','green'];
+  const prioLbls = { all:'Toutes priorités', red:'🔴 Bloquant', orange:'🟠 Important', blue:'🔵 Préparation', green:'🟢 Validation' };
+
+  let h = `<div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-bottom:8px">
+    <span style="font-size:10px;font-weight:700;color:#94A3B8;text-transform:uppercase;letter-spacing:.5px;min-width:80px">Responsable</span>`;
+  for (const r of respOpts) {
+    const act = retroFilterResp === r;
+    h += `<button class="retro-filter-btn" onclick="setRetroResp('${r}')" style="background:${act?'#051E50':'#F1F5F9'};color:${act?'#FFD700':'#374151'};border-color:${act?'#051E50':'#E2E8F0'}">${respLbls[r]}</button>`;
+  }
+  h += `</div><div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center">
+    <span style="font-size:10px;font-weight:700;color:#94A3B8;text-transform:uppercase;letter-spacing:.5px;min-width:80px">Priorité</span>`;
+  for (const p of prioOpts) {
+    const act = retroFilterPrio === p;
+    h += `<button class="retro-filter-btn" onclick="setRetroPrio('${p}')" style="background:${act?'#051E50':'#F1F5F9'};color:${act?'#FFD700':'#374151'};border-color:${act?'#051E50':'#E2E8F0'}">${prioLbls[p]}</button>`;
+  }
+  h += `</div>`;
+  const el = $('retro-filters-wrap'); if (el) el.innerHTML = h;
+}
+
+function setRetroResp(val) { retroFilterResp = val; renderRetroFilters(); applyRetroFilters(); }
+function setRetroPrio(val) { retroFilterPrio = val; renderRetroFilters(); applyRetroFilters(); }
+
+function initRetro() {
+  $('retro-calendar').innerHTML = buildRetroCalendar();
+  renderRetroFilters();
+  updateRetroProgress();
 }
 
 // Bootstrap
