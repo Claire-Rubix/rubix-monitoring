@@ -208,6 +208,24 @@ th{color:#1D4ED8;font-weight:600;font-size:10px;text-transform:uppercase;letter-
 .cl-reset-btn:hover{background:#FEE2E2;border-color:#FECACA;color:#DC2626}
 .pitch-prog-bar{height:8px;background:#E2E8F0;border-radius:4px;overflow:hidden;margin-top:6px}
 .pitch-prog-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,#DC2626,#F59E0B);transition:width .3s}
+/* Demandes en attente */
+.demandes-wrap{margin-bottom:20px}
+.demande-card{background:#fff;border-radius:8px;border:1px solid #EDE9FE;border-left:4px solid #7C3AED;padding:14px 16px;margin-bottom:10px;position:relative}
+.demande-header{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:6px}
+.demande-titre{font-size:13px;font-weight:700;color:#051E50;flex:1}
+.demande-status-btn{background:none;border:none;font-size:18px;cursor:pointer;padding:0;line-height:1;flex-shrink:0;margin-top:-2px}
+.demande-meta{font-size:11px;color:#6B7280;margin-bottom:6px;display:flex;gap:12px;flex-wrap:wrap}
+.demande-meta span::before{content:"→ "}
+.demande-detail{font-size:11px;color:#334155;margin-bottom:5px;background:#F5F3FF;border-radius:5px;padding:5px 8px}
+.demande-pourquoi{font-size:12px;color:#6B7280;font-style:italic;line-height:1.6}
+.demande-card.demande-done{opacity:.6}
+/* Vercel costs */
+.vercel-prog-wrap{margin:12px 0}
+.vercel-prog-bar{height:12px;background:#E2E8F0;border-radius:6px;overflow:visible;position:relative;margin-top:4px}
+.vercel-prog-fill{height:100%;border-radius:6px;transition:width .3s}
+.vercel-proj-bar{height:12px;background:#E2E8F0;border-radius:6px;overflow:hidden;margin-top:6px;position:relative}
+.vercel-proj-covered{height:100%;display:inline-block;border-radius:6px 0 0 6px}
+.vercel-proj-surplus{height:100%;display:inline-block;border-radius:0 6px 6px 0}
 .retro-milestone-banner{font-size:10px;font-weight:700;padding:4px 8px;border-radius:6px 6px 0 0;text-align:center;border:1px solid;border-bottom:none}
 .retro-day-header{background:#F8FAFC;border:1px solid #E2E8F0;border-bottom:none;padding:7px 10px;text-align:center;border-radius:7px 7px 0 0}
 .retro-day.today .retro-day-header{border:2px solid #FFD700;border-bottom:none;background:#FFFBEB}
@@ -488,7 +506,7 @@ th{color:#1D4ED8;font-weight:600;font-size:10px;text-transform:uppercase;letter-
       <button class="sub-tab-btn active" onclick="showPitchTab('overview',this)">Vue d'ensemble</button>
       <button class="sub-tab-btn" onclick="showPitchTab('openai',this)">OpenAI &amp; Tiers</button>
       <button class="sub-tab-btn" onclick="showPitchTab('formations',this)">📅 Formations</button>
-      <button class="sub-tab-btn" onclick="showPitchTab('couts',this)">💰 Coûts</button>
+      <button class="sub-tab-btn" onclick="showPitchTab('couts',this)">💰 Coûts globaux</button>
       <button class="sub-tab-btn" onclick="showPitchTab('checklist',this)">✅ Checklist</button>
       <button class="sub-tab-btn" onclick="showPitchTab('chantiers',this)">⚙️ Chantiers</button>
     </div>
@@ -1239,6 +1257,7 @@ th{color:#1D4ED8;font-weight:600;font-size:10px;text-transform:uppercase;letter-
     <div class="container">
       <div class="section-title" style="margin-top:20px"><span class="st-bar" style="background:#051E50"></span>📆 Rétroplanning — Actions jour par jour</div>
       <div style="font-size:12px;color:#64748B;margin:6px 0 14px">Cliquez sur l'icône statut pour avancer : ⬜ À faire → 🔄 En cours → ✅ Fait → ❌ Bloqué. Sauvegardé automatiquement.</div>
+      <div id="retro-demandes-wrap" class="demandes-wrap"></div>
       <div id="retro-prog-wrap" class="retro-prog-wrap"></div>
       <div id="retro-filters-wrap" style="margin-bottom:14px"></div>
       <div id="retro-calendar"></div>
@@ -1420,6 +1439,188 @@ function renderGlobalAlerts(proj) {
   html('global-dyn-alerts', h);
 }
 
+// ====================== DEMANDES EN ATTENTE ======================
+
+const DEMANDES = [
+  { id:'d1', titre:'Création canal Teams "Rubix Pitch — Retours & Support"', destinataire:'IT', deadline:'28/02',
+    pourquoi:'Centraliser les remontées de bugs des commerciaux pendant et après les formations. Sans canal dédié, les retours se perdent dans les emails et les conversations informelles.' },
+  { id:'d2', titre:'3 à 5 testeurs commerciaux volontaires', destinataire:'Manager (point du 05/03)', deadline:'06/03',
+    detail:'Profils : 2 RVE terrain + 1 DE minimum. Effort : 1h de leur temps entre le 7 et le 10/03.',
+    pourquoi:'Valider l\'app en conditions réelles avant la formation. Leurs retours permettent de corriger les derniers bugs sur des vrais cas métier.' },
+  { id:'d3', titre:'Liste des 66 participants aux 3 sessions', destinataire:'Organisateurs formation', deadline:'20/03',
+    detail:'Données : nom, prénom, profil (RVE/DE), session attribuée (1, 2 ou 3).',
+    pourquoi:'Après la session 1, on met en place des accès individuels pour suivre qui utilise l\'app, gérer le déploiement progressif et sauvegarder l\'historique de chaque commercial (multi-device).' },
+  { id:'d4', titre:'Validation budget 50$ (46€) pour compte IA dédié', destinataire:'Manager', deadline:'28/02',
+    detail:'Paiement unique par carte.',
+    pourquoi:'Séparer les crédits IA de Rubix Pitch de ceux de Smart Spec (risque de coupure). Ces 50$ sont aussi la condition pour monter en capacité (Tier 2 = 10× plus d\'utilisateurs simultanés). Les crédits sont consommés progressivement (~5$/mois pour 15 users).' },
+  { id:'d5', titre:'Suivre la consommation Vercel (plan Pro 20$/mois)', destinataire:'Claire (auto)', deadline:'Tous les vendredis',
+    pourquoi:'Le plan Pro inclut 20$ de crédit mensuel. En phase de développement, les Build Minutes peuvent faire dépasser ce crédit. Surplus actuel estimé : ~14$ ce mois (temporaire). Après le code freeze, la consommation redescend dans le crédit. Mettre à jour la jauge chaque vendredi dans la page monitoring.' },
+];
+
+const D_CYCLE = ['todo', 'inprogress', 'done'];
+const D_ICONS = { todo:'⬜', inprogress:'🔄', done:'✅' };
+const D_LABELS = { todo:'À traiter', inprogress:'En cours', done:'Fait' };
+
+function getDStatus(id)      { return localStorage.getItem('demande_status_' + id) || 'todo'; }
+function setDStatus(id, val) { val === 'todo' ? localStorage.removeItem('demande_status_' + id) : localStorage.setItem('demande_status_' + id, val); }
+
+function toggleDemandeStatus(id) {
+  const cur  = getDStatus(id);
+  const next = D_CYCLE[(D_CYCLE.indexOf(cur) + 1) % D_CYCLE.length];
+  setDStatus(id, next);
+  const btn  = document.getElementById('db-' + id); if (btn) { btn.textContent = D_ICONS[next]; btn.title = D_LABELS[next]; }
+  const card = document.getElementById('dc-' + id); if (card) card.classList.toggle('demande-done', next === 'done');
+}
+
+function renderDemandes() {
+  const el = $('retro-demandes-wrap'); if (!el) return;
+  let h = `<div style="font-size:13px;font-weight:800;color:#7C3AED;margin-bottom:10px;display:flex;align-items:center;gap:8px">
+    🟣 Demandes en attente — Ce dont j'ai besoin des autres
+    <span style="font-size:11px;font-weight:500;color:#6B7280">(${DEMANDES.length} demandes)</span>
+  </div>`;
+  for (const d of DEMANDES) {
+    const status = getDStatus(d.id);
+    h += `<div class="demande-card${status === 'done' ? ' demande-done' : ''}" id="dc-${d.id}">
+      <div class="demande-header">
+        <div class="demande-titre">${d.titre}</div>
+        <button class="demande-status-btn" id="db-${d.id}" onclick="toggleDemandeStatus('${d.id}')" title="${D_LABELS[status]}">${D_ICONS[status]}</button>
+      </div>
+      <div class="demande-meta">
+        <span>Destinataire : <strong>${d.destinataire}</strong></span>
+        <span>Deadline : <strong>${d.deadline}</strong></span>
+      </div>
+      ${d.detail ? `<div class="demande-detail">📋 ${d.detail}</div>` : ''}
+      <div class="demande-pourquoi">💬 Pourquoi : ${d.pourquoi}</div>
+    </div>`;
+  }
+  el.innerHTML = h;
+}
+
+// ====================== VERCEL COSTS ======================
+
+// À mettre à jour depuis vercel.com → Dashboard → Usage
+const VERCEL_USAGE = {
+  plan: 'Pro',
+  creditIncluded: 20.00,
+  cycleStart: '2026-02-20',
+  cycleEnd:   '2026-03-20',
+  consumed: {
+    total:               8.08,
+    buildMinutes:        7.43,
+    functionInvocations: 0.60,
+    fluidMemory:         0.03,
+    fluidCPU:            0.01,
+    onDemandCharges:     0.00,
+  },
+  lastChecked: '2026-02-25',
+};
+
+const VERCEL_PROJECTIONS = [
+  { label:'Maintenant (dev intensif)',    build:30,  functions:2.50, status:'red',    comment:'Surplus ~$14' },
+  { label:'Après code freeze (mars)',     build:5,   functions:2.50, status:'green',  comment:'Dans le crédit' },
+  { label:'15 users actifs (avril)',      build:3,   functions:5,    status:'green',  comment:'' },
+  { label:'66 users actifs (cible)',      build:3,   functions:12,   status:'green',  comment:'' },
+];
+
+function renderVercelCosts() {
+  const v = VERCEL_USAGE;
+  const today0 = new Date(); today0.setHours(0,0,0,0);
+  const cycleStart = new Date(v.cycleStart);
+  const cycleEnd   = new Date(v.cycleEnd);
+  const joursEcoules = Math.max(1, Math.floor((today0 - cycleStart) / 86400000));
+  const totalJours   = Math.floor((cycleEnd - cycleStart) / 86400000);
+  const joursRestants = Math.max(0, totalJours - joursEcoules);
+  const projection   = Math.round((v.consumed.total / joursEcoules) * totalJours * 100) / 100;
+  const surplus      = Math.max(0, Math.round((projection - v.creditIncluded) * 100) / 100);
+  const pctConsumed  = Math.min(100, Math.round(v.consumed.total / v.creditIncluded * 1000) / 10);
+  const pctProj      = projection / v.creditIncluded;
+
+  const barColor = pctConsumed <= 50 ? '#22C55E' : pctConsumed <= 80 ? '#F59E0B' : pctConsumed <= 100 ? '#F97316' : '#EF4444';
+  const borderColor = projection < v.creditIncluded ? '#22C55E' : projection < 30 ? '#F97316' : '#EF4444';
+  const statusIcon = projection < v.creditIncluded ? '🟢' : projection < 30 ? '🟠' : '🔴';
+
+  const coveredPct = Math.min(100, Math.round(v.creditIncluded / projection * 100));
+  const surplusPct = 100 - coveredPct;
+
+  let h = `<div style="border-left:4px solid ${borderColor};background:#fff;border-radius:8px;border:1px solid #E2E8F0;border-left-width:4px;padding:16px;margin-bottom:16px">`;
+  h += `<div style="font-size:14px;font-weight:800;color:#051E50;margin-bottom:4px">${statusIcon} 🖥️ Hébergement Vercel — Suivi des coûts</div>`;
+  h += `<div style="font-size:12px;color:#64748B;margin-bottom:12px">Plan Pro · 20$/mois inclus · Mis à jour le ${v.lastChecked}</div>`;
+  h += `<div style="font-size:12px;color:#334155;margin-bottom:12px">L'application est hébergée sur Vercel (plan Pro, 20$/mois). Le plan inclut un crédit de 20$. Au-delà, les frais supplémentaires sont facturés automatiquement.</div>`;
+
+  // Cycle info
+  h += `<div style="font-size:11px;color:#64748B;margin-bottom:10px">Cycle : ${v.cycleStart} → ${v.cycleEnd} &nbsp;|&nbsp; Jours écoulés : <strong>${joursEcoules} / ${totalJours}</strong> &nbsp;|&nbsp; Restants : <strong>${joursRestants}</strong></div>`;
+
+  // Crédit consommé
+  h += `<div style="font-size:12px;font-weight:700;color:#051E50;margin-bottom:4px">Crédit inclus consommé : $${v.consumed.total.toFixed(2)} / $${v.creditIncluded.toFixed(2)}</div>`;
+  h += `<div class="vercel-prog-bar"><div class="vercel-prog-fill" style="width:${pctConsumed}%;background:${barColor}"></div></div>`;
+  h += `<div style="font-size:11px;color:${barColor};font-weight:700;margin-bottom:10px">${pctConsumed}% du crédit utilisé</div>`;
+  if (v.consumed.onDemandCharges > 0) h += `<div style="font-size:11px;color:#DC2626;font-weight:700;margin-bottom:8px">⚠️ Surplus facturé (On-Demand) : $${v.consumed.onDemandCharges.toFixed(2)}</div>`;
+
+  // Détail par poste
+  h += `<div style="font-size:11px;font-weight:700;color:#051E50;margin:12px 0 6px;text-transform:uppercase;letter-spacing:.6px">Détail par poste</div>`;
+  h += `<table style="margin-bottom:12px"><thead><tr><th>Poste</th><th>Consommé</th><th>Proj. fin cycle</th><th>Commentaire</th></tr></thead><tbody>`;
+  const postes = [
+    { l:'Build Minutes',        v:v.consumed.buildMinutes,        pct: v.consumed.buildMinutes / v.consumed.total },
+    { l:'Function Invocations', v:v.consumed.functionInvocations, pct: v.consumed.functionInvocations / v.consumed.total },
+    { l:'Memory + CPU',         v:v.consumed.fluidMemory + v.consumed.fluidCPU, pct: (v.consumed.fluidMemory + v.consumed.fluidCPU) / v.consumed.total },
+  ];
+  let totalConsumed = 0; let totalProj = 0;
+  for (const p of postes) {
+    const pv = Math.round(p.v * 100) / 100;
+    const pp = Math.round((p.v / joursEcoules) * totalJours * 100) / 100;
+    totalConsumed += pv; totalProj += pp;
+    const isHigh = pp > v.creditIncluded * 0.5;
+    h += `<tr><td>${p.l}</td><td>$${pv.toFixed(2)}</td><td>~$${pp.toFixed(2)}</td><td>${isHigh ? '🔴 Élevé (dev intensif)' : '🟢 Normal'}</td></tr>`;
+  }
+  h += `<tr style="font-weight:700;border-top:2px solid #E2E8F0"><td>TOTAL</td><td>$${totalConsumed.toFixed(2)}</td><td>~$${projection.toFixed(2)}</td><td>${surplus > 0 ? `🟠 Surplus ~$${surplus.toFixed(2)}` : '🟢 OK'}</td></tr>`;
+  h += '</tbody></table>';
+
+  // Jauge de projection
+  h += `<div style="font-size:11px;font-weight:700;color:#051E50;margin:10px 0 4px">Projection fin de cycle</div>`;
+  if (surplus > 0) {
+    const projTotal = v.creditIncluded + surplus;
+    h += `<div class="vercel-proj-bar">
+      <div class="vercel-proj-covered" style="width:${coveredPct}%;background:#22C55E"></div>
+      <div class="vercel-proj-surplus" style="width:${surplusPct}%;background:#F97316"></div>
+    </div>`;
+    h += `<div style="font-size:11px;color:#64748B;margin-top:4px;display:flex;gap:12px"><span style="color:#22C55E">■ Couvert ($${v.creditIncluded})</span><span style="color:#F97316">■ Surplus estimé ($${surplus.toFixed(2)})</span></div>`;
+  } else {
+    h += `<div class="vercel-proj-bar"><div class="vercel-proj-covered" style="width:${Math.min(100,Math.round(projection/v.creditIncluded*100))}%;background:#22C55E"></div></div>`;
+    h += `<div style="font-size:11px;color:#22C55E;margin-top:4px">Dans le crédit inclus ✅</div>`;
+  }
+
+  // Pourquoi élevé
+  h += `<div style="font-size:11px;color:#334155;margin-top:12px;padding:8px;background:#FEFCE8;border-radius:6px;border-left:3px solid #F59E0B">
+    <strong>Pourquoi c'est élevé ce mois :</strong> Les Build Minutes représentent ${Math.round(v.consumed.buildMinutes/v.consumed.total*100)}% de la consommation. C'est le coût de chaque déploiement en phase de dev intensif. Après le code freeze du 10/03, les déploiements deviennent rares et le coût redescend naturellement.
+  </div>`;
+
+  // Projections par scénario
+  h += `<div style="font-size:11px;font-weight:700;color:#051E50;margin:12px 0 6px;text-transform:uppercase;letter-spacing:.6px">Prévisions par période</div>`;
+  h += `<table style="margin-bottom:10px"><thead><tr><th>Période</th><th>Build Minutes</th><th>Fonctions</th><th>Total/mois</th></tr></thead><tbody>`;
+  for (const row of VERCEL_PROJECTIONS) {
+    const total = row.build + row.functions;
+    const surplus2 = Math.max(0, total - v.creditIncluded);
+    const icon = row.status === 'red' ? '🔴' : row.status === 'green' ? '🟢' : '🟠';
+    const comment = row.comment ? ` — ${row.comment}` : (surplus2 > 0 ? ` — surplus $${surplus2.toFixed(0)}` : ' — dans le crédit');
+    h += `<tr><td>${row.label}</td><td>~$${row.build}</td><td>~$${row.functions}</td><td>${icon} ~$${total}${comment}</td></tr>`;
+  }
+  h += '</tbody></table>';
+
+  // Seuils d'alerte
+  h += `<div style="font-size:11px;color:#334155;padding:8px 10px;background:#F8FAFC;border-radius:6px;border:1px solid #E2E8F0">
+    <strong>Seuils d'alerte :</strong>&nbsp;
+    🟢 &lt;50% du crédit = OK &nbsp;|&nbsp;
+    🟡 50-80% = surveiller &nbsp;|&nbsp;
+    🟠 80-100% = ralentir les déploiements &nbsp;|&nbsp;
+    🔴 &gt;100% = surplus facturé
+    <br><strong>Statut actuel :</strong> ${pctConsumed <= 50 ? '🟢' : pctConsumed <= 80 ? '🟡' : '🟠'} ${pctConsumed}% &nbsp;|&nbsp;
+    Alerte projection &gt;$${v.creditIncluded} : ${surplus > 0 ? `🟠 OUI (~$${projection.toFixed(2)})` : '🟢 NON'}
+  </div>`;
+  h += `<div style="font-size:11px;color:#64748B;margin-top:8px;font-style:italic">💡 Le surplus actuel est temporaire et lié à la phase de développement. Dès le code freeze, la consommation rentre dans les $20/mois. Aucun changement de plan nécessaire.</div>`;
+  h += '</div>';
+  return h;
+}
+
 // ====================== PITCH GENERATOR SUB-TABS ======================
 
 // ---- Constantes modifiables ----
@@ -1504,21 +1705,47 @@ function renderPitchFormations() {
   html('pitch-formations-widget', tlH + tableH);
 }
 
-// ---- Coûts ----
+// ---- Coûts globaux ----
 function renderPitchCouts() {
-  const cpp  = PITCH_CALLS_PITCH * PITCH_PRICE_CALL;
-  const cppE = (cpp * PITCH_EUR_USD).toFixed(3);
-  const max10 = (10 * cpp * PITCH_EUR_USD).toFixed(2);
-  let h = `<div class="pitch-cost-kpis">
+  const cpp   = PITCH_CALLS_PITCH * PITCH_PRICE_CALL;
+  const cppE  = (cpp * PITCH_EUR_USD).toFixed(3);
+  const max5  = (5  * cpp * PITCH_EUR_USD).toFixed(2);
+
+  // Vercel + OpenAI summary
+  const vercelNow  = VERCEL_PROJECTIONS[0]; // dev intensif
+  const vercelStab = VERCEL_PROJECTIONS[1]; // après code freeze
+  const openaiStab = (66 * 5 * 20 * PITCH_CALLS_PITCH * PITCH_PRICE_CALL).toFixed(0); // 66 users, 5 pitchs, 20j
+  const vercelStabTotal = vercelStab.build + vercelStab.functions;
+  const totalStab = (+openaiStab * PITCH_EUR_USD + vercelStabTotal).toFixed(0);
+
+  let h = `<div style="margin-bottom:16px;padding:14px;background:#F8FAFC;border-radius:8px;border:1px solid #E2E8F0">
+    <div style="font-size:13px;font-weight:800;color:#051E50;margin-bottom:10px">💰 Coûts globaux — Résumé</div>
+    <table><thead><tr><th>Source</th><th>Ce mois</th><th>Cible (66 users, stabilisé)</th></tr></thead><tbody>
+      <tr><td>Vercel (Pro)</td><td>~$${vercelNow.build + vercelNow.functions}*</td><td>~$${vercelStabTotal}/mois</td></tr>
+      <tr><td>OpenAI (API)</td><td>~$0.25</td><td>~${(+openaiStab * PITCH_EUR_USD).toFixed(0)} €/mois</td></tr>
+      <tr style="font-weight:700;border-top:2px solid #E2E8F0"><td>TOTAL</td><td>~$${vercelNow.build + vercelNow.functions + 0.25}</td><td>~$${totalStab}/mois</td></tr>
+    </tbody></table>
+    <div style="font-size:11px;color:#64748B;margin-top:8px">* Vercel élevé ce mois à cause du développement intensif. Redescend à ~$${vercelStabTotal} après stabilisation.</div>
+    <div style="font-size:11px;color:#334155;margin-top:4px;font-weight:600">Coût par commercial/mois (66 users) : ~$${(+totalStab / 66).toFixed(2)}</div>
+  </div>`;
+
+  // Vercel details
+  h += renderVercelCosts();
+
+  // Séparateur OpenAI
+  h += `<div style="font-size:13px;font-weight:800;color:#051E50;margin:20px 0 10px">🤖 Coûts API OpenAI — Détail</div>`;
+
+  h += `<div class="pitch-cost-kpis">
     <div class="pitch-cost-kpi"><div class="pitch-cost-val">${cppE} €</div><div class="pitch-cost-lbl">par pitch complet</div></div>
     <div class="pitch-cost-kpi"><div class="pitch-cost-val">${cpp.toFixed(5)} $</div><div class="pitch-cost-lbl">${PITCH_CALLS_PITCH} appels × ${PITCH_PRICE_CALL} $/appel</div></div>
-    <div class="pitch-cost-kpi"><div class="pitch-cost-val">${max10} €</div><div class="pitch-cost-lbl">quota max/user/jour (10 pitchs)</div></div>
+    <div class="pitch-cost-kpi"><div class="pitch-cost-val">${max5} €</div><div class="pitch-cost-lbl">quota max/user/jour (5 pitchs)</div></div>
   </div>`;
+
   const scenarios = [
     { label:'Pilote réduit',           users:5,  pitchs:15  },
     { label:'Session formation (×3)',  users:22, pitchs:66  },
     { label:'10 ambassadeurs actifs',  users:10, pitchs:30  },
-    { label:'Worst case (quota max)',  users:22, pitchs:220, hl:true },
+    { label:'Worst case (quota max 5)', users:22, pitchs:110, hl:true },
   ];
   h += `<table><thead><tr><th>Scénario</th><th>Users</th><th>Pitchs/jour</th><th>Coût/jour</th><th>Coût/mois (20j)</th></tr></thead><tbody>`;
   for (const row of scenarios) {
@@ -1527,7 +1754,7 @@ function renderPitchCouts() {
     const style   = row.hl ? ' style="background:#FEF9C3"' : '';
     h += `<tr${style}><td>${row.label}</td><td>${row.users}</td><td>${row.pitchs}</td><td>${daily} €</td><td>${monthly} €</td></tr>`;
   }
-  h += `</tbody></table><div class="note" style="margin-top:10px">Budget de test recommandé avant la formation : <strong>20-30 $</strong>. Coûts réels visibles dans platform.openai.com/usage.</div>`;
+  h += `</tbody></table><div class="note" style="margin-top:10px">Quota recommandé : <strong>5 pitchs/jour/user</strong>. Coûts réels visibles dans platform.openai.com/usage.</div>`;
   html('pitch-couts-widget', h);
 }
 
@@ -1592,6 +1819,8 @@ const RETRO_DATA = [
     { id:'s1-3', text:'Mettre à jour OPENAI_API_KEY dans Vercel', responsable:'CLAIRE', priority:'red' },
     { id:'s1-4', text:'Tester que l\'app fonctionne avec la nouvelle clé', responsable:'CLAIRE', priority:'red' },
     { id:'s1-5', text:'Créer canal Teams "Rubix Pitch — Retours & Support"', responsable:'CLAIRE', priority:'blue' },
+    { id:'s1-20', text:'Demander à l\'IT la création du canal Teams "Rubix Pitch — Retours & Support"', responsable:'CLAIRE', priority:'blue' },
+    { id:'s1-21', text:'Demander validation budget 50$ (46€) pour compte OpenAI dédié au manager', responsable:'CLAIRE', priority:'blue' },
   ]},
   { date:'2026-02-26', milestone:null, actions:[
     { id:'s1-6', text:'Corriger bug API Fusion (solutions_selectionnees = [])', responsable:'CLAUDE CODE', priority:'red' },
@@ -1631,7 +1860,7 @@ const RETRO_DATA = [
   ]},
   { date:'2026-03-05', milestone:'💜 Point manager', actions:[
     { id:'s2-12', text:'Point manager : présenter la page /monitoring', responsable:'CLAIRE', priority:'blue' },
-    { id:'s2-13', text:'Demander 3-5 testeurs commerciaux volontaires (2 RVE + 1 DE + 1 non-tech)', responsable:'CLAIRE', priority:'blue' },
+    { id:'s2-13', text:'Demander 3-5 testeurs commerciaux volontaires (2 RVE + 1 DE + 1 non-tech) — montrer la page /monitoring en support', responsable:'CLAIRE', priority:'blue' },
     { id:'s2-14', text:'Créer endpoint /api/health (test OpenAI + Blob)', responsable:'CLAUDE CODE', priority:'orange' },
   ]},
   { date:'2026-03-06', milestone:'📋 Point d\'étape', actions:[
@@ -1641,6 +1870,7 @@ const RETRO_DATA = [
     { id:'s2-18', text:'Confirmer liste testeurs (noms reçus du point manager)', responsable:'CLAIRE', priority:'blue' },
     { id:'s2-19', text:'Préparer users.json avec les 66 participants', responsable:'CLAIRE', priority:'blue' },
     { id:'s2-20', text:'Décider quota pitchs/jour par utilisateur : 5 (~€72/mois, recommandé) ou 10 (~€146/mois)', responsable:'CLAIRE', priority:'orange' },
+    { id:'s2-22', text:'Mettre à jour les métriques Vercel dans la page /monitoring (vercel.com → Dashboard → Usage → copier les chiffres dans VERCEL_USAGE)', responsable:'CLAIRE', priority:'green' },
   ]},
   // Semaine 3 — Bêta test + Simulations (09/03 → 13/03)
   // 07/03 (Sam) + 08/03 (Dim) → déplacés semaine du 09/03
@@ -1706,6 +1936,7 @@ const RETRO_DATA = [
   { date:'2026-03-20', milestone:null, actions:[
     { id:'s5-5', text:'Bilan semaine pilote : logs, feedback ambassadeurs, décision suite', responsable:'CLAIRE', priority:'green' },
     { id:'s5-6', text:'Si KO → identifier et corriger avant le 25/03', responsable:'CLAIRE', priority:'green' },
+    { id:'s5-7', text:'Relancer les organisateurs formation pour la liste des 66 participants si pas encore reçue (deadline 20/03)', responsable:'CLAIRE', priority:'blue' },
   ]},
   { date:'2026-03-24', milestone:'📋 Veille formation 2', actions:[
     { id:'s6-1', text:'Checklist veille complète (même que 16/03)', responsable:'CLAIRE', priority:'green' },
@@ -1954,6 +2185,7 @@ function setRetroResp(val) { retroFilterResp = val; renderRetroFilters(); applyR
 function setRetroPrio(val) { retroFilterPrio = val; renderRetroFilters(); applyRetroFilters(); }
 
 function initRetro() {
+  renderDemandes();
   $('retro-calendar').innerHTML = buildRetroCalendar();
   renderRetroFilters();
   updateRetroProgress();
