@@ -247,6 +247,13 @@ th{color:#1D4ED8;font-weight:600;font-size:10px;text-transform:uppercase;letter-
 .cl-reset-btn:hover{background:#FEE2E2;border-color:#FECACA;color:#DC2626}
 .pitch-prog-bar{height:8px;background:#E2E8F0;border-radius:4px;overflow:hidden;margin-top:6px}
 .pitch-prog-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,#DC2626,#F59E0B);transition:width .3s}
+/* Inline edit system */
+.edit-wrap{display:inline-flex;align-items:center;gap:4px}
+.edit-btn{background:none;border:none;cursor:pointer;font-size:11px;opacity:.3;padding:0 2px;line-height:1;transition:opacity .15s;flex-shrink:0}
+.edit-btn:hover{opacity:.8}
+.edit-val{outline:none;transition:background .15s}
+.edit-val[contenteditable="true"]{background:#FEFCE8;border-radius:3px;padding:0 3px;outline:1px solid #FCD34D}
+.edit-val.edited{color:#7C3AED}
 /* Demandes en attente */
 .demandes-wrap{margin-bottom:20px}
 .dem-header{display:flex;align-items:center;gap:10px;margin-bottom:8px;flex-wrap:wrap}
@@ -542,7 +549,7 @@ th{color:#1D4ED8;font-weight:600;font-size:10px;text-transform:uppercase;letter-
     <!-- Sous-onglets Rubix Pitch -->
     <div class="sub-tabs-nav">
       <button class="sub-tab-btn active" onclick="showPitchTab('synthese',this)">Synthèse</button>
-      <button class="sub-tab-btn" onclick="showPitchTab('couts',this)">Coûts</button>
+      <button class="sub-tab-btn" onclick="showPitchTab('couts',this)">Situation &amp; Coûts</button>
       <button class="sub-tab-btn" onclick="showPitchTab('pilote',this)">Pilote &amp; Formations</button>
       <button class="sub-tab-btn" onclick="showPitchTab('ameliorations',this)">Améliorations</button>
       <button class="sub-tab-btn" onclick="showPitchTab('retro',this)">Rétroplanning</button>
@@ -1437,7 +1444,7 @@ function renderPitchFormations() {
   const OPENAI_COSTS = { pricePerCall: PITCH_PRICE_CALL, callsPerPitch: PITCH_CALLS_PITCH, eurUsd: PITCH_EUR_USD };
 
   let tlH = '<div class="pitch-timeline">';
-  for (const f of PITCH_FORMATION_DATES) {
+  PITCH_FORMATION_DATES.forEach((f, i) => {
     const target = new Date(f.date); target.setHours(0,0,0,0);
     const days = Math.ceil((target - today0) / 86400000);
     const isPast = days < 0; const isToday = days === 0;
@@ -1448,21 +1455,21 @@ function renderPitchFormations() {
     const whenColor = (f.done || isPast) ? '#059669' : isToday ? '#D97706' : '#64748B';
     tlH += `<div class="${cls}">
       <div class="pitch-tl-dot"></div>
-      <div class="pitch-tl-date">${f.label}</div>
-      <div class="pitch-tl-desc">${f.desc}</div>
-      <div class="pitch-tl-users">${f.users} participant${f.users > 1 ? 's' : ''}</div>
+      <div class="pitch-tl-date">${peSpan('form_date_'+i, f.label)}</div>
+      <div class="pitch-tl-desc">${peSpan('form_desc_'+i, f.desc)}</div>
+      <div class="pitch-tl-users">${peSpan('form_users_'+i, f.users+' participant'+(f.users>1?'s':''))}</div>
       <div class="pitch-tl-when" style="color:${whenColor}">${when}</div>
     </div>`;
-  }
+  });
   tlH += '</div>';
 
   let tableH = `<table style="margin-top:16px"><thead><tr><th>Session</th><th>Participants</th><th>Pitchs/jour (est.)</th><th>Appels OpenAI</th><th>Coût estimé/jour</th></tr></thead><tbody>`;
-  for (const f of PITCH_FORMATION_DATES) {
+  PITCH_FORMATION_DATES.forEach((f, i) => {
     const pitchs = f.users * 3;
     const calls  = pitchs * OPENAI_COSTS.callsPerPitch;
     const cost   = (calls * OPENAI_COSTS.pricePerCall * OPENAI_COSTS.eurUsd).toFixed(2);
-    tableH += `<tr><td>${f.label} — ${f.desc}</td><td>${f.users}</td><td>${pitchs}</td><td>${calls}</td><td>${cost} €</td></tr>`;
-  }
+    tableH += `<tr><td>${peSpan('form_t_session_'+i, f.label+' — '+f.desc)}</td><td>${peSpan('form_t_users_'+i, f.users)}</td><td>${pitchs}</td><td>${calls}</td><td>${peSpan('form_t_cost_'+i, cost+' €')}</td></tr>`;
+  });
   tableH += '</tbody></table>';
   tableH += `<div class="note" style="margin-top:10px">Base : ${OPENAI_COSTS.callsPerPitch} appels × ${OPENAI_COSTS.pricePerCall}$ × ${OPENAI_COSTS.eurUsd} EUR/USD. Coûts réels visibles dans le dashboard OpenAI.</div>`;
   html('pitch-formations-widget', tlH + tableH);
@@ -1517,129 +1524,114 @@ function renderPitchCouts() {
   const C   = COSTS;
   const EUR = C.EUR_USD;
 
-  // SET-UP totaux
-  const setupUSD = C.setup.reduce((s, r) => s + r.cost, 0);          // 105
-  const setupEUR = Math.round(setupUSD * EUR);                        // ~97
+  // Calculs IA uniquement
+  const oaiRem = C.openaiCredits.loaded - C.openaiCredits.consumed;
+  const oaiPct = Math.round(C.openaiCredits.consumed / C.openaiCredits.loaded * 1000) / 10;
 
-  // FONCTIONNEMENT totaux
-  const t15 = C.running.vercelPro + C.running.openaiPer15;            // 15.60
-  const t66 = C.running.vercelPro + C.running.openaiPer66;            // 17.64
+  const VERCEL_SURCHAGE = 14; // surcoût Vercel builds lié à Rubix Pitch ($/mois)
 
-  // CRÉDITS OPENAI
-  const oaiRem    = C.openaiCredits.loaded - C.openaiCredits.consumed; // 48.75
-  const oaiPct    = Math.round(C.openaiCredits.consumed / C.openaiCredits.loaded * 1000) / 10; // 2.5
-  const monthsRem = Math.round(oaiRem / C.running.openaiPer15);       // ~81 mois
+  // Scénarios montée en charge
+  const MONTEE = [
+    { palier:'Pilote actuel',      users:5,   pitchs:25,  risqueLabel:'Aucun',  risqueColor:'#059669', note:'Configuration actuelle' },
+    { palier:'Fin pilote',         users:22,  pitchs:110, risqueLabel:'Aucun',  risqueColor:'#059669', note:'Aucun changement requis' },
+    { palier:'Equipe commerciale', users:50,  pitchs:250, risqueLabel:'Faible', risqueColor:'#D97706', note:'Compte IA dedié recommandé' },
+    { palier:'Cible groupe',       users:66,  pitchs:330, risqueLabel:'Faible', risqueColor:'#D97706', note:'Compte IA dedié + SSO' },
+    { palier:'Extension large',    users:100, pitchs:500, risqueLabel:'Modéré', risqueColor:'#DC2626', note:'Azure OpenAI entreprise' },
+  ];
 
   let h = '';
 
-  // ── Vercel temps réel (section existante) ──────────────────────────────
-  h += renderVercelCosts();
+  // ══════════════════════════════════════════════════════════════════════
+  // BLOC 1 — SITUATION ACTUELLE
+  // ══════════════════════════════════════════════════════════════════════
+  h += `<div style="background:#fff;border-radius:8px;border:1px solid #E2E8F0;padding:16px;margin-bottom:16px">`;
+  h += `<div style="font-size:14px;font-weight:800;color:#051E50;margin-bottom:4px">${peSpan('sit_titre','Situation actuelle')}</div>`;
+  h += `<div style="font-size:11px;color:#64748B;margin-bottom:14px">${peSpan('sit_intro','Rubix Pitch utilise l\\'API OpenAI pour générer les pitchs. Les coûts ci-dessous sont spécifiques à cette application.')}</div>`;
 
-  // ── Carte principale ───────────────────────────────────────────────────
-  h += `<div style="border-left:4px solid #22C55E;background:#fff;border-radius:8px;border:1px solid #E2E8F0;padding:16px;margin-bottom:16px">`;
-  h += `<div style="font-size:14px;font-weight:800;color:#051E50;margin-bottom:4px">💰 Coûts Rubix Rubix Pitch</div>`;
+  // Badges
+  h += `<div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px">
+    <div style="background:#F0FDF4;border:1px solid #BBF7D0;border-radius:8px;padding:10px 16px;flex:1;min-width:140px;text-align:center">
+      <div style="font-size:10px;color:#6B7280;text-transform:uppercase;letter-spacing:.5px">Phase</div>
+      <div style="font-size:13px;font-weight:800;color:#059669;margin-top:4px">${peSpan('sit_phase','Pilote en cours','color:#059669')}</div>
+    </div>
+    <div style="background:#EFF6FF;border:1px solid #BFDBFE;border-radius:8px;padding:10px 16px;flex:1;min-width:140px;text-align:center">
+      <div style="font-size:10px;color:#6B7280;text-transform:uppercase;letter-spacing:.5px">Utilisateurs</div>
+      <div style="font-size:13px;font-weight:800;color:#1D4ED8;margin-top:4px">${peSpan('sit_users','5 ambassadeurs','color:#1D4ED8')}</div>
+    </div>
+    <div style="background:#F8FAFC;border:1px solid #E2E8F0;border-radius:8px;padding:10px 16px;flex:1;min-width:140px;text-align:center">
+      <div style="font-size:10px;color:#6B7280;text-transform:uppercase;letter-spacing:.5px">Compte IA</div>
+      <div style="font-size:13px;font-weight:800;color:#051E50;margin-top:4px">${peSpan('sit_ia','OpenAI (dedié Rubix Digital)')}</div>
+    </div>
+  </div>`;
 
-  // ── 1. COÛTS DE CONSTRUCTION ───────────────────────────────────────────
-  h += sectionSep('COÛTS DE CONSTRUCTION (SET-UP)', 'Phase temporaire — terminée après le code freeze du 10/03');
-  h += `<p style="font-size:12px;color:#334155;margin:8px 0 12px">Le set-up de l'application comprend l'hébergement pendant la phase de développement et les crédits IA nécessaires au lancement.</p>`;
-  h += `<table style="margin-bottom:12px"><thead><tr><th>Poste</th><th>Coût</th><th>Détail</th></tr></thead><tbody>`;
-  for (const row of C.setup) {
-    h += `<tr>
-      <td><strong>${row.label}</strong><br><span style="color:#9CA3AF;font-size:10px">${row.sub}</span></td>
-      <td style="font-weight:700;white-space:nowrap;color:#051E50">~$${row.cost}</td>
-      <td style="font-size:11px;color:#334155">${row.detail}</td>
-    </tr>`;
-  }
+  // Coûts spécifiques Rubix Pitch
+  h += `<div style="font-size:12px;font-weight:700;color:#6B7280;text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px">Coûts mensuels Rubix Pitch</div>`;
+  const oaiMonth5 = (25 * C.running.costPerPitch * EUR).toFixed(2);
+  const vercelEUR = Math.round(VERCEL_SURCHAGE * EUR);
+  const totalMonth = (parseFloat(oaiMonth5) + vercelEUR).toFixed(2);
+  h += `<table style="margin-bottom:12px"><thead><tr><th>Poste</th><th>Coût/mois</th><th>Détail</th></tr></thead><tbody>`;
+  h += `<tr>
+    <td style="font-weight:700">${peSpan('sit_c_vercel','Surcoût Vercel (builds)')}</td>
+    <td style="font-weight:700;color:#051E50">${peSpan('sit_c_vercel_prix','~'+vercelEUR+'€/mois','color:#051E50')}</td>
+    <td style="font-size:11px;color:#334155">${peSpan('sit_c_vercel_detail','+14$ de builds liés à Rubix Pitch sur le forfait Vercel Pro partagé')}</td>
+  </tr>`;
+  h += `<tr>
+    <td style="font-weight:700">${peSpan('sit_c_oai','OpenAI (IA)')}</td>
+    <td style="font-weight:700;color:#051E50">${peSpan('sit_c_oai_prix','~'+oaiMonth5+'€/mois','color:#051E50')}</td>
+    <td style="font-size:11px;color:#334155">${peSpan('sit_c_oai_detail','5 users x 5 pitchs/mois — ~0,007€ par pitch')}</td>
+  </tr>`;
   h += `<tr style="font-weight:700;background:#F0FDF4;border-top:2px solid #E2E8F0">
-    <td>TOTAL SET-UP</td>
-    <td style="color:#166534">~$${setupUSD}</td>
-    <td style="color:#166534">≈ ${setupEUR}€</td>
+    <td>TOTAL Rubix Pitch</td>
+    <td style="color:#059669">${peSpan('sit_c_total','~'+totalMonth+'€/mois','color:#059669')}</td>
+    <td style="font-size:11px;color:#059669">${peSpan('sit_c_total_detail','soit ~'+((parseFloat(totalMonth))/5).toFixed(2)+'€ par commercial')}</td>
   </tr>`;
   h += '</tbody></table>';
 
-  // ── 2. COÛTS DE FONCTIONNEMENT ─────────────────────────────────────────
-  h += sectionSep('COÛTS DE FONCTIONNEMENT (RÉCURRENT)', 'À partir d\'avril 2026 — budget mensuel prévisible');
-  h += `<p style="font-size:12px;color:#334155;margin:8px 0 12px">Une fois l'application stabilisée, les coûts mensuels sont faibles et prévisibles.</p>`;
-  h += `<table style="margin-bottom:12px"><thead><tr><th>Poste</th><th>15 users</th><th>66 users</th><th>Détail</th></tr></thead><tbody>`;
-  h += `<tr>
-    <td>Vercel Pro</td>
-    <td>~$${C.running.vercelPro}</td>
-    <td>~$${C.running.vercelPro}</td>
-    <td style="font-size:11px;color:#334155">Coût stable, peu de builds en production</td>
-  </tr>`;
-  h += `<tr>
-    <td>OpenAI API</td>
-    <td>~$${C.running.openaiPer15.toFixed(2)}</td>
-    <td>~$${C.running.openaiPer66.toFixed(2)}</td>
-    <td style="font-size:11px;color:#334155">~$${C.running.costPerPitch} / pitch<br>Base : 5 pitchs/mois / commercial</td>
-  </tr>`;
-  h += `<tr style="font-weight:700;border-top:2px solid #E2E8F0">
-    <td>TOTAL / mois</td>
-    <td>~$${Math.round(t15)}/mois<br><span style="font-size:11px;color:#9CA3AF">(${Math.ceil(t15 * EUR)}€)</span></td>
-    <td>~$${Math.round(t66)}/mois<br><span style="font-size:11px;color:#9CA3AF">(${Math.ceil(t66 * EUR)}€)</span></td>
-    <td></td>
-  </tr>`;
-  h += `<tr>
-    <td style="color:#6B7280">Par commercial</td>
-    <td style="color:#6B7280">~${Math.round(t15 / 15 * EUR * 100) / 100}€</td>
-    <td style="color:#059669;font-weight:700">~0,27€ <span style="font-size:10px">(≈ 0,30€)</span></td>
-    <td></td>
-  </tr>`;
+  // Crédits prépayés
+  h += `<div style="background:#F8FAFC;border-radius:8px;padding:12px;border:1px solid #E2E8F0;font-size:12px;color:#334155;margin-top:4px">
+    <strong>Crédits IA :</strong> ${peSpan('sit_credits','$'+C.openaiCredits.loaded+' chargés, $'+C.openaiCredits.consumed+' consommés, reste ~$'+oaiRem.toFixed(0))}
+    <div class="vercel-prog-bar" style="margin-top:6px"><div class="vercel-prog-fill" style="width:${Math.max(1, Math.round(oaiPct))}%;background:#22C55E"></div></div>
+    <div style="font-size:11px;color:#059669;margin-top:4px">${peSpan('sit_credits_note','Ces crédits couvrent plusieurs années d\\'utilisation au rythme actuel.')}</div>
+  </div>`;
+
+  h += '</div>'; // fin bloc situation
+
+  // ══════════════════════════════════════════════════════════════════════
+  // BLOC 2 — MONTÉE EN CHARGE
+  // ══════════════════════════════════════════════════════════════════════
+  h += `<div style="background:#fff;border-radius:8px;border:1px solid #E2E8F0;padding:16px;margin-bottom:16px">`;
+  h += `<div style="font-size:14px;font-weight:800;color:#051E50;margin-bottom:4px">${peSpan('montee_titre','Montée en charge')}</div>`;
+  h += `<div style="font-size:11px;color:#64748B;margin-bottom:14px">${peSpan('montee_desc','Projection des coûts IA selon le nombre d\\'utilisateurs. Base : 5 pitchs/mois par commercial.')}</div>`;
+
+  h += `<table style="margin-bottom:12px"><thead><tr><th>Palier</th><th>Users</th><th>Builds Vercel</th><th>IA OpenAI</th><th>Total/mois</th><th>Par commercial</th><th>Risque</th><th>Prérequis</th></tr></thead><tbody>`;
+  MONTEE.forEach((m, i) => {
+    const oaiEUR = (m.pitchs * C.running.costPerPitch * EUR).toFixed(2);
+    const totalEUR = (VERCEL_SURCHAGE * EUR + m.pitchs * C.running.costPerPitch * EUR).toFixed(2);
+    const perUser = (parseFloat(totalEUR) / m.users).toFixed(2);
+    const isCurrent = i === 0;
+    const rowBg = isCurrent ? 'background:#F0FDF4;' : '';
+    h += `<tr style="${rowBg}">
+      <td style="font-weight:700">${peSpan('montee_palier_'+i, m.palier)}${isCurrent ? ' <span style="font-size:9px;background:#059669;color:#fff;border-radius:3px;padding:1px 5px;margin-left:4px">ACTUEL</span>' : ''}</td>
+      <td style="font-weight:700;text-align:center">${peSpan('montee_users_'+i, m.users)}</td>
+      <td style="text-align:center">${peSpan('montee_vercel_'+i, '~'+vercelEUR+'€')}</td>
+      <td style="text-align:center">${peSpan('montee_oai_'+i, '~'+oaiEUR+'€')}</td>
+      <td style="font-weight:700;text-align:center">${peSpan('montee_total_'+i, '~'+totalEUR+'€')}</td>
+      <td style="font-weight:700;text-align:center;color:#059669">${peSpan('montee_peruser_'+i, '~'+perUser+'€','color:#059669')}</td>
+      <td style="text-align:center"><span style="display:inline-block;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:700;color:${m.risqueColor};border:1px solid ${m.risqueColor}">${peSpan('montee_risque_'+i, m.risqueLabel, 'color:'+m.risqueColor)}</span></td>
+      <td style="font-size:11px;color:#334155">${peSpan('montee_note_'+i, m.note)}</td>
+    </tr>`;
+  });
   h += '</tbody></table>';
 
-  // ── 3. LE CHIFFRE CLÉ ─────────────────────────────────────────────────
-  h += sectionSep('LE CHIFFRE CLÉ', '');
-  h += `<div style="background:#051E50;color:#fff;border-radius:12px;padding:32px 24px;margin:12px 0 20px;text-align:center">
-    <div style="font-size:24px;font-weight:800;margin-bottom:8px">~${setupEUR}€ de set-up</div>
-    <div style="font-size:16px;font-weight:400;margin-bottom:8px">+</div>
-    <div style="font-size:28px;font-weight:800">0,30€ / commercial / mois</div>
-    <div style="font-size:13px;font-weight:400;opacity:.75;margin-top:8px">(base 5 pitchs/mois par commercial)</div>
+  // Chiffre clé
+  h += `<div style="background:#051E50;color:#fff;border-radius:12px;padding:24px;text-align:center;margin-top:4px">
+    <div style="font-size:12px;opacity:.7;margin-bottom:6px">${peSpan('montee_key_label','A retenir','color:#fff')}</div>
+    <div style="font-size:24px;font-weight:800">${peSpan('montee_key_value','~13€/mois pour 66 commerciaux','color:#fff')}</div>
+    <div style="font-size:13px;opacity:.7;margin-top:8px">${peSpan('montee_key_sub','Soit ~0,20€ par commercial par mois (builds + IA)','color:#fff')}</div>
   </div>`;
 
-  // ── 4. DÉTAIL OPENAI ──────────────────────────────────────────────────
-  h += sectionSep('DÉTAIL OPENAI', '');
-  h += `<p style="font-size:12px;color:#334155;margin:8px 0 12px">Coût par pitch complet : <strong>~$${C.running.costPerPitch}</strong> (6 appels API) — soit moins de 1 centime par pitch généré.</p>`;
-  h += `<table style="margin-bottom:6px"><thead><tr><th>Scénario</th><th>Pitchs/mois</th><th>Coût OpenAI/mois</th></tr></thead><tbody>`;
-  for (const sc of C.oaiScenarios) {
-    const cost = (sc.pitchs * C.running.costPerPitch).toFixed(2);
-    h += `<tr><td>${sc.label}</td><td>${sc.pitchs}</td><td>~$${cost}</td></tr>`;
-  }
-  h += '</tbody></table>';
-  h += `<div style="font-size:11px;color:#9CA3AF;margin-bottom:12px">Base : 5 pitchs/mois par commercial.</div>`;
+  h += '</div>'; // fin bloc montée
 
-  // ── 5. BUDGET PHASE DE TEST ────────────────────────────────────────────
-  h += sectionSep('BUDGET PHASE DE TEST', '');
-  const testTotal  = C.testBudget.reduce((s, r) => s + r.cost, 0);
-  const testPitchs = C.testBudget.reduce((s, r) => s + r.pitchs, 0);
-  h += `<table style="margin-bottom:8px"><thead><tr><th>Action</th><th>Pitchs</th><th>Coût</th></tr></thead><tbody>`;
-  for (const row of C.testBudget) {
-    h += `<tr><td>${row.label}</td><td>${row.pitchs}</td><td>$${row.cost}</td></tr>`;
-  }
-  h += `<tr style="font-weight:700;border-top:2px solid #E2E8F0">
-    <td>TOTAL phase de test</td><td>${testPitchs}</td><td>$${Math.round(testTotal * 1000) / 1000}</td>
-  </tr>`;
-  h += '</tbody></table>';
-  h += `<div style="font-size:11px;color:#9CA3AF;margin-bottom:12px">(inclus dans le set-up, déjà comptabilisé)</div>`;
-
-  // ── 6. CRÉDITS OPENAI ─────────────────────────────────────────────────
-  h += sectionSep('CRÉDITS OPENAI', '');
-  h += `<div style="font-size:12px;color:#334155;margin-bottom:8px">
-    Crédits chargés : <strong>$${C.openaiCredits.loaded}</strong> (plan Tier 2) &nbsp;|&nbsp;
-    Consommé à date : <strong>~$${C.openaiCredits.consumed}</strong> &nbsp;|&nbsp;
-    Restant : <strong>~$${oaiRem.toFixed(2)}</strong>
-  </div>`;
-  h += `<div class="vercel-prog-bar" style="margin-bottom:4px"><div class="vercel-prog-fill" style="width:${Math.max(1, Math.round(oaiPct))}%;background:#22C55E"></div></div>`;
-  h += `<div style="display:flex;justify-content:space-between;font-size:11px;color:#9CA3AF;margin-bottom:10px">
-    <span>$${C.openaiCredits.consumed} consommé</span>
-    <span>$${C.openaiCredits.loaded}</span>
-  </div>`;
-  h += `<div style="background:#F0FDF4;border-radius:8px;padding:12px;border:1px solid #BBF7D0;font-size:12px;color:#166534">
-    ${oaiPct}% consommé &nbsp;|&nbsp;
-    Au rythme actuel (~$${C.running.openaiPer15}/mois avec 15 users),
-    ces crédits durent <strong>${monthsRem > 24 ? 'plus de ' + Math.floor(monthsRem / 12) + ' ans' : monthsRem + ' mois'}</strong>.
-  </div>`;
-
-  h += '</div>'; // fin carte principale
   html('pitch-couts-widget', h);
 }
 
@@ -1704,35 +1696,35 @@ function renderPitchPilote() {
   ];
 
   let h = `<div style="border-left:4px solid #3B82F6;background:#fff;border-radius:8px;border:1px solid #E2E8F0;padding:16px;margin-bottom:16px">`;
-  h += `<div style="font-size:14px;font-weight:800;color:#051E50;margin-bottom:4px">🏁 Pilote & Transition IT</div>`;
+  h += `<div style="font-size:14px;font-weight:800;color:#051E50;margin-bottom:4px">${peSpan('pil_titre','🏁 Pilote & Transition IT')}</div>`;
 
   // ── 1. Périmètre pilote ────────────────────────────────────────────────
   h += sectionSep('PÉRIMÈTRE PILOTE', '');
   h += `<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:12px">
     <div style="background:#EFF6FF;border-radius:8px;padding:12px;text-align:center">
       <div style="font-size:11px;color:#6B7280;margin-bottom:4px">Début pilote</div>
-      <div style="font-size:16px;font-weight:800;color:#1D4ED8">17/03/2026</div>
-      <div style="font-size:11px;color:#6B7280">Session 1</div>
+      <div style="font-size:16px;font-weight:800;color:#1D4ED8">${peSpan('pil_debut','17/03/2026','color:#1D4ED8')}</div>
+      <div style="font-size:11px;color:#6B7280">${peSpan('pil_debut_sub','Session 1')}</div>
     </div>
     <div style="background:#EFF6FF;border-radius:8px;padding:12px;text-align:center">
       <div style="font-size:11px;color:#6B7280;margin-bottom:4px">Fin pilote</div>
-      <div style="font-size:16px;font-weight:800;color:#1D4ED8">30/04/2026</div>
-      <div style="font-size:11px;color:#6B7280">Bilan GO/NO GO</div>
+      <div style="font-size:16px;font-weight:800;color:#1D4ED8">${peSpan('pil_fin','30/04/2026','color:#1D4ED8')}</div>
+      <div style="font-size:11px;color:#6B7280">${peSpan('pil_fin_sub','Bilan GO/NO GO')}</div>
     </div>
     <div style="background:#EFF6FF;border-radius:8px;padding:12px;text-align:center">
       <div style="font-size:11px;color:#6B7280;margin-bottom:4px">Durée</div>
-      <div style="font-size:16px;font-weight:800;color:#1D4ED8">6 semaines</div>
-      <div style="font-size:11px;color:#6B7280">22 ambassadeurs</div>
+      <div style="font-size:16px;font-weight:800;color:#1D4ED8">${peSpan('pil_duree','6 semaines','color:#1D4ED8')}</div>
+      <div style="font-size:11px;color:#6B7280">${peSpan('pil_ambassadeurs','22 ambassadeurs')}</div>
     </div>
   </div>`;
-  h += `<p style="font-size:12px;color:#334155;margin:0 0 12px;line-height:1.6">L'objectif du pilote est de prouver que l'application fonctionne en conditions réelles, que les commerciaux l'adoptent, et que les coûts sont maîtrisés.</p>`;
+  h += `<p style="font-size:12px;color:#334155;margin:0 0 12px;line-height:1.6">${peSpan('pil_objectif','L\'objectif du pilote est de prouver que l\'application fonctionne en conditions réelles, que les commerciaux l\'adoptent, et que les coûts sont maîtrisés.')}</p>`;
 
   // ── 2. Critères de succès ──────────────────────────────────────────────
   h += sectionSep('CRITÈRES DE SUCCÈS DU PILOTE', '');
   h += `<table style="margin-bottom:12px"><thead><tr><th>Critère</th><th>Comment on mesure</th><th>Cible</th></tr></thead><tbody>`;
-  for (const r of CRITERES) {
-    h += `<tr><td style="font-weight:700">${r.critere}</td><td style="font-size:11px;color:#334155">${r.comment}</td><td style="font-weight:700;color:#1D4ED8">${r.cible}</td></tr>`;
-  }
+  CRITERES.forEach((r, i) => {
+    h += `<tr><td style="font-weight:700">${peSpan('crit_name_'+i, r.critere)}</td><td style="font-size:11px;color:#334155">${peSpan('crit_comment_'+i, r.comment)}</td><td style="font-weight:700;color:#1D4ED8">${peSpan('crit_cible_'+i, r.cible, 'color:#1D4ED8')}</td></tr>`;
+  });
   h += '</tbody></table>';
 
   // ── 3. Timeline transition IT ──────────────────────────────────────────
@@ -1755,9 +1747,9 @@ function renderPitchPilote() {
     if (!isLast) h += `<div style="flex:1;height:2px;background:#D1D5DB"></div>`;
     h += `</div>`;
     h += `<div style="margin-top:6px;text-align:center;padding:0 2px">`;
-    h += `<div style="font-size:11px;font-weight:800;color:${t.color}">${t.date}</div>`;
-    h += `<div style="font-size:11px;font-weight:700;color:#051E50;margin-top:2px">${t.label}</div>`;
-    if (t.sub) h += `<div style="font-size:10px;color:#9CA3AF">${t.sub}</div>`;
+    h += `<div style="font-size:11px;font-weight:800;color:${t.color}">${peSpan('tl_date_'+i, t.date, 'color:'+t.color)}</div>`;
+    h += `<div style="font-size:11px;font-weight:700;color:#051E50;margin-top:2px">${peSpan('tl_label_'+i, t.label)}</div>`;
+    if (t.sub) h += `<div style="font-size:10px;color:#9CA3AF">${peSpan('tl_sub_'+i, t.sub)}</div>`;
     h += `</div></div>`;
   }
   h += `</div></div>`;
@@ -1765,13 +1757,13 @@ function renderPitchPilote() {
   // ── 4. Ce qui change avec l'IT ─────────────────────────────────────────
   h += sectionSep('CE QUI CHANGE AVEC L\'IT', '');
   h += `<table style="margin-bottom:12px"><thead><tr><th>Composant</th><th>Pilote (aujourd\'hui)</th><th>Cible IT (industrialisé)</th></tr></thead><tbody>`;
-  for (const r of TRANSITION) {
+  TRANSITION.forEach((r, i) => {
     h += `<tr>
-      <td style="font-weight:700">${r.composant}</td>
-      <td style="font-size:11px;color:#6B7280">${r.pilote}</td>
-      <td style="font-size:11px;color:#166534;font-weight:600">${r.cible}</td>
+      <td style="font-weight:700">${peSpan('trans_comp_'+i, r.composant)}</td>
+      <td style="font-size:11px;color:#6B7280">${peSpan('trans_pilote_'+i, r.pilote)}</td>
+      <td style="font-size:11px;color:#166534;font-weight:600">${peSpan('trans_cible_'+i, r.cible, 'color:#166534')}</td>
     </tr>`;
-  }
+  });
   h += '</tbody></table>';
 
   // ── 5. Statut ──────────────────────────────────────────────────────────
@@ -1779,11 +1771,11 @@ function renderPitchPilote() {
   h += `<div style="display:flex;gap:16px;align-items:center;flex-wrap:wrap">
     <div style="background:#EFF6FF;border-radius:8px;padding:10px 16px;border:1px solid #BFDBFE">
       <span style="font-size:11px;color:#6B7280">Statut pilote : </span>
-      <span style="font-size:12px;font-weight:800;color:#1D4ED8">● EN COURS</span>
+      <span style="font-size:12px;font-weight:800;color:#1D4ED8">${peSpan('pil_statut','● EN COURS','color:#1D4ED8')}</span>
     </div>
     <div style="background:#F8FAFC;border-radius:8px;padding:10px 16px;border:1px solid #E2E8F0">
       <span style="font-size:11px;color:#6B7280">Date de bilan : </span>
-      <span style="font-size:12px;font-weight:800;color:#051E50">30/04/2026</span>
+      <span style="font-size:12px;font-weight:800;color:#051E50">${peSpan('pil_bilan','30/04/2026','color:#051E50')}</span>
     </div>
   </div>`;
 
@@ -1805,16 +1797,63 @@ function initPitchSubTabs() {
 }
 
 /* ---- Synthèse hero (chiffre clé) ---- */
+/* ====================== INLINE EDIT SYSTEM ====================== */
+const _pitchEdits = JSON.parse(localStorage.getItem('pitch_edits') || '{}');
+
+function pe(key, defaultVal) {
+  /* return stored edit or default */
+  return _pitchEdits[key] !== undefined ? _pitchEdits[key] : defaultVal;
+}
+
+function peSpan(key, defaultVal, extraStyle) {
+  /* return an editable span with pencil button */
+  const val = pe(key, defaultVal);
+  const edited = _pitchEdits[key] !== undefined ? ' edited' : '';
+  const st = extraStyle ? ` style="${extraStyle}"` : '';
+  return `<span class="edit-wrap"><span class="edit-val${edited}" id="pe-${key}"${st}>${val}</span><button class="edit-btn" onclick="peStart('${key}')" title="Modifier">✏️</button></span>`;
+}
+
+function peStart(key) {
+  const el = document.getElementById('pe-' + key);
+  if (!el) return;
+  el.contentEditable = 'true';
+  el.focus();
+  /* select all text */
+  const range = document.createRange(); range.selectNodeContents(el);
+  const sel = window.getSelection(); sel.removeAllRanges(); sel.addRange(range);
+  const handler = () => { peSave(key, el); el.removeEventListener('blur', handler); };
+  el.addEventListener('blur', handler);
+  el.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); el.blur(); }});
+}
+
+function peSave(key, el) {
+  el.contentEditable = 'false';
+  const val = el.textContent.trim();
+  _pitchEdits[key] = val;
+  el.classList.add('edited');
+  localStorage.setItem('pitch_edits', JSON.stringify(_pitchEdits));
+}
+
+function peReset() {
+  if (!confirm('Réinitialiser toutes les modifications ?')) return;
+  localStorage.removeItem('pitch_edits');
+  Object.keys(_pitchEdits).forEach(k => delete _pitchEdits[k]);
+  initPitchSubTabs();
+}
+
 function renderPitchSynthese() {
   const el = $('pitch-synthese-hero');
   if (!el) return;
   const setupEUR = Math.ceil(COSTS.setup.reduce((s,r) => s + r.usd, 0) * COSTS.EUR_USD);
   el.innerHTML = `<div style="background:#051E50;color:#fff;border-radius:12px;padding:28px 24px;text-align:center;margin-bottom:16px">
-    <div style="font-size:13px;opacity:.7;margin-bottom:8px">Le chiffre clé</div>
-    <div style="font-size:22px;font-weight:800">~${setupEUR}€ de set-up</div>
+    <div style="font-size:13px;opacity:.7;margin-bottom:8px">${peSpan('synth_title','Le chiffre clé','color:#fff')}</div>
+    <div style="font-size:22px;font-weight:800">${peSpan('synth_setup','~'+setupEUR+'€ de set-up','color:#fff')}</div>
     <div style="font-size:15px;margin:4px 0">+</div>
-    <div style="font-size:26px;font-weight:800">0,30€ / commercial / mois</div>
-    <div style="font-size:12px;opacity:.6;margin-top:6px">(base 5 pitchs/mois par commercial)</div>
+    <div style="font-size:26px;font-weight:800">${peSpan('synth_running','0,30€ / commercial / mois','color:#fff')}</div>
+    <div style="font-size:12px;opacity:.6;margin-top:6px">${peSpan('synth_base','(base 5 pitchs/mois par commercial)','color:#fff')}</div>
+  </div>
+  <div style="text-align:right;margin-top:-10px;margin-bottom:8px">
+    <button onclick="peReset()" style="font-size:10px;background:none;border:1px solid #E2E8F0;border-radius:4px;padding:2px 8px;color:#94A3B8;cursor:pointer">Réinitialiser les modifications</button>
   </div>`;
 }
 
@@ -1833,37 +1872,47 @@ const PITCH_AMELIORATIONS = [
 function renderPitchAmeliorations() {
   const el = $('pitch-ameliorations-widget'); if (!el) return;
   const impactLabel = { critique:'Critique', important:'Important', optimisation:'Optimisation' };
-  const impactCls   = { critique:'ar-crit', important:'ar-warn', optimisation:'ar-info' };
+  const statusCycle = ['a_faire','en_cours','fait'];
+  const statusIcons = { a_faire:'⬜', en_cours:'🔄', fait:'✅' };
+  const statusLabels = { a_faire:'À faire', en_cours:'En cours', fait:'Fait' };
 
-  let h = `<div style="font-size:14px;font-weight:800;color:#051E50;margin-bottom:4px">Améliorations prévues</div>`;
-  h += `<div style="font-size:11px;color:#64748B;margin-bottom:12px">8 améliorations techniques planifiées pour renforcer la fiabilité et les performances.</div>`;
+  let h = `<div style="font-size:14px;font-weight:800;color:#051E50;margin-bottom:4px">${peSpan('amel_title','Améliorations prévues')}</div>`;
+  h += `<div style="font-size:11px;color:#64748B;margin-bottom:12px">${peSpan('amel_desc','8 améliorations techniques planifiées pour renforcer la fiabilité et les performances.')}</div>`;
 
   h += `<div style="display:flex;flex-direction:column;gap:6px">`;
   for (const a of PITCH_AMELIORATIONS) {
-    h += `<div style="background:#fff;border:1px solid #E2E8F0;border-radius:8px;padding:10px 14px">
+    const st = pe('amel_status_'+a.id, a.status);
+    h += `<div style="background:#fff;border:1px solid #E2E8F0;border-radius:8px;padding:10px 14px${st==='fait'?';opacity:.6':''}">
       <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
-        <span style="font-size:12px;font-weight:700;color:#051E50;flex:1">${a.id}. ${a.label}</span>
+        <button onclick="peToggleAmel(${a.id})" style="background:none;border:none;cursor:pointer;font-size:14px;padding:0" title="${statusLabels[st]}">${statusIcons[st]}</button>
+        <span style="font-size:12px;font-weight:700;color:#051E50;flex:1">${peSpan('amel_label_'+a.id, a.id+'. '+a.label)}</span>
         <span class="badge ${a.impact === 'critique' ? 'bd-crit' : ''}" style="font-size:9px">${impactLabel[a.impact]}</span>
       </div>
-      <div style="font-size:11px;color:#64748B">${a.detail}</div>
+      <div style="font-size:11px;color:#64748B;padding-left:28px">${peSpan('amel_detail_'+a.id, a.detail)}</div>
     </div>`;
   }
   h += `</div>`;
 
-  /* Alerte compte IA partagé — résumé business */
   h += `<div style="margin-top:16px;padding:12px;background:#FEF2F2;border-radius:8px;border:1px solid #FECACA">
-    <div style="font-size:12px;font-weight:700;color:#991B1B;margin-bottom:4px">Action en cours : création d'un compte IA dédié</div>
-    <div style="font-size:11px;color:#334155">Actuellement Rubix Pitch partage son compte IA avec Smart Spec. Un compte séparé est en cours de création pour éviter tout risque de coupure.</div>
-    <details style="margin-top:8px"><summary style="font-size:10px;color:#64748B;cursor:pointer">Détail technique (capacité, tiers, procédure)</summary>
+    <div style="font-size:12px;font-weight:700;color:#991B1B;margin-bottom:4px">${peSpan('amel_alerte_title','Action en cours : création d\'un compte IA dédié')}</div>
+    <div style="font-size:11px;color:#334155">${peSpan('amel_alerte_desc','Actuellement Rubix Pitch partage son compte IA avec Smart Spec. Un compte séparé est en cours de création pour éviter tout risque de coupure.')}</div>
+    <details style="margin-top:8px"><summary style="font-size:10px;color:#64748B;cursor:pointer">Détail technique</summary>
       <div style="font-size:11px;color:#334155;margin-top:8px;line-height:1.8">
-        <strong>Capacité actuelle :</strong> ~40 utilisateurs simultanés (Tier 1).<br>
-        <strong>Objectif :</strong> ~800 utilisateurs (Tier 2, automatique après 46€ de dépenses + 7 jours).<br>
-        <strong>Procédure :</strong> Créer un compte OpenAI dédié → Ajouter une carte bancaire → Charger 46€ de crédits → Créer une clé API → Mettre à jour la configuration serveur.
+        ${peSpan('amel_tech_detail','<strong>Capacité actuelle :</strong> ~40 utilisateurs simultanés.<br><strong>Objectif :</strong> ~800 utilisateurs (montée automatique après 46€ + 7 jours).<br><strong>Procédure :</strong> Créer un compte dédié → Carte bancaire → 46€ crédits → Clé API → Mise à jour serveur.')}
       </div>
     </details>
   </div>`;
 
   el.innerHTML = h;
+}
+
+function peToggleAmel(id) {
+  const cycle = ['a_faire','en_cours','fait'];
+  const cur = pe('amel_status_'+id, 'a_faire');
+  const next = cycle[(cycle.indexOf(cur) + 1) % cycle.length];
+  _pitchEdits['amel_status_'+id] = next;
+  localStorage.setItem('pitch_edits', JSON.stringify(_pitchEdits));
+  renderPitchAmeliorations();
 }
 
 // ====================== RÉTROPLANNING ======================
