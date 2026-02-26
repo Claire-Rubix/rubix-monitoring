@@ -253,7 +253,7 @@ th{color:#1D4ED8;font-weight:600;font-size:10px;text-transform:uppercase;letter-
 .edit-val{outline:none;transition:background .15s;cursor:text;border-radius:3px}
 .edit-val:hover{background:#F1F5F9}
 .edit-val[contenteditable="true"]{background:#FEFCE8;padding:0 3px;outline:1px solid #FCD34D;cursor:text}
-.edit-val.edited{color:#7C3AED}
+.edit-val.edited{}
 /* Demandes en attente */
 .demandes-wrap{margin-bottom:20px}
 .dem-header{display:flex;align-items:center;gap:10px;margin-bottom:8px;flex-wrap:wrap}
@@ -1099,7 +1099,7 @@ function renderGlobalAlerts(proj) {
 // ====================== DEMANDES EN ATTENTE ======================
 
 const DEMANDES = [
-  { id:'d1', titre:'Création canal Teams "Rubix Pitch — Retours & Support"', destinataire:'IT', deadline:'28/02',
+  { id:'d1', titre:'Création canal Teams "Rubix Pitch - Retours & Support"', destinataire:'IT', deadline:'28/02',
     pourquoi:'Centraliser les remontées de bugs des commerciaux pendant et après les formations.' },
   { id:'d2', titre:'1 personne pour tester l\'app avant les formations (vérification bugs)', destinataire:'À désigner', deadline:'10/03',
     detail:'Quelqu\'un qui parcourt l\'app, teste les fonctionnalités et remonte les problèmes. Effort : ~1h.',
@@ -1116,10 +1116,12 @@ const D_LABELS = { todo:'À traiter', inprogress:'En cours', done:'Fait' };
 function getDStatus(id)      { return localStorage.getItem('demande_status_' + id) || 'todo'; }
 function setDStatus(id, val) { val === 'todo' ? localStorage.removeItem('demande_status_' + id) : localStorage.setItem('demande_status_' + id, val); }
 
+const AV_CYCLE = ['pending','ok','no'];
 function toggleAVCheck(id, el) {
-  const cur = localStorage.getItem('av_check_' + id) || '';
-  const next = cur === 'done' ? '' : 'done';
-  next ? localStorage.setItem('av_check_' + id, next) : localStorage.removeItem('av_check_' + id);
+  const cur = localStorage.getItem('av_check_' + id) || 'pending';
+  const idx = AV_CYCLE.indexOf(cur);
+  const next = AV_CYCLE[(idx + 1) % AV_CYCLE.length];
+  localStorage.setItem('av_check_' + id, next);
   renderPitchAValider();
 }
 
@@ -1231,7 +1233,7 @@ function renderVercelCosts() {
   const surplusPct = 100 - coveredPct;
 
   let h = `<div style="border-left:4px solid ${borderColor};background:#fff;border-radius:8px;border:1px solid #E2E8F0;border-left-width:4px;padding:16px;margin-bottom:16px">`;
-  h += `<div style="font-size:14px;font-weight:800;color:#051E50;margin-bottom:4px">${statusIcon} 🖥️ Hébergement Vercel — Suivi des coûts</div>`;
+  h += `<div style="font-size:14px;font-weight:800;color:#051E50;margin-bottom:4px">${statusIcon} 🖥️ Hébergement Vercel : suivi des coûts</div>`;
   h += `<div style="font-size:12px;color:#64748B;margin-bottom:12px">Plan Pro · 20$/mois inclus · Mis à jour le ${v.lastChecked}</div>`;
   h += `<div style="font-size:12px;color:#334155;margin-bottom:12px">L'application est hébergée sur Vercel (plan Pro, 20$/mois). Le plan inclut un crédit de 20$. Au-delà, les frais supplémentaires sont facturés automatiquement.</div>`;
 
@@ -1321,7 +1323,7 @@ function renderVercelCostsAPI(api) {
   const barColor      = surplus === 0 ? '#22C55E' : surplus < 5 ? '#F59E0B' : '#EF4444';
 
   let h = `<div style="border-left:4px solid ${borderColor};background:#fff;border-radius:8px;border:1px solid #E2E8F0;border-left-width:4px;padding:16px;margin-bottom:16px">`;
-  h += `<div style="font-size:14px;font-weight:800;color:#051E50;margin-bottom:4px">${statusIcon} 🖥️ Hébergement Vercel — Suivi des coûts</div>`;
+  h += `<div style="font-size:14px;font-weight:800;color:#051E50;margin-bottom:4px">${statusIcon} 🖥️ Hébergement Vercel : suivi des coûts</div>`;
   h += `<div style="font-size:12px;color:#64748B;margin-bottom:12px">Plan Pro · $${api.planFee}/mois inclus · <span style="color:#059669;font-weight:700">⚡ Données en temps réel</span></div>`;
   h += `<div style="font-size:12px;color:#334155;margin-bottom:12px">L'application est hébergée sur Vercel (plan Pro, $20/mois). Le plan inclut un crédit de $20. Au-delà, les frais supplémentaires sont facturés automatiquement.</div>`;
 
@@ -1407,9 +1409,9 @@ const PITCH_STATUS_META   = { ok:{icon:'🟢',label:'OK',cls:'ok'}, warning:{ico
 
 const PITCH_FORMATION_DATES = [
   { date:'2026-02-25', label:'25 fév',   desc:'Test solo Claire',               users:1,  done:true  },
-  { date:'2026-03-17', label:'17 mars',  desc:'Session 1 — Pilote réduit',      users:22, done:false },
-  { date:'2026-03-25', label:'25 mars',  desc:'Session 2 — Pilote élargi',      users:22, done:false },
-  { date:'2026-04-08', label:'8 avr',    desc:'Session 3 — Déploiement final',  users:22, done:false },
+  { date:'2026-03-17', label:'17 mars',  desc:'Session 1, pilote réduit',       users:22, done:false },
+  { date:'2026-03-25', label:'25 mars',  desc:'Session 2, pilote élargi',       users:22, done:false },
+  { date:'2026-04-08', label:'8 avr',    desc:'Session 3, déploiement final',   users:22, done:false },
 ];
 const PITCH_PRICE_CALL  = 0.00623; // $ par appel OpenAI
 const PITCH_CALLS_PITCH = 6;       // appels par pitch complet
@@ -1475,7 +1477,7 @@ function renderPitchFormations() {
     const pitchs = f.users * 3;
     const calls  = pitchs * OPENAI_COSTS.callsPerPitch;
     const cost   = (calls * OPENAI_COSTS.pricePerCall * OPENAI_COSTS.eurUsd).toFixed(2);
-    tableH += `<tr><td>${peSpan('form_t_session_'+i, f.label+' — '+f.desc)}</td><td>${peSpan('form_t_users_'+i, f.users)}</td><td>${pitchs}</td><td>${calls}</td><td>${peSpan('form_t_cost_'+i, cost+' €')}</td></tr>`;
+    tableH += `<tr><td>${peSpan('form_t_session_'+i, f.label+' : '+f.desc)}</td><td>${peSpan('form_t_users_'+i, f.users)}</td><td>${pitchs}</td><td>${calls}</td><td>${peSpan('form_t_cost_'+i, cost+' €')}</td></tr>`;
   });
   tableH += '</tbody></table>';
   tableH += `<div class="note" style="margin-top:10px">Base : ${OPENAI_COSTS.callsPerPitch} appels × ${OPENAI_COSTS.pricePerCall}$ × ${OPENAI_COSTS.eurUsd} EUR/USD. Coûts réels visibles dans le dashboard OpenAI.</div>`;
@@ -1485,10 +1487,10 @@ function renderPitchFormations() {
 // ---- Coûts globaux ----
 const COSTS = {
   setup: [
-    { label:'Vercel Pro — Février 2026',  sub:'(phase de dev intensif)',    cost:34, detail:'Hébergement pendant le développement. Élevé à cause des déploiements fréquents.' },
-    { label:'Vercel Pro — Mars 2026',     sub:'(stabilisation)',            cost:20, detail:'Dev + formations. Retour à la normale après code freeze.' },
-    { label:'OpenAI API — Dev & tests',   sub:'(jan.–mars 2026)',           cost:1,  detail:'Tous les appels IA pendant le développement et les tests.' },
-    { label:'OpenAI — Crédits Tier 2',    sub:'(paiement unique)',          cost:50, detail:'Prépayé pour monter en capacité. Consommé progressivement par l\'usage.' },
+    { label:'Vercel Pro, Février 2026',   sub:'(phase de dev intensif)',    cost:34, detail:'Hébergement pendant le développement. Élevé à cause des déploiements fréquents.' },
+    { label:'Vercel Pro, Mars 2026',      sub:'(stabilisation)',            cost:20, detail:'Dev + formations. Retour à la normale après code freeze.' },
+    { label:'OpenAI API, Dev & tests',    sub:'(jan.–mars 2026)',           cost:1,  detail:'Tous les appels IA pendant le développement et les tests.' },
+    { label:'OpenAI, Crédits Tier 2',     sub:'(paiement unique)',          cost:50, detail:'Prépayé pour monter en capacité. Consommé progressivement par l\'usage.' },
   ],
   running: {
     vercelPro:      15,
@@ -1538,7 +1540,7 @@ function renderPitchCouts() {
     { id:'A', titre:'On attend l\'IT', color:'#64748B', bg:'#F8FAFC', border:'#CBD5E1',
       openai_setup:'0€', vercel_surcout:'0€', ia_mois:'0€', total_pilote:'0€',
       detail:'Aucun coût additionnel. Le projet est en pause.' },
-    { id:'B', titre:'Progressif (5 → 25)', color:'#166534', bg:'#F0FDF4', border:'#22C55E',
+    { id:'B', titre:'Progressif (5→10→15→25)', color:'#166534', bg:'#F0FDF4', border:'#22C55E',
       openai_setup:'~46€', vercel_surcout:'~13€ (temporaire)', ia_mois:'~3€', total_pilote:'~65€',
       detail:'<strong>Crédits IA :</strong> 46€ prépayés (durée ~2 ans au rythme pilote).<br><strong>Surcoût Vercel :</strong> chaque amélioration déclenche une reconstruction. Pendant la phase de préparation (~1 mois), les builds augmentent → surcoût ~13€. <strong>Ce surcoût disparaît après stabilisation.</strong><br><strong>Consommation IA :</strong> ~0,06€/pitch, soit ~3€/mois pour 5-25 utilisateurs actifs.' },
     { id:'C', titre:'Tous en live (25+)', color:'#991B1B', bg:'#FEF2F2', border:'#EF4444',
@@ -1659,27 +1661,27 @@ function renderPitchPilote() {
       { label:'Infrastructure', val:'En attente IT' },
       { label:'Support', val:'Aucun' },
     ]},
-    { id:'B', titre:'Progressif (5 → 25)', color:'#166534', bg:'#F0FDF4', border:'#22C55E', items:[
+    { id:'B', titre:'Progressif (5→10→15→25)', color:'#166534', bg:'#F0FDF4', border:'#22C55E', items:[
       { label:'Préparation', val:'Créer un compte IA dédié (7 jours) + tester la génération avec 5 users' },
-      { label:'Compte IA', val:'Compte OpenAI dédié Rubix Pitch — carte bancaire + 46€ crédits' },
-      { label:'Formations', val:'Vague 1 : 5 users → Vague 2 : 10 users → Vague 3 : 25 users' },
+      { label:'Compte IA', val:'Compte OpenAI dédié Rubix Pitch, carte bancaire + 46€ crédits' },
+      { label:'Formations', val:'Vague 1 : 5 users → Vague 2 : 10 users → Vague 3 : 15 users → Vague 4 : 25 users' },
       { label:'Gestion d\'erreurs', val:'Messages clairs + relance automatique (à déployer avant vague 2)' },
       { label:'Monitoring', val:'Surveillance manuelle entre chaque vague, ajustements au fil de l\'eau' },
-      { label:'Support', val:'Claire seule — charge estimée : 2-3h/semaine' },
+      { label:'Support', val:'Claire seule, charge estimée : 2-3h/semaine' },
     ]},
     { id:'C', titre:'Tous en live (25+)', color:'#991B1B', bg:'#FEF2F2', border:'#EF4444', items:[
-      { label:'Préparation', val:'Compte IA dédié + gestion d\'erreurs + relance automatique + test de charge — 2 à 3 semaines minimum' },
-      { label:'Compte IA', val:'Compte OpenAI dédié — quota augmenté pour 25+ users simultanés (7 jours d\'activation)' },
-      { label:'Formations', val:'Session unique : tous les commerciaux testent le même jour et repartent avec l\'app' },
-      { label:'Gestion d\'erreurs', val:'Indispensable — sinon l\'app plante devant 25 personnes' },
+      { label:'Préparation', val:'Compte IA dédié + gestion d\'erreurs + relance automatique + test de charge. 2 à 3 semaines minimum' },
+      { label:'Compte IA', val:'Compte OpenAI dédié, quota augmenté pour 25+ users simultanés (7 jours d\'activation)' },
+      { label:'Formations', val:'3 sessions de formation (22 pers. chacune). Tous les commerciaux repartent avec l\'app' },
+      { label:'Gestion d\'erreurs', val:'Indispensable, sinon l\'app plante devant 25 personnes' },
       { label:'Crédits IA', val:'Provisionner 5-15€ de crédits pour la session' },
       { label:'Support', val:'Claire temps plein pendant la préparation + jour J' },
     ]},
     { id:'D', titre:'Hybride (test live → accès restreint)', color:'#92400E', bg:'#FFFBEB', border:'#F59E0B', items:[
-      { label:'Préparation', val:'Identique à l\'option C — 2 à 3 semaines' },
+      { label:'Préparation', val:'Identique à l\'option C, 2 à 3 semaines' },
       { label:'Compte IA', val:'Identique à l\'option C' },
       { label:'Formations', val:'Tout le monde teste le jour J, mais seuls 5-10 commerciaux gardent l\'accès ensuite' },
-      { label:'Gestion des accès', val:'Retirer l\'accès à une partie des commerciaux après la session — communication à prévoir' },
+      { label:'Gestion des accès', val:'Retirer l\'accès à une partie des commerciaux après la session. Communication à prévoir' },
       { label:'Risque humain', val:'Frustration des commerciaux qui perdent l\'accès après avoir testé' },
       { label:'Support', val:'Claire temps plein + gestion post-formation' },
     ]},
@@ -1755,11 +1757,15 @@ function peSpan(key, defaultVal, extraStyle) {
 function peStart(key) {
   const el = document.getElementById('pe-' + key);
   if (!el) return;
+  if (el.contentEditable === 'true') return; /* already editing */
   el.contentEditable = 'true';
   el.focus();
-  /* select all text */
-  const range = document.createRange(); range.selectNodeContents(el);
-  const sel = window.getSelection(); sel.removeAllRanges(); sel.addRange(range);
+  /* place cursor where user clicked instead of selecting all */
+  const sel = window.getSelection();
+  if (sel.rangeCount === 0) {
+    const range = document.createRange(); range.selectNodeContents(el); range.collapse(false);
+    sel.removeAllRanges(); sel.addRange(range);
+  }
   const handler = () => { peSave(key, el); el.removeEventListener('blur', handler); };
   el.addEventListener('blur', handler);
   el.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); el.blur(); }});
@@ -1808,13 +1814,14 @@ function renderPitchSynthese() {
       risque: 'Les formations sont repoussées. La crédibilité du projet baisse.',
       verdict: 'Aucun risque technique, mais le projet est bloqué' },
     { id:'B', color:'#166534', bg:'#F0FDF4', border:'#22C55E',
-      titre: 'Scalabilité progressive',
-      desc: 'On ouvre l\'app par vagues : 5, puis 10, puis 25 utilisateurs.',
-      testeurs: '5 → 25', delai: 'Immédiat',
+      titre: 'Progressif (5→10→15→25)',
+      desc: 'On ouvre l\'app par vagues : 5, puis 10, puis 15, puis 25 utilisateurs.',
+      testeurs: '5 → 25', delai: 'Dès fin de préparation (~14/03)',
       cout: '~65€ sur 6 semaines', charge: '2-3 h/semaine pendant 6 semaines',
       limites: 'Max 5-10 utilisateurs simultanés au départ. Ajustement entre chaque vague.',
       risque: 'Faible. Les problèmes sont détectés et corrigés entre chaque vague.',
-      verdict: 'Recommandé — risque maîtrisé, résultats rapides' },
+      verdict: 'Recommandé : risque maîtrisé, résultats rapides',
+      bonus: 'En parallèle, une page de consultation de la matrice (personas, questions découverte, solutions) peut être mise à disposition de tous les commerciaux sans IA, sans coût supplémentaire et sans risque technique. Temps de réalisation estimé : ~0.5 jour.' },
     { id:'C', color:'#991B1B', bg:'#FEF2F2', border:'#EF4444',
       titre: 'Tout le monde en live',
       desc: 'Tous les commerciaux testent l\'app le même jour et repartent avec.',
@@ -1823,7 +1830,7 @@ function renderPitchSynthese() {
       charge: 'Temps plein pendant 2-3 semaines (compte dédié, fiabilisation, tests de charge)',
       limites: 'Si la préparation n\'est pas terminée : lenteurs, erreurs, app qui plante devant les commerciaux.',
       risque: 'Élevé sans préparation complète. L\'image du projet est en jeu.',
-      verdict: 'Ambitieux — faisable uniquement si le calendrier le permet' },
+      verdict: 'Ambitieux : nécessite que toute la préparation soit terminée à temps' },
     { id:'D', color:'#92400E', bg:'#FFFBEB', border:'#F59E0B',
       titre: 'Hybride',
       desc: 'Tout le monde teste le jour J, mais seul un petit groupe repart avec l\'app.',
@@ -1832,7 +1839,7 @@ function renderPitchSynthese() {
       charge: 'Temps plein 2-3 semaines + gestion accès post-formation',
       limites: 'Mêmes risques que l\'option C le jour J. Frustration possible des commerciaux qui n\'ont plus accès ensuite.',
       risque: 'Élevé le jour J + risque d\'incompréhension sur le périmètre.',
-      verdict: 'Risqué — cumule les contraintes de C avec une communication complexe' },
+      verdict: 'Risqué : cumule les contraintes de C avec une communication complexe' },
   ];
 
   for (const o of opts) {
@@ -1864,6 +1871,10 @@ function renderPitchSynthese() {
       <div style="margin-top:12px;padding:10px 14px;background:#051E50;border-radius:8px;font-size:14px;font-weight:700;color:#FFD700;text-align:center">
         ${peSpan('opt_'+o.id+'_verdict', o.verdict)}
       </div>
+      ${o.bonus ? `<div style="margin-top:10px;padding:12px 16px;background:#FFFBEB;border:1px solid #FDE68A;border-radius:8px;display:flex;gap:10px;align-items:flex-start">
+        <span style="font-size:18px;flex-shrink:0">&#11088;</span>
+        <div style="font-size:13px;color:#92400E;line-height:1.6"><strong>Bonus possible :</strong> ${peSpan('opt_'+o.id+'_bonus', o.bonus)}</div>
+      </div>` : ''}
     </div>`;
   }
 
@@ -1884,7 +1895,7 @@ function renderPitchAValider() {
 
   const AV_ITEMS = [
     { id:'av1', label:'Budget validé', desc:'De ~65€ (option B) à ~85€ (option C) sur 6 semaines. Inclut crédits IA + surcoût Vercel temporaire. Détail dans l\'onglet Coûts.' },
-    { id:'av2', label:'Charge de travail acceptée', desc:'2-3 h/semaine pendant 6 semaines : préparation technique, fiabilisation, accompagnement formations.' },
+    { id:'av2', label:'Charge de travail acceptée', desc:'Option B : 2-3 h/semaine pendant 6 semaines. Options C et D : temps plein pendant 2-3 semaines de préparation + accompagnement formations.' },
     { id:'av3', label:'Exclusivité projet', desc:'Pas de développement d\'autres applications pendant cette période. Le temps est dédié à la fiabilisation et au déploiement de Rubix Pitch.' },
     { id:'av4', label:'Télétravail nécessaire', desc:'Le réseau Rubix bloque l\'accès aux outils de développement et d\'hébergement (Vercel, GitHub, API OpenAI). Le travail technique ne peut se faire qu\'en télétravail.' },
     { id:'av5', label:'Limites de capacité acceptées', desc:'L\'environnement actuel supporte un nombre limité d\'utilisateurs simultanés. En progressif c\'est gérable. Si tout le monde se connecte en même temps, il y aura des lenteurs ou des plantages.' },
@@ -1892,21 +1903,31 @@ function renderPitchAValider() {
     { id:'av7', label:'Incidents possibles le jour J', desc:'C\'est un outil en phase pilote, pas un produit fini. Des lenteurs ou erreurs sont possibles lors d\'une utilisation intensive.' },
     { id:'av8', label:'Suivi des bugs via Teams pendant tout le pilote', desc:'Un canal Teams dédié est nécessaire pour centraliser les remontées d\'incidents. Claire assure le suivi et les corrections tout au long des 6 semaines.' },
     { id:'av9', label:'1 personne pour tester l\'app avant les formations', desc:'Quelqu\'un qui parcourt l\'app et remonte les problèmes. Effort : ~1h. Échéance : 10/03.' },
-    { id:'av10', label:'Canal Teams "Rubix Pitch — Retours & Support"', desc:'Demande à l\'IT. Nécessaire avant la 1re formation. Échéance : 28/02.' },
+    { id:'av10', label:'Canal Teams "Rubix Pitch - Retours & Support"', desc:'Demande à l\'IT. Nécessaire avant la 1re formation. Échéance : 28/02.' },
     { id:'av11', label:'Liste des 66 participants (options B, C, D)', desc:'Nom, prénom, profil, session attribuée. À demander aux organisateurs formation. Échéance : 20/03.' },
   ];
 
-  function getAVStatus(id) { return localStorage.getItem('av_check_' + id) || ''; }
+  function getAVStatus(id) { return localStorage.getItem('av_check_' + id) || 'pending'; }
+
+  const avStyles = {
+    pending: { bg:'#F8FAFC', border:'#E2E8F0', icon:'⏳', iconBg:'#F1F5F9', iconColor:'#64748B', labelColor:'#051E50', badgeLabel:'En attente', badgeBg:'#F1F5F9', badgeColor:'#64748B' },
+    ok:      { bg:'#F0FDF4', border:'#86EFAC', icon:'✓',  iconBg:'#22C55E', iconColor:'#fff',    labelColor:'#059669', badgeLabel:'Validé',    badgeBg:'#DCFCE7', badgeColor:'#166534' },
+    no:      { bg:'#FEF2F2', border:'#FECACA', icon:'✗',  iconBg:'#EF4444', iconColor:'#fff',    labelColor:'#DC2626', badgeLabel:'Refusé',    badgeBg:'#FEE2E2', badgeColor:'#991B1B' },
+  };
 
   h += `<div style="display:flex;flex-direction:column;gap:6px">`;
   for (const item of AV_ITEMS) {
-    const checked = getAVStatus(item.id) === 'done';
-    h += `<div style="background:${checked?'#F0FDF4':'#F8FAFC'};border:1px solid ${checked?'#86EFAC':'#E2E8F0'};border-radius:10px;padding:14px 18px;display:flex;gap:14px;align-items:flex-start;cursor:pointer;transition:all .15s" onclick="toggleAVCheck('${item.id}',this)">
-      <div style="width:22px;height:22px;border-radius:6px;border:2px solid ${checked?'#22C55E':'#CBD5E1'};background:${checked?'#22C55E':'#fff'};display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;transition:all .15s">
-        ${checked ? '<span style="color:#fff;font-size:14px;font-weight:800">✓</span>' : ''}
+    const st = getAVStatus(item.id);
+    const s = avStyles[st] || avStyles.pending;
+    h += `<div style="background:${s.bg};border:1px solid ${s.border};border-left:4px solid ${s.border};border-radius:10px;padding:14px 18px;display:flex;gap:14px;align-items:flex-start;cursor:pointer;transition:all .15s" onclick="toggleAVCheck('${item.id}',this)">
+      <div style="width:26px;height:26px;border-radius:50%;background:${s.iconBg};display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px">
+        <span style="color:${s.iconColor};font-size:14px;font-weight:800">${s.icon}</span>
       </div>
       <div style="flex:1">
-        <div style="font-size:14px;font-weight:700;color:${checked?'#059669':'#051E50'};${checked?'text-decoration:line-through':''}">${peSpan('av_l_'+item.id, item.label)}</div>
+        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+          <span style="font-size:14px;font-weight:700;color:${s.labelColor}">${peSpan('av_l_'+item.id, item.label)}</span>
+          <span style="font-size:11px;font-weight:700;padding:2px 10px;border-radius:20px;background:${s.badgeBg};color:${s.badgeColor}">${s.badgeLabel}</span>
+        </div>
         <div style="font-size:13px;color:#64748B;line-height:1.6;margin-top:4px">${peSpan('av_d_'+item.id, item.desc)}</div>
       </div>
     </div>`;
@@ -2050,8 +2071,8 @@ const RETRO_DATA = [
     { id:'s1-2', text:'Charger 50$ de crédits sur le nouveau compte', responsable:'CLAIRE', priority:'red' },
     { id:'s1-3', text:'Mettre à jour OPENAI_API_KEY dans Vercel', responsable:'CLAIRE', priority:'red' },
     { id:'s1-4', text:'Tester que l\'app fonctionne avec la nouvelle clé', responsable:'CLAIRE', priority:'red' },
-    { id:'s1-5', text:'Créer canal Teams "Rubix Pitch — Retours & Support"', responsable:'CLAIRE', priority:'blue' },
-    { id:'s1-20', text:'Demander à l\'IT la création du canal Teams "Rubix Pitch — Retours & Support"', responsable:'CLAIRE', priority:'blue' },
+    { id:'s1-5', text:'Créer canal Teams "Rubix Pitch - Retours & Support"', responsable:'CLAIRE', priority:'blue' },
+    { id:'s1-20', text:'Demander à l\'IT la création du canal Teams "Rubix Pitch - Retours & Support"', responsable:'CLAIRE', priority:'blue' },
     { id:'s1-21', text:'Demander validation budget 50$ (46€) pour compte OpenAI dédié au manager', responsable:'CLAIRE', priority:'blue' },
   ]},
   { date:'2026-02-26', milestone:null, actions:[
@@ -2606,35 +2627,35 @@ function renderProgrammeSynth() {
     { id:'A', titre:'Attendre l\'IT', color:'#64748B', bg:'#F8FAFC', border:'#CBD5E1',
       steps:[
         { date:'25/02 → 14/03', label:'Préparation', desc:'Prête mais en attente' },
-        { date:'Indéterminé', label:'Attente IT', desc:'Projet en pause — aucun déploiement, aucune formation', accent:true },
+        { date:'Indéterminé', label:'Attente IT', desc:'Projet en pause, aucun déploiement ni formation', accent:true },
       ]
     },
     { id:'B', titre:'Progressif (5→10→15→25)', color:'#166534', bg:'#F0FDF4', border:'#86EFAC',
       steps:[
         { date:'25/02 → 14/03', label:'Préparation', desc:'Compte IA, matrice, corrections, tests' },
-        { date:'17/03', label:'Session 1', desc:'Formation 22 pers. — 5 activés', accent:true },
+        { date:'17/03', label:'Session 1', desc:'Formation 22 pers., 5 activés', accent:true },
         { date:'18/03 → 24/03', label:'Suivi', desc:'Retours + corrections' },
-        { date:'25/03', label:'Session 2', desc:'Formation 22 pers. — 10 actifs', accent:true },
-        { date:'08/04', label:'Session 3', desc:'Formation 22 pers. — 15 actifs', accent:true },
-        { date:'Avril → Mai', label:'Ouverture', desc:'Montée graduelle → 25+ actifs' },
+        { date:'25/03', label:'Session 2', desc:'Formation 22 pers., 10 actifs', accent:true },
+        { date:'08/04', label:'Session 3', desc:'Formation 22 pers., 15 actifs', accent:true },
+        { date:'Mi-avril', label:'Ouverture', desc:'Montée graduelle → 25+ actifs' },
         { date:'30/04', label:'Bilan pilote', desc:'Résultats + décision suite', accent:true },
       ]
     },
     { id:'C', titre:'Tous en live (25+)', color:'#DC2626', bg:'#FEF2F2', border:'#FECACA',
       steps:[
         { date:'25/02 → 14/03', label:'Préparation', desc:'Compte IA, matrice, corrections, tests de charge' },
-        { date:'17/03', label:'Session 1', desc:'22 pers. — tous actifs immédiatement', accent:true },
-        { date:'25/03', label:'Session 2', desc:'22 pers. — charge cumulée', accent:true },
-        { date:'08/04', label:'Session 3', desc:'22 pers. — corrections urgentes entre sessions', accent:true },
+        { date:'17/03', label:'Session 1', desc:'22 pers., tous actifs immédiatement', accent:true },
+        { date:'25/03', label:'Session 2', desc:'22 pers., charge cumulée', accent:true },
+        { date:'08/04', label:'Session 3', desc:'22 pers., corrections urgentes entre sessions', accent:true },
         { date:'30/04', label:'Bilan pilote', desc:'Résultats + décision suite', accent:true },
       ]
     },
-    { id:'D', titre:'Hybride — test live + accès limité', color:'#92400E', bg:'#FFFBEB', border:'#FDE68A',
+    { id:'D', titre:'Hybride : test live + accès limité', color:'#92400E', bg:'#FFFBEB', border:'#FDE68A',
       steps:[
         { date:'25/02 → 14/03', label:'Préparation', desc:'Identique à C' },
-        { date:'17/03', label:'Session 1', desc:'Tous testent — seuls 5 gardent l\'accès', accent:true },
-        { date:'25/03', label:'Session 2', desc:'Idem — 10 actifs total', accent:true },
-        { date:'08/04', label:'Session 3', desc:'Idem — 15 actifs + communication accès', accent:true },
+        { date:'17/03', label:'Session 1', desc:'Tous testent, seuls 5 gardent l\'accès', accent:true },
+        { date:'25/03', label:'Session 2', desc:'Idem, 10 actifs total', accent:true },
+        { date:'08/04', label:'Session 3', desc:'Idem, 15 actifs + communication accès', accent:true },
         { date:'30/04', label:'Bilan pilote', desc:'Résultats + décision suite', accent:true },
       ]
     },
@@ -2644,7 +2665,7 @@ function renderProgrammeSynth() {
 
   // Prerequisite block
   h += `<div style="background:#EFF6FF;border:1px solid #BFDBFE;border-radius:10px;padding:20px;margin-bottom:24px">
-    <div style="font-size:15px;font-weight:700;color:#1D4ED8;margin-bottom:10px">📋 Prérequis communs — 25/02 → 14/03</div>
+    <div style="font-size:15px;font-weight:700;color:#1D4ED8;margin-bottom:10px">📋 Prérequis communs : 25/02 → 14/03</div>
     <div style="display:flex;flex-wrap:wrap;gap:8px">`;
   for (const item of commonItems) {
     h += `<div style="background:#fff;border:1px solid #BFDBFE;border-radius:8px;padding:8px 14px;font-size:13px;color:#334155;line-height:1.5">${item}</div>`;
