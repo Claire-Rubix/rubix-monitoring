@@ -2181,76 +2181,120 @@ function buildWeeks() {
   return weeks;
 }
 
-// ── Build horizontal roadmap grid ───────────────────────────────────────────
+// ── Build week-by-week view with horizontal days ─────────────────────────────
 function buildRetroCalendar() {
   const weeks = buildWeeks();
   if (!weeks.length) return '';
-  const today0  = new Date(); today0.setHours(0,0,0,0);
-  const resps   = ['CLAIRE','CLAUDE CODE','FORMATEUR'];
-  const respLbl = { 'CLAIRE':'Claire', 'CLAUDE CODE':'Claude Code', 'FORMATEUR':'Formateur' };
+  const today0 = new Date(); today0.setHours(0,0,0,0);
+  const dayNames = ['Lun','Mar','Mer','Jeu','Ven'];
   const respDot = { 'CLAIRE':'#051E50', 'CLAUDE CODE':'#1E40AF', 'FORMATEUR':'#166534' };
-  const nWeeks  = weeks.length;
-  const colW    = `minmax(80px,1fr)`;
+
+  // Detect formation dates for "evolution" banners
+  const formationDates = ['2026-03-17','2026-03-25','2026-04-08'];
+  let lastFormation = null;
 
   let h = '';
-
-  // Grid: columns = label + weeks
-  h += `<div class="rm-grid-wrap"><div class="rm-grid" style="grid-template-columns:100px repeat(${nWeeks},${colW})">`;
-
-  // ── Row 0: Header (corner + week labels) ──────────────────────────────
-  h += `<div class="rm-corner">Semaine →</div>`;
-  for (let w = 0; w < nWeeks; w++) {
+  for (let w = 0; w < weeks.length; w++) {
     const wk = weeks[w];
     const isNow = today0 >= wk.mon && today0 <= wk.fri;
-    const nowCls = isNow ? ' rm-wk-today' : '';
-    const msHtml = wk.milestones.map(m => {
-      const ms = getMilestoneStyle(m);
-      return `<div class="rm-wk-hdr-ms" style="color:${ms.color}">${m}</div>`;
-    }).join('');
-    h += `<div class="rm-wk-hdr${nowCls}" onclick="openWeekDetail(${w})">
-      <div class="rm-wk-hdr-date">${wk.label}</div>${msHtml}
-    </div>`;
-  }
+    const isPast = wk.fri < today0;
 
-  // ── Rows 1-3: Swimlanes ──────────────────────────────────────────────
-  for (const resp of resps) {
-    // Swimlane label
-    h += `<div class="rm-swim-label"><span class="rm-swim-dot" style="background:${respDot[resp]}"></span>${respLbl[resp]}</div>`;
+    // Check if a formation happened this week
+    const formationThisWeek = wk.entries.find(e => formationDates.includes(e.date));
 
-    for (let w = 0; w < nWeeks; w++) {
-      const wk = weeks[w];
-      const phaseCls = `rm-phase-${wk.phase + 1}`;
-      const actions = (wk.actionsByResp[resp] || []).filter(a => isRetroVisible(a));
-      const total   = actions.length;
-      const done    = actions.filter(a => getRS(a.id) === 'done').length;
-
-      h += `<div class="rm-cell ${phaseCls}" onclick="openWeekDetail(${w})">`;
-      if (total > 0) {
-        // Show condensed pills (max 3, then count)
-        const show = actions.slice(0, 3);
-        for (const a of show) {
-          const status  = getRS(a.id);
-          const bc      = PRIO_COLORS[a.priority] || '#94A3B8';
-          const doneCls = status === 'done' ? ' done-card' : '';
-          const hidCls  = !isRetroVisible(a) ? ' hidden' : '';
-          h += `<div class="rm-pill${doneCls}${hidCls}" data-aid="${a.id}" style="border-left-color:${bc}" data-resp="${a.responsable}" data-prio="${a.priority}">
-            <span class="rm-pill-text" title="${a.text.replace(/"/g,'&quot;')}">${a.text}</span>
-            <span class="rm-pill-status" onclick="event.stopPropagation();clickRetroStatus('${a.id}')" title="${S_LABELS[status]}">${S_ICONS[status]}</span>
+    // Evolution banner between formations
+    if (lastFormation && !formationThisWeek) {
+      const nextForm = formationDates.find(d => new Date(d) > new Date(lastFormation));
+      if (nextForm && wk.mon <= new Date(nextForm)) {
+        // We're between formations — show only on first week after
+        const prevDate = new Date(lastFormation).toLocaleDateString('fr-FR',{day:'2-digit',month:'short'});
+        const nextDate = new Date(nextForm).toLocaleDateString('fr-FR',{day:'2-digit',month:'short'});
+        if (wk.entries[0] && new Date(wk.entries[0].date) > new Date(lastFormation) && !wk._evoBannerShown) {
+          h += `<div style="background:linear-gradient(90deg,#EFF6FF,#DBEAFE);border-radius:8px;padding:10px 16px;margin:16px 0;display:flex;align-items:center;gap:10px">
+            <span style="font-size:16px">📈</span>
+            <div><span style="font-size:12px;font-weight:700;color:#1D4ED8">Evolution entre les formations</span>
+            <span style="font-size:11px;color:#64748B;margin-left:8px">${prevDate} → ${nextDate}</span></div>
           </div>`;
         }
-        if (total > 3) {
-          h += `<div style="font-size:9px;color:#94A3B8;text-align:center;padding:1px 0">+${total - 3} de plus…</div>`;
+      }
+    }
+    if (formationThisWeek) lastFormation = formationThisWeek.date;
+
+    // Phase header
+    const phaseEntry = wk.entries.find(e => e.phaseHeader);
+    if (phaseEntry) {
+      const ph = phaseEntry.phaseHeader;
+      h += `<div style="background:${ph.bg};border-left:4px solid ${ph.color};border-radius:6px;padding:10px 14px;margin:20px 0 8px">
+        <span style="font-size:13px;font-weight:800;color:${ph.color}">${ph.label}</span>
+      </div>`;
+    }
+
+    // All actions count
+    const allActions = wk.entries.flatMap(e => e.actions).filter(a => isRetroVisible(a));
+    const total = allActions.length;
+    const done = allActions.filter(a => getRS(a.id) === 'done').length;
+    const pct = total > 0 ? Math.round(done / total * 100) : 0;
+
+    // Week card
+    const border = isNow ? '2px solid #FFD700' : isPast ? '1px solid #E5E7EB' : '1px solid #E2E8F0';
+    const bg = isNow ? '#FFFBEB' : '#fff';
+    h += `<div style="background:${bg};border:${border};border-radius:10px;margin-bottom:10px;overflow:hidden">`;
+
+    // Week header
+    h += `<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 14px;background:${isNow?'#FEF3C7':'#F8FAFC'};border-bottom:1px solid #E5E7EB">`;
+    h += `<div style="display:flex;align-items:center;gap:8px">`;
+    h += `<span style="font-size:13px;font-weight:800;color:#051E50">Semaine ${wk.label}</span>`;
+    if (isNow) h += `<span style="background:#FFD700;color:#92400E;padding:1px 8px;border-radius:10px;font-size:10px;font-weight:700">EN COURS</span>`;
+    // Milestones inline
+    for (const m of wk.milestones) {
+      const ms = getMilestoneStyle(m);
+      h += `<span style="background:${ms.bg};color:${ms.color};border:1px solid ${ms.border};padding:1px 8px;border-radius:10px;font-size:10px;font-weight:700">${m}</span>`;
+    }
+    h += `</div>`;
+    h += `<div style="display:flex;align-items:center;gap:6px">
+      <span style="font-size:11px;font-weight:700;color:${pct===100?'#059669':'#64748B'}">${done}/${total}</span>
+      <div style="width:50px;height:5px;background:#E5E7EB;border-radius:3px;overflow:hidden"><div style="width:${pct}%;height:100%;background:${pct===100?'#22C55E':'#3B82F6'};border-radius:3px"></div></div>
+    </div>`;
+    h += `</div>`;
+
+    // Days grid (horizontal)
+    h += `<div style="display:grid;grid-template-columns:repeat(5,1fr);gap:0">`;
+    for (let d = 0; d < 5; d++) {
+      const day = wk.days[d];
+      const ds = day.toISOString().split('T')[0];
+      const entry = wk.entries.find(e => e.date === ds);
+      const isToday = ds === today0.toISOString().split('T')[0];
+      const dayBg = isToday ? '#FEF9C3' : d % 2 === 0 ? '#FAFAFA' : '#fff';
+      const dayBorder = d < 4 ? 'border-right:1px solid #F1F5F9;' : '';
+
+      h += `<div style="padding:8px 6px;min-height:60px;${dayBorder}background:${dayBg}">`;
+      h += `<div style="font-size:10px;font-weight:700;color:${isToday?'#92400E':'#94A3B8'};text-transform:uppercase;margin-bottom:4px">${dayNames[d]} ${day.getDate()}/${day.getMonth()+1}</div>`;
+
+      if (entry) {
+        // Milestone badge
+        if (entry.milestone) {
+          const ms = getMilestoneStyle(entry.milestone);
+          h += `<div style="background:${ms.bg};color:${ms.color};border:1px solid ${ms.border};border-radius:4px;padding:2px 4px;font-size:9px;font-weight:700;margin-bottom:4px;text-align:center">${entry.milestone}</div>`;
         }
-        // Count badge
-        if (done > 0) {
-          h += `<div style="text-align:right;margin-top:1px"><span class="rm-count" style="background:${done === total ? '#22C55E' : '#94A3B8'}">${done}/${total}</span></div>`;
+        // Actions (compact list)
+        for (const a of entry.actions) {
+          if (!isRetroVisible(a)) continue;
+          const status = getRS(a.id);
+          const bc = PRIO_COLORS[a.priority] || '#94A3B8';
+          const isDone = status === 'done';
+          const txtSt = isDone ? 'text-decoration:line-through;color:#B0B0B0' : 'color:#334155';
+          h += `<div style="display:flex;align-items:flex-start;gap:3px;margin-bottom:2px;font-size:10px;line-height:1.3">`;
+          h += `<span style="cursor:pointer;flex-shrink:0" onclick="clickRetroStatus('${a.id}');_weeksCache=null;$('retro-calendar').innerHTML=buildRetroCalendar();updateRetroProgress()" title="${S_LABELS[status]}">${S_ICONS[status]}</span>`;
+          h += `<span style="width:4px;height:4px;border-radius:50%;background:${bc};flex-shrink:0;margin-top:4px"></span>`;
+          h += `<span style="${txtSt}">${a.text}</span>`;
+          h += `</div>`;
         }
       }
       h += `</div>`;
     }
+    h += `</div>`; // fin days grid
+    h += `</div>`; // fin week card
   }
-
-  h += `</div></div>`; // close grid + wrap
   return h;
 }
 
