@@ -1528,17 +1528,20 @@ function renderPitchCouts() {
 
   const OPTS = [
     { id:'A', titre:'On attend l\'IT', color:'#64748B', bg:'#F8FAFC', border:'#CBD5E1',
-      setup:'0€', mensuel:'0€', parUser:'—', credits:'—',
-      detail:'Aucun coût. Le projet est en pause.' },
+      setup:'0€', mensuel:'0€', parUser:'—', credits:'—', vercel:'Aucun impact',
+      detail:'Aucun coût. Le projet est en pause, aucune modification n\'est faite sur l\'application.' },
     { id:'B', titre:'Progressif (5 → 25)', color:'#166534', bg:'#F0FDF4', border:'#22C55E',
-      setup:'~46€', mensuel:'~13€ → ~13€', parUser:'~0,30€ → ~0,50€', credits:'46€ crédits OpenAI (durée ~2 ans au rythme pilote)',
-      detail:'Set-up : création d\'un compte OpenAI dédié (46€ de crédits prépayés).<br>Mensuel : hébergement (~13€ builds Vercel) + IA (~0,06€/pitch).<br>Le coût par commercial baisse au fur et à mesure qu\'on élargit.' },
+      setup:'~46€', mensuel:'~13€', parUser:'~0,50€', credits:'46€ crédits OpenAI prépayés (durée ~2 ans au rythme pilote)',
+      vercel:'Surcoût temporaire pendant la phase de préparation (~13€/mois de builds). Baisse une fois l\'app stabilisée.',
+      detail:'<strong>Set-up :</strong> compte OpenAI dédié (46€ de crédits).<br><strong>IA :</strong> ~0,06€ par pitch généré — négligeable.<br><strong>Hébergement :</strong> chaque amélioration déclenche une reconstruction Vercel. Pendant la phase active (6 semaines), les builds augmentent → surcoût ~13€/mois. <strong>Après stabilisation, ce surcoût disparaît.</strong>' },
     { id:'C', titre:'Tous en live (25+)', color:'#991B1B', bg:'#FEF2F2', border:'#EF4444',
-      setup:'~46€ + 5-15€', mensuel:'~15€', parUser:'~0,30€', credits:'46€ crédits + 5-15€ provision session jour J',
-      detail:'Set-up identique à B + provision de crédits supplémentaires pour la session de test (25+ pitchs en une après-midi).<br>Mensuel : identique à B si les 25 restent actifs.' },
+      setup:'~46€ + 5-15€', mensuel:'~15€', parUser:'~0,30€', credits:'46€ crédits + 5-15€ provision pour la session jour J',
+      vercel:'Identique à B + pic de consommation le jour J (25+ utilisateurs simultanés = appels serveur en hausse).',
+      detail:'<strong>Set-up :</strong> identique à B + provision de crédits supplémentaires.<br><strong>IA :</strong> le jour J, 25+ pitchs en quelques heures → 5-15€ de crédits consommés.<br><strong>Hébergement :</strong> surcoût builds identique à B pendant la préparation + surcoût serveur le jour J.' },
     { id:'D', titre:'Hybride', color:'#92400E', bg:'#FFFBEB', border:'#F59E0B',
-      setup:'~46€ + 5-15€', mensuel:'~13€', parUser:'~0,50€ → ~1,30€', credits:'Identique à C',
-      detail:'Set-up identique à C.<br>Mensuel : seuls 5-10 users restent actifs, le coût par commercial est plus élevé car les frais fixes (hébergement) sont répartis sur moins de monde.' },
+      setup:'~46€ + 5-15€', mensuel:'~13€', parUser:'~1,30€', credits:'Identique à C',
+      vercel:'Identique à C pendant la préparation et le jour J. Après : retour au niveau B car seuls 5-10 users restent.',
+      detail:'<strong>Set-up :</strong> identique à C.<br><strong>Après le jour J :</strong> seuls 5-10 users restent actifs. Coût mensuel identique à B, mais réparti sur moins de monde → coût par commercial plus élevé.' },
   ];
 
   let h = `<div style="font-size:15px;font-weight:800;color:#051E50;margin-bottom:14px">${peSpan('c_titre','Coûts par option')}</div>`;
@@ -1563,9 +1566,12 @@ function renderPitchCouts() {
           <div style="font-size:14px;font-weight:800;color:#334155">${peSpan('c_'+o.id+'_paruser', o.parUser)}</div>
         </div>
       </div>
-      <div style="font-size:12px;color:#334155;line-height:1.6">${peSpan('c_'+o.id+'_detail', o.detail)}</div>`;
+      <div style="font-size:12px;color:#334155;line-height:1.6">${peSpan('c_'+o.id+'_detail', o.detail)}</div>
+      <div style="margin-top:8px;padding:8px 12px;background:#fff;border-radius:6px;border:1px solid #E2E8F0;font-size:11px;color:#64748B;line-height:1.5">
+        <strong>Vercel (hébergement) :</strong> ${peSpan('c_'+o.id+'_vercel', o.vercel)}
+      </div>`;
     if (o.credits !== '—') {
-      h += `<div style="margin-top:8px;font-size:11px;color:#64748B"><strong>Crédits :</strong> ${peSpan('c_'+o.id+'_credits', o.credits)}</div>`;
+      h += `<div style="margin-top:6px;font-size:11px;color:#64748B"><strong>Crédits :</strong> ${peSpan('c_'+o.id+'_credits', o.credits)}</div>`;
     }
     h += `</div>`;
   }
