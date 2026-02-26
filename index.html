@@ -548,7 +548,6 @@ th{color:#1D4ED8;font-weight:600;font-size:10px;text-transform:uppercase;letter-
     <div class="sub-tabs-nav">
       <button class="sub-tab-btn active" onclick="showPitchTab('synthese',this)">Synthèse</button>
       <button class="sub-tab-btn" onclick="showPitchTab('avalider',this)">À valider</button>
-      <button class="sub-tab-btn" onclick="showPitchTab('demandes',this)">Demandes IT</button>
       <button class="sub-tab-btn" onclick="showPitchTab('programme',this)" style="border-left:2px solid #E2E8F0;margin-left:6px;padding-left:14px">Programme</button>
       <button class="sub-tab-btn" onclick="showPitchTab('couts',this)">Coûts</button>
       <button class="sub-tab-btn" onclick="showPitchTab('ameliorations',this)">Améliorations</button>
@@ -569,10 +568,6 @@ th{color:#1D4ED8;font-weight:600;font-size:10px;text-transform:uppercase;letter-
       <div id="pitch-avalider-widget"></div>
     </div>
 
-    <!-- Demandes IT -->
-    <div class="sub-page" id="pitch-sub-demandes">
-      <div id="pitch-demandes-widget"></div>
-    </div>
 
     <!-- ===== MON PROGRAMME : ce que je garde pour bosser ===== -->
 
@@ -1793,7 +1788,6 @@ let vercelBillingAPI = null;
 function initPitchSubTabs() {
   renderPitchSynthese();
   renderPitchAValider();
-  renderPitchDemandes();
   renderPitchStatusWidget();
   renderPitchFormations();
   renderPitchCouts();
@@ -1949,76 +1943,41 @@ function renderPitchAValider() {
 
   h += `<div style="font-size:15px;font-weight:800;color:#051E50;margin-bottom:14px">${peSpan('av_titre','Ce qu\'il faut valider pour avancer')}</div>`;
 
-  /* --- Manager --- */
   h += `<div style="background:#F8FAFC;border:1px solid #E2E8F0;border-radius:12px;padding:20px;margin-bottom:16px">
-    <div style="font-size:14px;font-weight:800;color:#051E50;margin-bottom:14px">${peSpan('av_m_titre','Manager — Budget et charge')}</div>
+    <div style="display:flex;flex-direction:column;gap:14px">
 
-    <div style="display:flex;gap:12px;align-items:flex-start;margin-bottom:12px">
-      <div style="width:30px;height:30px;border-radius:8px;background:#EFF6FF;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:15px">💰</div>
-      <div>
-        <div style="font-size:12px;font-weight:700;color:#334155">${peSpan('av_m_budget_t','Budget')}</div>
-        <div style="font-size:12px;color:#64748B;line-height:1.5;margin-top:2px">${peSpan('av_m_budget','~46€ pour créer un compte IA dédié + 0,30€/commercial/mois. Détail dans l\'onglet Coûts.')}</div>
+      <div style="display:flex;gap:12px;align-items:flex-start">
+        <div style="width:30px;height:30px;border-radius:8px;background:#EFF6FF;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:15px">💰</div>
+        <div>
+          <div style="font-size:12px;font-weight:700;color:#334155">${peSpan('av_m_budget_t','Budget')}</div>
+          <div style="font-size:12px;color:#64748B;line-height:1.5;margin-top:2px">${peSpan('av_m_budget','~46€ pour créer un compte IA dédié + 0,30€/commercial/mois. Détail dans l\'onglet Coûts.')}</div>
+        </div>
       </div>
-    </div>
 
-    <div style="display:flex;gap:12px;align-items:flex-start;margin-bottom:12px">
-      <div style="width:30px;height:30px;border-radius:8px;background:#EFF6FF;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:15px">⏱️</div>
-      <div>
-        <div style="font-size:12px;font-weight:700;color:#334155">${peSpan('av_m_temps_t','Charge de travail')}</div>
-        <div style="font-size:12px;color:#64748B;line-height:1.5;margin-top:2px">${peSpan('av_m_temps','2-3 h/semaine pendant 6 semaines : préparation technique, fiabilisation, accompagnement formations. Programme détaillé dans l\'onglet Programme.')}</div>
+      <div style="display:flex;gap:12px;align-items:flex-start">
+        <div style="width:30px;height:30px;border-radius:8px;background:#EFF6FF;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:15px">⏱️</div>
+        <div>
+          <div style="font-size:12px;font-weight:700;color:#334155">${peSpan('av_m_temps_t','Charge de travail')}</div>
+          <div style="font-size:12px;color:#64748B;line-height:1.5;margin-top:2px">${peSpan('av_m_temps','2-3 h/semaine pendant 6 semaines : préparation technique, fiabilisation, accompagnement formations. Programme détaillé dans l\'onglet Programme.')}</div>
+        </div>
       </div>
-    </div>
 
-    <div style="display:flex;gap:12px;align-items:flex-start;margin-bottom:12px">
-      <div style="width:30px;height:30px;border-radius:8px;background:#EFF6FF;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:15px">📊</div>
-      <div>
-        <div style="font-size:12px;font-weight:700;color:#334155">${peSpan('av_m_vercel_t','Pourquoi l\'hébergement augmente')}</div>
-        <div style="font-size:12px;color:#64748B;line-height:1.5;margin-top:2px">${peSpan('av_m_vercel','Chaque modification de l\'app déclenche une reconstruction automatique. Plus on améliore, plus on consomme de temps serveur. C\'est temporaire : une fois stabilisé, les coûts baissent.')}</div>
+      <div style="display:flex;gap:12px;align-items:flex-start">
+        <div style="width:30px;height:30px;border-radius:8px;background:#FEF3C7;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:15px">⚡</div>
+        <div>
+          <div style="font-size:12px;font-weight:700;color:#334155">${peSpan('av_d_limites_t','Limites de capacité')}</div>
+          <div style="font-size:12px;color:#64748B;line-height:1.5;margin-top:2px">${peSpan('av_d_limites','L\'environnement actuel supporte un nombre limité d\'utilisateurs simultanés. En progressif c\'est gérable. Si tout le monde se connecte en même temps sans préparation, il y aura des lenteurs ou des plantages.')}</div>
+        </div>
       </div>
-    </div>
 
-    <div style="display:flex;gap:12px;align-items:flex-start">
-      <div style="width:30px;height:30px;border-radius:8px;background:#EFF6FF;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:15px">🛡️</div>
-      <div>
-        <div style="font-size:12px;font-weight:700;color:#334155">${peSpan('av_m_cadre_t','Cadre')}</div>
-        <div style="font-size:12px;color:#64748B;line-height:1.5;margin-top:2px">${peSpan('av_m_cadre','Aucun support IT malgré 3 demandes. Le projet tourne en autonomie. Je ne peux pas porter la responsabilité d\'un déploiement large sans appui IT.')}</div>
+      <div style="display:flex;gap:12px;align-items:flex-start">
+        <div style="width:30px;height:30px;border-radius:8px;background:#FEF3C7;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:15px">🐛</div>
+        <div>
+          <div style="font-size:12px;font-weight:700;color:#334155">${peSpan('av_d_bugs_t','Incidents possibles le jour J')}</div>
+          <div style="font-size:12px;color:#64748B;line-height:1.5;margin-top:2px">${peSpan('av_d_bugs','C\'est un outil en phase pilote, pas un produit fini. Des lenteurs ou erreurs sont possibles lors d\'une utilisation intensive. C\'est normal pour cette phase.')}</div>
+        </div>
       </div>
-    </div>
-  </div>`;
 
-  /* --- Direction --- */
-  h += `<div style="background:#FFFBEB;border:1px solid #FDE68A;border-radius:12px;padding:20px;margin-bottom:16px">
-    <div style="font-size:14px;font-weight:800;color:#92400E;margin-bottom:14px">${peSpan('av_d_titre','Direction — Limites et attentes')}</div>
-
-    <div style="display:flex;gap:12px;align-items:flex-start;margin-bottom:12px">
-      <div style="width:30px;height:30px;border-radius:8px;background:#FEF3C7;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:15px">⚡</div>
-      <div>
-        <div style="font-size:12px;font-weight:700;color:#334155">${peSpan('av_d_limites_t','Limites de capacité')}</div>
-        <div style="font-size:12px;color:#64748B;line-height:1.5;margin-top:2px">${peSpan('av_d_limites','L\'environnement actuel supporte un nombre limité d\'utilisateurs simultanés. En progressif c\'est gérable. Si tout le monde se connecte en même temps sans préparation, il y aura des lenteurs ou des plantages.')}</div>
-      </div>
-    </div>
-
-    <div style="display:flex;gap:12px;align-items:flex-start;margin-bottom:12px">
-      <div style="width:30px;height:30px;border-radius:8px;background:#FEF3C7;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:15px">🐛</div>
-      <div>
-        <div style="font-size:12px;font-weight:700;color:#334155">${peSpan('av_d_bugs_t','Incidents possibles le jour J')}</div>
-        <div style="font-size:12px;color:#64748B;line-height:1.5;margin-top:2px">${peSpan('av_d_bugs','C\'est un outil en phase pilote, pas un produit fini. Des lenteurs ou erreurs sont possibles lors d\'une utilisation intensive. C\'est normal pour cette phase.')}</div>
-      </div>
-    </div>
-
-    <div style="display:flex;gap:12px;align-items:flex-start">
-      <div style="width:30px;height:30px;border-radius:8px;background:#FEF3C7;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:15px">📢</div>
-      <div>
-        <div style="font-size:12px;font-weight:700;color:#334155">${peSpan('av_d_it_t','L\'IT doit être débloqué')}</div>
-        <div style="font-size:12px;color:#64748B;line-height:1.5;margin-top:2px">${peSpan('av_d_it','Pour passer du pilote à un vrai déploiement (domaine officiel, authentification, montée en charge), il faut l\'IT. 3 demandes sans retour. C\'est un sujet à porter côté direction.')}</div>
-      </div>
-    </div>
-  </div>`;
-
-  /* --- Résumé --- */
-  h += `<div style="background:#051E50;color:#fff;border-radius:12px;padding:20px;text-align:center">
-    <div style="font-size:14px;font-weight:700;line-height:1.7">
-      ${peSpan('av_resume','Le programme est prêt. J\'ai besoin du budget, du temps, et d\'attentes réalistes. Le sujet IT n\'est pas dans mon périmètre.','color:#fff')}
     </div>
   </div>`;
 
