@@ -1678,7 +1678,30 @@ function initPitchChecklist() {
 
 // ---- Pilote & Transition IT ----
 function renderPitchPilote() {
-  let h = `<div style="font-size:15px;font-weight:800;color:#051E50;margin-bottom:14px">${peSpan('pil_titre','Set-up par option')}</div>`;
+  let h = '';
+
+  /* --- Périmètre pilote --- */
+  h += `<div style="font-size:15px;font-weight:800;color:#051E50;margin-bottom:12px">${peSpan('pil_header','Pilote')}</div>`;
+  h += `<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:12px">
+    <div style="background:#EFF6FF;border-radius:8px;padding:12px;text-align:center">
+      <div style="font-size:11px;color:#6B7280;margin-bottom:4px">Début pilote</div>
+      <div style="font-size:16px;font-weight:800;color:#1D4ED8">${peSpan('pil_debut','17/03/2026','color:#1D4ED8')}</div>
+      <div style="font-size:11px;color:#6B7280">${peSpan('pil_debut_sub','Session 1')}</div>
+    </div>
+    <div style="background:#EFF6FF;border-radius:8px;padding:12px;text-align:center">
+      <div style="font-size:11px;color:#6B7280;margin-bottom:4px">Fin pilote</div>
+      <div style="font-size:16px;font-weight:800;color:#1D4ED8">${peSpan('pil_fin','30/04/2026','color:#1D4ED8')}</div>
+      <div style="font-size:11px;color:#6B7280">${peSpan('pil_fin_sub','Bilan GO/NO GO')}</div>
+    </div>
+    <div style="background:#EFF6FF;border-radius:8px;padding:12px;text-align:center">
+      <div style="font-size:11px;color:#6B7280;margin-bottom:4px">Durée</div>
+      <div style="font-size:16px;font-weight:800;color:#1D4ED8">${peSpan('pil_duree','6 semaines','color:#1D4ED8')}</div>
+    </div>
+  </div>`;
+  h += `<p style="font-size:12px;color:#334155;margin:0 0 16px;line-height:1.6">${peSpan('pil_objectif','L\'objectif du pilote est de prouver que l\'application fonctionne en conditions réelles, que les commerciaux l\'adoptent, et que les coûts sont maîtrisés.')}</p>`;
+
+  /* --- Set-up par option --- */
+  h += `<div style="font-size:14px;font-weight:800;color:#051E50;margin-bottom:12px">${peSpan('pil_titre','Set-up par option')}</div>`;
 
   const SETUPS = [
     { id:'A', titre:'On attend l\'IT', color:'#64748B', bg:'#F8FAFC', border:'#CBD5E1', items:[
