@@ -212,7 +212,7 @@ th{color:#1D4ED8;font-weight:600;font-size:10px;text-transform:uppercase;letter-
   .rm-swim-label{writing-mode:horizontal-tb;position:relative;left:auto;z-index:auto}
   .rm-corner{position:relative;left:auto;z-index:auto}
 }
-/* Sub-tabs (Pitch Generator) */
+/* Sub-tabs (Rubix Pitch) */
 .sub-tabs-nav{display:flex;gap:0;flex-wrap:wrap;margin-bottom:16px;border-bottom:2px solid #E2E8F0}
 .sub-tab-btn{padding:7px 13px;border:1px solid transparent;border-bottom:none;border-radius:6px 6px 0 0;font-size:11px;font-weight:600;cursor:pointer;background:none;color:#64748B;transition:all .15s;margin-bottom:-2px;white-space:nowrap}
 .sub-tab-btn.active{background:#fff;color:#051E50;border-color:#E2E8F0;border-bottom-color:#fff}
@@ -308,11 +308,11 @@ th{color:#1D4ED8;font-weight:600;font-size:10px;text-transform:uppercase;letter-
 <nav class="nav" id="nav">
   <a class="active" onclick="showTab('alertes')">Alertes</a>
   <a onclick="showTab('pole')">Pôle Acquisition</a>
-  <a onclick="showTab('pitch')">Pitch Generator</a>
+  <a onclick="showTab('pitch')">Rubix Pitch</a>
+  <a onclick="showTab('retro')">Rétroplanning</a>
   <a onclick="showTab('smart')">Smart Content</a>
   <a onclick="showTab('vercel')">Capacité Vercel</a>
   <a onclick="showTab('couts')">Coûts</a>
-  <a onclick="showTab('retro')">📆 Rétroplanning</a>
 </nav>
 
 <!-- LOADING -->
@@ -357,7 +357,7 @@ th{color:#1D4ED8;font-weight:600;font-size:10px;text-transform:uppercase;letter-
 
       <div class="alert-block">
         <div class="alert-block-head">
-          <h3>Pitch Generator</h3>
+          <h3>Rubix Pitch</h3>
           <span class="badge">OPENAI TIER 1</span>
         </div>
         <div class="alert-block-body">
@@ -537,11 +537,11 @@ th{color:#1D4ED8;font-weight:600;font-size:10px;text-transform:uppercase;letter-
   <div class="container">
     <div class="section-title">
       <div class="st-bar" style="background:#8B5CF6"></div>
-      Pitch Generator
+      Rubix Pitch
       <span class="badge bo">OPENAI TIER 1</span>
     </div>
 
-    <!-- Sous-onglets Pitch Generator -->
+    <!-- Sous-onglets Rubix Pitch -->
     <div class="sub-tabs-nav">
       <button class="sub-tab-btn active" onclick="showPitchTab('overview',this)">Vue d'ensemble</button>
       <button class="sub-tab-btn" onclick="showPitchTab('openai',this)">OpenAI &amp; Tiers</button>
@@ -787,7 +787,7 @@ th{color:#1D4ED8;font-weight:600;font-size:10px;text-transform:uppercase;letter-
           </div>
           <div style="font-size:12px;color:#78350F;line-height:1.6">
             Rubix Pitch est rattaché au compte OpenAI de <strong>Smart Spec</strong> (pas de compte séparé).<br>
-            Si Smart Spec consomme tous les crédits, <strong>Pitch Generator s'arrête immédiatement</strong> sans préavis.
+            Si Smart Spec consomme tous les crédits, <strong>Rubix Pitch s'arrête immédiatement</strong> sans préavis.
           </div>
           <div style="margin-top:8px;padding:8px;background:#FEFCE8;border-radius:6px;font-size:11px;color:#334155">
             <strong style="color:#D97706">Action à faire :</strong> Créer un compte OpenAI dédié pour Rubix Pitch avec un budget séparé. Mettre à jour la variable d'environnement <code style="background:#F1F5F9;padding:1px 4px;border-radius:3px">OPENAI_API_KEY</code> dans Vercel.
@@ -1251,7 +1251,7 @@ th{color:#1D4ED8;font-weight:600;font-size:10px;text-transform:uppercase;letter-
             <div><strong>Deployments :</strong> 100/jour (soft limit)</div>
           </div>
           <div style="margin-top:8px;font-size:11px;color:#64748B">
-            <strong>Note :</strong> le streaming evite le timeout (Smart Content article). Les appels non-streaming longs (Pitch Generator ~55s, Gemini non-stream) sont limites a 60s par defaut. Pour le Chantier 3 (génération serveur), ajouter <code style="background:#F1F5F9;padding:1px 5px;border-radius:3px">maxDuration: 300</code> dans vercel.json.
+            <strong>Note :</strong> le streaming evite le timeout (Smart Content article). Les appels non-streaming longs (Rubix Pitch ~55s, Gemini non-stream) sont limites a 60s par defaut. Pour le Chantier 3 (génération serveur), ajouter <code style="background:#F1F5F9;padding:1px 5px;border-radius:3px">maxDuration: 300</code> dans vercel.json.
           </div>
         </div>
       </div>
@@ -1819,7 +1819,7 @@ function renderPitchStatusWidget() {
   const vals = Object.values(PITCH_STATUSES);
   const global = vals.includes('critical') ? 'critical' : vals.includes('warning') ? 'warning' : 'ok';
   const sm = PITCH_STATUS_META[global];
-  let h = `<div class="pitch-gs pitch-gs-${sm.cls}">${sm.icon} Statut global Pitch Generator : <strong>${sm.label}</strong></div>`;
+  let h = `<div class="pitch-gs pitch-gs-${sm.cls}">${sm.icon} Statut global Rubix Pitch : <strong>${sm.label}</strong></div>`;
   h += '<div class="pitch-sc-grid">';
   for (const [key, val] of Object.entries(PITCH_STATUSES)) {
     const m = PITCH_STATUS_META[val];
@@ -1935,7 +1935,7 @@ function renderPitchCouts() {
 
   // ── Carte principale ───────────────────────────────────────────────────
   h += `<div style="border-left:4px solid #22C55E;background:#fff;border-radius:8px;border:1px solid #E2E8F0;padding:16px;margin-bottom:16px">`;
-  h += `<div style="font-size:14px;font-weight:800;color:#051E50;margin-bottom:4px">💰 Coûts Rubix Pitch Generator</div>`;
+  h += `<div style="font-size:14px;font-weight:800;color:#051E50;margin-bottom:4px">💰 Coûts Rubix Rubix Pitch</div>`;
 
   // ── 1. COÛTS DE CONSTRUCTION ───────────────────────────────────────────
   h += sectionSep('COÛTS DE CONSTRUCTION (SET-UP)', 'Phase temporaire — terminée après le code freeze du 10/03');
