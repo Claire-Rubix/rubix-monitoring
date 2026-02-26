@@ -547,51 +547,58 @@ th{color:#1D4ED8;font-weight:600;font-size:10px;text-transform:uppercase;letter-
     <!-- Sous-onglets Rubix Pitch -->
     <div class="sub-tabs-nav">
       <button class="sub-tab-btn active" onclick="showPitchTab('synthese',this)">Synthèse</button>
-      <button class="sub-tab-btn" onclick="showPitchTab('demandes',this)">Demandes</button>
-      <button class="sub-tab-btn" onclick="showPitchTab('couts',this)">Situation &amp; Coûts</button>
-      <button class="sub-tab-btn" onclick="showPitchTab('pilote',this)">Pilote &amp; Formations</button>
+      <button class="sub-tab-btn" onclick="showPitchTab('avalider',this)">À valider</button>
+      <button class="sub-tab-btn" onclick="showPitchTab('demandes',this)">Demandes IT</button>
+      <button class="sub-tab-btn" onclick="showPitchTab('programme',this)" style="border-left:2px solid #E2E8F0;margin-left:6px;padding-left:14px">Programme</button>
+      <button class="sub-tab-btn" onclick="showPitchTab('couts',this)">Coûts</button>
       <button class="sub-tab-btn" onclick="showPitchTab('ameliorations',this)">Améliorations</button>
-      <button class="sub-tab-btn" onclick="showPitchTab('retro',this)">Rétroplanning</button>
+      <button class="sub-tab-btn" onclick="showPitchTab('pilote',this)">Pilote</button>
     </div>
 
-    <!-- SUB-PAGE 1 : Synthèse -->
-    <div class="sub-page active" id="pitch-sub-synthese">
-      <div id="pitch-status-widget"></div>
-      <div id="pitch-synthese-hero"></div>
-      <div class="app-meta">
-        <div class="meta-card">
-          <div class="meta-label">Coût par pitch généré</div>
-          <div class="meta-val" id="pitch-cost-per-pitch">—</div>
-        </div>
-      </div>
-      <div class="mini-metrics">
-        <div class="mini-metric"><div class="mini-val" id="pitch-fninv"></div><div class="mini-label">Utilisations ce mois</div></div>
-        <div class="mini-metric"><div class="mini-val" id="pitch-fndur"></div><div class="mini-label">Temps de réponse</div></div>
-      </div>
-      <details style="margin-top:12px">
-        <summary style="font-size:11px;color:#64748B;cursor:pointer">Liens techniques</summary>
-        <div class="links" style="margin-top:8px">
-          <a href="https://platform.openai.com/usage" target="_blank" class="btn btn-o">OpenAI Usage</a>
-          <a href="https://platform.openai.com/settings/organization/limits" target="_blank" class="btn btn-o">Rate Limits</a>
-          <a href="https://vercel.com/dashboard" target="_blank" class="btn btn-o">Vercel Dashboard</a>
-        </div>
-      </details>
-      <!-- preserve hidden IDs for renderAll -->
-      <div style="display:none"><span id="pitch-dot"></span><span id="pitch-last-deploy"></span><span id="pitch-build"></span><span id="pitch-bw"></span></div>
-    </div><!-- /synthese -->
+    <!-- ===== RÉUNION : ce qu'ils voient ===== -->
 
-    <!-- SUB-PAGE : Demandes -->
+    <!-- Synthèse -->
+    <div class="sub-page active" id="pitch-sub-synthese">
+      <div id="pitch-synthese-hero"></div>
+      <!-- preserve hidden IDs for renderAll -->
+      <div style="display:none"><span id="pitch-dot"></span><span id="pitch-last-deploy"></span><span id="pitch-build"></span><span id="pitch-bw"></span><span id="pitch-fninv"></span><span id="pitch-fndur"></span><span id="pitch-cost-per-pitch"></span></div>
+    </div>
+
+    <!-- À valider -->
+    <div class="sub-page" id="pitch-sub-avalider">
+      <div id="pitch-avalider-widget"></div>
+    </div>
+
+    <!-- Demandes IT -->
     <div class="sub-page" id="pitch-sub-demandes">
       <div id="pitch-demandes-widget"></div>
-    </div><!-- /demandes -->
+    </div>
 
-    <!-- SUB-PAGE 2 : Coûts -->
+    <!-- ===== MON PROGRAMME : ce que je garde pour bosser ===== -->
+
+    <!-- Programme (ex-Rétroplanning) -->
+    <div class="sub-page" id="pitch-sub-programme">
+      <div style="font-size:12px;color:#64748B;margin:0 0 14px">Cliquez sur une semaine pour voir le détail jour par jour.</div>
+      <div id="retro-demandes-wrap" class="demandes-wrap"></div>
+      <div id="retro-prog-wrap" class="retro-prog-wrap"></div>
+      <div id="retro-filters-wrap" style="margin-bottom:14px"></div>
+      <div id="retro-calendar"></div>
+      <div id="retro-detail-container"></div>
+    </div>
+
+    <!-- Coûts -->
     <div class="sub-page" id="pitch-sub-couts">
       <div id="pitch-couts-widget"></div>
-    </div><!-- /couts -->
+    </div>
 
-    <!-- SUB-PAGE 3 : Pilote & Formations -->
+    <!-- Améliorations -->
+    <div class="sub-page" id="pitch-sub-ameliorations">
+      <div id="pitch-ameliorations-widget"></div>
+    </div>
+
+    <!-- Pilote -->
     <div class="sub-page" id="pitch-sub-pilote">
+      <div id="pitch-status-widget"></div>
       <div id="pitch-formations-widget"></div>
       <div id="pitch-pilote-widget"></div>
       <div style="margin-top:20px">
@@ -615,22 +622,15 @@ th{color:#1D4ED8;font-weight:600;font-size:10px;text-transform:uppercase;letter-
           <button class="cl-reset-btn" onclick="resetPitchChecklist()">Réinitialiser</button>
         </div>
       </div>
+      <details style="margin-top:12px">
+        <summary style="font-size:11px;color:#64748B;cursor:pointer">Liens techniques</summary>
+        <div class="links" style="margin-top:8px">
+          <a href="https://platform.openai.com/usage" target="_blank" class="btn btn-o">OpenAI Usage</a>
+          <a href="https://platform.openai.com/settings/organization/limits" target="_blank" class="btn btn-o">Rate Limits</a>
+          <a href="https://vercel.com/dashboard" target="_blank" class="btn btn-o">Vercel Dashboard</a>
+        </div>
+      </details>
     </div><!-- /pilote -->
-
-    <!-- SUB-PAGE 4 : Améliorations -->
-    <div class="sub-page" id="pitch-sub-ameliorations">
-      <div id="pitch-ameliorations-widget"></div>
-    </div><!-- /ameliorations -->
-
-    <!-- SUB-PAGE 5 : Rétroplanning -->
-    <div class="sub-page" id="pitch-sub-retro">
-      <div style="font-size:12px;color:#64748B;margin:0 0 14px">Cliquez sur une semaine pour voir le détail jour par jour. Double-cliquez sur un texte pour l'éditer.</div>
-      <div id="retro-demandes-wrap" class="demandes-wrap"></div>
-      <div id="retro-prog-wrap" class="retro-prog-wrap"></div>
-      <div id="retro-filters-wrap" style="margin-bottom:14px"></div>
-      <div id="retro-calendar"></div>
-      <div id="retro-detail-container"></div>
-    </div><!-- /retro -->
 
   </div>
   </div>
@@ -1420,7 +1420,7 @@ function showPitchTab(id, btn) {
   const page = document.getElementById('pitch-sub-' + id);
   if (page) page.classList.add('active');
   if (btn) btn.classList.add('active');
-  if (id === 'retro') {
+  if (id === 'programme') {
     if (!retroInitialized) { retroInitialized = true; initRetro(); }
     else { updateRetroProgress(); }
     setTimeout(() => { const el = $('retro-today'); if (el) el.scrollIntoView({block:'nearest',inline:'center'}); }, 80);
@@ -1792,6 +1792,7 @@ let pitchInitialized = false;
 let vercelBillingAPI = null;
 function initPitchSubTabs() {
   renderPitchSynthese();
+  renderPitchAValider();
   renderPitchDemandes();
   renderPitchStatusWidget();
   renderPitchFormations();
@@ -1854,111 +1855,162 @@ function renderPitchSynthese() {
 
   /* --- Où on en est --- */
   h += `<div style="background:#F8FAFC;border:1px solid #E2E8F0;border-radius:12px;padding:20px;margin-bottom:16px">
-    <div style="font-size:14px;font-weight:800;color:#051E50;margin-bottom:10px">Où on en est</div>
-    <div style="display:flex;flex-direction:column;gap:8px;font-size:12px;color:#334155;line-height:1.6">
+    <div style="font-size:14px;font-weight:800;color:#051E50;margin-bottom:12px">Où on en est</div>
+    <div style="display:flex;flex-direction:column;gap:10px;font-size:13px;color:#334155;line-height:1.6">
       <div style="display:flex;gap:10px;align-items:flex-start">
-        <span style="font-size:15px;flex-shrink:0">✅</span>
-        <div><strong>L'application est développée et fonctionnelle</strong> — hébergée sur un environnement existant (Vercel), prête à être utilisée.</div>
+        <span style="flex-shrink:0">✅</span>
+        <div><strong>L'application est prête</strong> — développée, fonctionnelle, hébergée.</div>
       </div>
       <div style="display:flex;gap:10px;align-items:flex-start">
-        <span style="font-size:15px;flex-shrink:0">📞</span>
-        <div><strong>3 demandes de support IT depuis le 6 février</strong> — pour intégrer l'app dans l'infrastructure Rubix. Aucune avancée à date.</div>
+        <span style="flex-shrink:0">📞</span>
+        <div><strong>3 demandes IT depuis le 6 février</strong> — aucune avancée.</div>
       </div>
       <div style="display:flex;gap:10px;align-items:flex-start">
-        <span style="font-size:15px;flex-shrink:0">📅</span>
-        <div><strong>Les formations approchent</strong> — les dates sont fixées, les commerciaux attendent de tester l'outil.</div>
+        <span style="flex-shrink:0">📅</span>
+        <div><strong>Les formations approchent</strong> — les commerciaux attendent.</div>
       </div>
     </div>
   </div>`;
 
-  /* --- La question --- */
+  /* --- Proposition --- */
   h += `<div style="background:#EFF6FF;border:1px solid #BFDBFE;border-radius:12px;padding:20px;margin-bottom:16px">
-    <div style="font-size:14px;font-weight:800;color:#1E40AF;margin-bottom:8px">La question</div>
+    <div style="font-size:14px;font-weight:800;color:#1E40AF;margin-bottom:8px">Ce qu'on peut faire</div>
     <div style="font-size:13px;color:#334155;line-height:1.7">
-      On peut faire tester l'app <strong>dès maintenant</strong> sur l'environnement existant, sans attendre l'IT.<br>
-      Mais cet environnement a des <strong>limites de scalabilité</strong>.<br>
-      Tout dépend de <strong>comment on y va</strong> :
+      L'environnement actuel permet de <strong>lancer les tests sans attendre l'IT</strong>.<br>
+      Il a des limites. Selon le nombre de testeurs et le rythme, l'impact est très différent.
     </div>
   </div>`;
 
   /* --- Deux scénarios --- */
   h += `<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">`;
 
-  /* Scénario A : progressif */
-  h += `<div style="background:#F0FDF4;border:1px solid #BBF7D0;border-radius:12px;padding:18px">
-    <div style="font-size:13px;font-weight:800;color:#166534;margin-bottom:10px">Option A — Progressif</div>
-    <div style="font-size:22px;font-weight:800;color:#166534;margin-bottom:4px">5 → 25 testeurs</div>
-    <div style="font-size:11px;color:#64748B;margin-bottom:12px">par vagues sur plusieurs semaines</div>
-    <div style="display:flex;flex-direction:column;gap:6px;font-size:11px;color:#334155;line-height:1.5">
-      <div>• <strong>Faisable immédiatement</strong> avec l'environnement actuel</div>
-      <div>• Compte IA actuel suffisant pour 5-10 users simultanés</div>
-      <div>• Montée progressive = quotas ajustés au fil de l'eau</div>
-      <div>• Budget maîtrisé (~0,30€/user/mois)</div>
-      <div>• Problèmes détectés et corrigés entre chaque vague</div>
+  h += `<div style="background:#F0FDF4;border:2px solid #22C55E;border-radius:12px;padding:18px">
+    <div style="font-size:13px;font-weight:800;color:#166534;margin-bottom:8px">Progressif</div>
+    <div style="font-size:24px;font-weight:800;color:#166534;margin-bottom:2px">5 → 25 testeurs</div>
+    <div style="font-size:12px;color:#64748B;margin-bottom:14px">par vagues, sur plusieurs semaines</div>
+    <div style="font-size:12px;color:#334155;line-height:1.7">
+      <strong>Pas de préparation lourde.</strong><br>
+      On commence avec 5 personnes, on ajuste, on élargit.<br>
+      Budget maîtrisé. Problèmes corrigés entre chaque vague.
     </div>
-    <div style="margin-top:12px;padding:10px;background:#DCFCE7;border-radius:8px;text-align:center">
-      <div style="font-size:12px;color:#166534;font-weight:700">Risque faible — je peux garantir que ça fonctionne</div>
+    <div style="margin-top:14px;padding:10px;background:#DCFCE7;border-radius:8px;text-align:center;font-size:12px;color:#166534;font-weight:700">
+      Je peux garantir que ça fonctionne
     </div>
   </div>`;
 
-  /* Scénario B : tous en même temps */
-  h += `<div style="background:#FEF2F2;border:1px solid #FECACA;border-radius:12px;padding:18px">
-    <div style="font-size:13px;font-weight:800;color:#991B1B;margin-bottom:10px">Option B — Tous en même temps</div>
-    <div style="font-size:22px;font-weight:800;color:#991B1B;margin-bottom:4px">25+ testeurs</div>
-    <div style="font-size:11px;color:#64748B;margin-bottom:12px">une seule après-midi</div>
-    <div style="display:flex;flex-direction:column;gap:6px;font-size:11px;color:#334155;line-height:1.5">
-      <div>• <strong>Nécessite 2-3 semaines de préparation</strong></div>
-      <div>• Compte IA dédié obligatoire (carte bancaire + 7 jours d'activation)</div>
-      <div>• Quotas à augmenter à l'avance pour 25+ users simultanés</div>
-      <div>• Gestion d'erreurs et relance automatique à finaliser</div>
-      <div>• Budget crédits IA à provisionner (~5-15€ la session)</div>
+  h += `<div style="background:#FEF2F2;border:2px solid #EF4444;border-radius:12px;padding:18px">
+    <div style="font-size:13px;font-weight:800;color:#991B1B;margin-bottom:8px">Tous en même temps</div>
+    <div style="font-size:24px;font-weight:800;color:#991B1B;margin-bottom:2px">25+ testeurs</div>
+    <div style="font-size:12px;color:#64748B;margin-bottom:14px">une seule après-midi</div>
+    <div style="font-size:12px;color:#334155;line-height:1.7">
+      <strong>2 à 3 semaines de préparation obligatoire.</strong><br>
+      Compte dédié à créer (7 jours), capacité à augmenter,<br>
+      gestion des erreurs à renforcer. Sans ça, l'app plantera.
     </div>
-    <div style="margin-top:12px;padding:10px;background:#FEE2E2;border-radius:8px;text-align:center">
-      <div style="font-size:12px;color:#991B1B;font-weight:700">Risque élevé si on y va sans cette préparation</div>
+    <div style="margin-top:14px;padding:10px;background:#FEE2E2;border-radius:8px;text-align:center;font-size:12px;color:#991B1B;font-weight:700">
+      Risque élevé sans cette préparation
     </div>
   </div>`;
 
   h += `</div>`;
 
-  /* --- Ce qui ne dépend pas de moi --- */
+  el.innerHTML = h;
+}
+
+/* ---- À valider ---- */
+function renderPitchAValider() {
+  const el = $('pitch-avalider-widget');
+  if (!el) return;
+  let h = '';
+
+  /* --- Section Manager --- */
+  h += `<div style="font-size:14px;font-weight:800;color:#051E50;margin-bottom:14px">Ce que je demande</div>`;
+
+  h += `<div style="background:#F8FAFC;border:1px solid #E2E8F0;border-radius:12px;padding:20px;margin-bottom:16px">
+    <div style="font-size:13px;font-weight:800;color:#051E50;margin-bottom:12px">Pour mon manager</div>
+    <div style="display:flex;flex-direction:column;gap:12px">
+
+      <div style="display:flex;gap:12px;align-items:flex-start">
+        <div style="width:32px;height:32px;border-radius:8px;background:#EFF6FF;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:16px">💰</div>
+        <div>
+          <div style="font-size:12px;font-weight:700;color:#334155">Budget</div>
+          <div style="font-size:12px;color:#64748B;line-height:1.5;margin-top:2px">~46€ pour créer un compte IA dédié + 0,30€ par commercial par mois en fonctionnement. Le détail est dans l'onglet <strong>Coûts</strong>.</div>
+        </div>
+      </div>
+
+      <div style="display:flex;gap:12px;align-items:flex-start">
+        <div style="width:32px;height:32px;border-radius:8px;background:#EFF6FF;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:16px">⏱️</div>
+        <div>
+          <div style="font-size:12px;font-weight:700;color:#334155">Temps projet</div>
+          <div style="font-size:12px;color:#64748B;line-height:1.5;margin-top:2px">Préparation, fiabilisation et accompagnement des formations. Le programme détaillé est dans l'onglet <strong>Programme</strong>.</div>
+        </div>
+      </div>
+
+      <div style="display:flex;gap:12px;align-items:flex-start">
+        <div style="width:32px;height:32px;border-radius:8px;background:#EFF6FF;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:16px">🛡️</div>
+        <div>
+          <div style="font-size:12px;font-weight:700;color:#334155">Cadre</div>
+          <div style="font-size:12px;color:#64748B;line-height:1.5;margin-top:2px">Pas de support IT à ce jour malgré 3 demandes. Je fais tourner le projet en autonomie mais <strong>je ne peux pas porter la responsabilité d'un déploiement large sans appui IT</strong>.</div>
+        </div>
+      </div>
+
+    </div>
+  </div>`;
+
+  /* --- Section Directrice --- */
   h += `<div style="background:#FFFBEB;border:1px solid #FDE68A;border-radius:12px;padding:20px;margin-bottom:16px">
-    <div style="font-size:13px;font-weight:700;color:#92400E;margin-bottom:10px">Ce qui reste bloqué sans l'IT</div>
-    <div style="display:flex;flex-direction:column;gap:6px;font-size:12px;color:#334155;line-height:1.5">
-      <div>• <strong>Domaine rubix officiel</strong> — l'app tourne sur une URL Vercel, pas sur rubix.fr</div>
-      <div>• <strong>SSO / authentification Rubix</strong> — aujourd'hui c'est un mot de passe partagé</div>
-      <div>• <strong>Hébergement pérenne</strong> — Vercel convient pour le pilote, pas pour un déploiement définitif</div>
-      <div>• <strong>Scalabilité illimitée</strong> — dépasser 50-100 users nécessite une infra dédiée</div>
-    </div>
-    <div style="margin-top:10px;font-size:11px;color:#92400E;font-style:italic">
-      → Ces sujets nécessitent une action côté IT. 3 demandes faites depuis le 6 février, sans retour.
+    <div style="font-size:13px;font-weight:800;color:#92400E;margin-bottom:12px">Pour la direction</div>
+    <div style="display:flex;flex-direction:column;gap:12px">
+
+      <div style="display:flex;gap:12px;align-items:flex-start">
+        <div style="width:32px;height:32px;border-radius:8px;background:#FEF3C7;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:16px">⚡</div>
+        <div>
+          <div style="font-size:12px;font-weight:700;color:#334155">Limites à accepter</div>
+          <div style="font-size:12px;color:#64748B;line-height:1.5;margin-top:2px">L'environnement actuel a des limites de capacité. En progressif, c'est gérable. En « tout le monde en même temps », il y aura des lenteurs ou des erreurs si la préparation n'est pas faite.</div>
+        </div>
+      </div>
+
+      <div style="display:flex;gap:12px;align-items:flex-start">
+        <div style="width:32px;height:32px;border-radius:8px;background:#FEF3C7;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:16px">🐛</div>
+        <div>
+          <div style="font-size:12px;font-weight:700;color:#334155">Bugs possibles le jour J</div>
+          <div style="font-size:12px;color:#64748B;line-height:1.5;margin-top:2px">C'est un outil en phase pilote. Des lenteurs ou erreurs ponctuelles sont possibles si beaucoup d'utilisateurs se connectent en même temps. Ce n'est pas un produit fini.</div>
+        </div>
+      </div>
+
+      <div style="display:flex;gap:12px;align-items:flex-start">
+        <div style="width:32px;height:32px;border-radius:8px;background:#FEF3C7;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:16px">📢</div>
+        <div>
+          <div style="font-size:12px;font-weight:700;color:#334155">IT à débloquer</div>
+          <div style="font-size:12px;color:#64748B;line-height:1.5;margin-top:2px">Pour aller au-delà du pilote (domaine officiel, authentification, montée en charge illimitée), <strong>il faut un appui IT</strong>. 3 demandes ont été faites sans retour. C'est un sujet à escalader côté direction.</div>
+        </div>
+      </div>
+
     </div>
   </div>`;
 
-  /* --- Chiffre clé --- */
-  h += `<div style="background:#051E50;color:#fff;border-radius:12px;padding:22px 20px;text-align:center;margin-bottom:16px">
-    <div style="font-size:11px;opacity:.7;margin-bottom:6px">Coût</div>
-    <div style="font-size:20px;font-weight:800">~${setupEUR}€ de set-up</div>
-    <div style="font-size:13px;margin:3px 0;opacity:.5">+</div>
-    <div style="font-size:22px;font-weight:800">0,30€ / commercial / mois</div>
-    <div style="font-size:11px;opacity:.5;margin-top:4px">(base 5 pitchs/mois par commercial)</div>
-  </div>`;
-
-  h += `<div style="text-align:right;margin-bottom:8px">
-    <button onclick="peReset()" style="font-size:10px;background:none;border:1px solid #E2E8F0;border-radius:4px;padding:2px 8px;color:#94A3B8;cursor:pointer">Réinitialiser les modifications</button>
+  /* --- Résumé décision --- */
+  h += `<div style="background:#051E50;color:#fff;border-radius:12px;padding:20px;text-align:center">
+    <div style="font-size:13px;opacity:.7;margin-bottom:6px">En résumé</div>
+    <div style="font-size:14px;font-weight:700;line-height:1.6">
+      Si on se lance, j'ai un programme prêt.<br>
+      J'ai besoin du budget, du temps, et d'attentes réalistes sur les limites.<br>
+      Le reste — l'IT — ce n'est pas dans mon périmètre.
+    </div>
   </div>`;
 
   el.innerHTML = h;
 }
 
-/* ---- Demandes ---- */
+/* ---- Demandes IT ---- */
 function renderPitchDemandes() {
   const el = $('pitch-demandes-widget');
   if (!el) return;
 
   const DEMANDES = [
-    { date:'06/02/2026', type:'Call', objet:'Demande initiale de support IT pour mise en production Rubix Pitch', statut:'sans_suite', detail:'Présentation du besoin, demande d\'accès serveur et domaine. Pas de retour.' },
-    { date:'13/02/2026', type:'Call', objet:'Relance — besoin d\'un environnement de test', statut:'sans_suite', detail:'Relance sur les accès. Discussion sur les contraintes sécurité. Toujours en attente.' },
-    { date:'20/02/2026', type:'Call', objet:'3e relance — blocage persistant', statut:'sans_suite', detail:'Aucune avancée côté IT. Proposition de lancer un pilote en autonomie avec Vercel en attendant.' },
+    { date:'06/02/2026', type:'Call', objet:'Demande initiale de support IT', statut:'sans_suite', detail:'Présentation du besoin : hébergement, domaine, accès serveur. Pas de retour.' },
+    { date:'13/02/2026', type:'Call', objet:'Relance', statut:'sans_suite', detail:'Relance sur les accès. Discussion contraintes sécurité. Toujours en attente.' },
+    { date:'20/02/2026', type:'Call', objet:'3e relance', statut:'sans_suite', detail:'Aucune avancée. Proposition de lancer en autonomie en attendant.' },
   ];
 
   const statutMeta = {
@@ -1967,35 +2019,26 @@ function renderPitchDemandes() {
     resolu: { icon:'🟢', label:'Résolu', bg:'#F0FDF4', border:'#BBF7D0', color:'#166534' },
   };
 
-  let h = `<div style="font-size:14px;font-weight:800;color:#051E50;margin-bottom:4px">Historique des demandes</div>`;
-  h += `<div style="font-size:11px;color:#64748B;margin-bottom:14px">Suivi des échanges avec le support IT depuis le lancement du projet.</div>`;
-
-  /* --- Résumé --- */
-  const total = DEMANDES.length;
-  const sansSuite = DEMANDES.filter(d => d.statut === 'sans_suite').length;
-  h += `<div style="background:#FEF2F2;border:1px solid #FECACA;border-radius:10px;padding:16px;margin-bottom:16px;display:flex;align-items:center;gap:14px">
-    <div style="font-size:32px;font-weight:800;color:#DC2626;line-height:1">${total}</div>
+  let h = `<div style="display:flex;align-items:center;gap:14px;background:#FEF2F2;border:1px solid #FECACA;border-radius:10px;padding:16px;margin-bottom:16px">
+    <div style="font-size:36px;font-weight:800;color:#DC2626;line-height:1">${DEMANDES.length}</div>
     <div>
-      <div style="font-size:13px;font-weight:700;color:#991B1B">demandes depuis le 6 février 2026</div>
-      <div style="font-size:11px;color:#64748B;margin-top:2px">${sansSuite} sans suite à ce jour</div>
+      <div style="font-size:14px;font-weight:700;color:#991B1B">demandes IT depuis le 6 février</div>
+      <div style="font-size:12px;color:#64748B;margin-top:2px">Aucune n'a abouti.</div>
     </div>
   </div>`;
 
-  /* --- Timeline --- */
-  h += `<div style="display:flex;flex-direction:column;gap:10px">`;
   for (const d of DEMANDES) {
     const sm = statutMeta[d.statut];
-    h += `<div style="background:${sm.bg};border:1px solid ${sm.border};border-radius:10px;padding:14px 16px">
-      <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+    h += `<div style="background:${sm.bg};border:1px solid ${sm.border};border-radius:10px;padding:14px 16px;margin-bottom:8px">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
         <span style="font-size:14px">${sm.icon}</span>
-        <span style="font-size:12px;font-weight:700;color:${sm.color}">${d.date} — ${d.type}</span>
-        <span style="margin-left:auto;font-size:10px;padding:2px 8px;border-radius:20px;background:${sm.border};color:${sm.color};font-weight:600">${sm.label}</span>
+        <span style="font-size:12px;font-weight:700;color:${sm.color}">${d.date}</span>
+        <span style="font-size:12px;font-weight:600;color:#334155;flex:1">${d.objet}</span>
+        <span style="font-size:10px;padding:2px 8px;border-radius:20px;background:${sm.border};color:${sm.color};font-weight:600">${sm.label}</span>
       </div>
-      <div style="font-size:12px;font-weight:600;color:#334155;margin-bottom:4px">${d.objet}</div>
-      <div style="font-size:11px;color:#64748B">${d.detail}</div>
+      <div style="font-size:11px;color:#64748B;padding-left:28px">${d.detail}</div>
     </div>`;
   }
-  h += `</div>`;
 
   el.innerHTML = h;
 }
