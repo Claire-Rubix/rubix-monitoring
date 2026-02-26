@@ -1888,8 +1888,8 @@ function renderPitchAmeliorations() {
   const statusIcons = { a_faire:'⬜', en_cours:'🔄', fait:'✅' };
   const statusLabels = { a_faire:'À faire', en_cours:'En cours', fait:'Fait' };
 
-  let h = `<div style="font-size:14px;font-weight:800;color:#051E50;margin-bottom:4px">${peSpan('amel_title','Améliorations prévues')}</div>`;
-  h += `<div style="font-size:11px;color:#64748B;margin-bottom:12px">${peSpan('amel_desc','8 améliorations techniques planifiées pour renforcer la fiabilité et les performances.')}</div>`;
+  let h = `<div style="font-size:14px;font-weight:800;color:#051E50;margin-bottom:4px">Améliorations prévues</div>`;
+  h += `<div style="font-size:11px;color:#64748B;margin-bottom:12px">8 améliorations techniques planifiées pour renforcer la fiabilité et les performances.</div>`;
 
   h += `<div style="display:flex;flex-direction:column;gap:6px">`;
   for (const a of PITCH_AMELIORATIONS) {
@@ -1904,10 +1904,10 @@ function renderPitchAmeliorations() {
     h += `<div style="background:#fff;border:1px solid ${st==='fait'?'#BBF7D0':st==='en_cours'?'#FDE68A':'#E2E8F0'};border-radius:8px;padding:10px 14px${st==='fait'?';opacity:.7':''}">
       <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
         <span style="font-size:14px">${statusIcons[st]}</span>
-        <span style="font-size:12px;font-weight:700;color:#051E50;flex:1">${peSpan('amel_label_'+a.id, a.id+'. '+a.label)}</span>
+        <span style="font-size:12px;font-weight:700;color:#051E50;flex:1">${a.id}. ${a.label}</span>
         <span class="badge ${a.impact === 'critique' ? 'bd-crit' : ''}" style="font-size:9px">${impactLabel[a.impact]}</span>
       </div>
-      <div style="font-size:11px;color:#64748B;padding-left:28px">${peSpan('amel_detail_'+a.id, a.detail)}</div>`;
+      <div style="font-size:11px;color:#64748B;padding-left:28px">${a.detail}</div>`;
     // Retro progress bar
     if (retroTotal > 0) {
       h += `<div style="padding-left:28px;margin-top:6px;display:flex;align-items:center;gap:8px">
@@ -1920,11 +1920,11 @@ function renderPitchAmeliorations() {
   h += `</div>`;
 
   h += `<div style="margin-top:16px;padding:12px;background:#FEF2F2;border-radius:8px;border:1px solid #FECACA">
-    <div style="font-size:12px;font-weight:700;color:#991B1B;margin-bottom:4px">${peSpan('amel_alerte_title','Action en cours : création d\'un compte IA dédié')}</div>
-    <div style="font-size:11px;color:#334155">${peSpan('amel_alerte_desc','Actuellement Rubix Pitch partage son compte IA avec Smart Spec. Un compte séparé est en cours de création pour éviter tout risque de coupure.')}</div>
+    <div style="font-size:12px;font-weight:700;color:#991B1B;margin-bottom:4px">Action en cours : création d'un compte IA dédié</div>
+    <div style="font-size:11px;color:#334155">Actuellement Rubix Pitch partage son compte IA avec Smart Spec. Un compte séparé est en cours de création pour éviter tout risque de coupure.</div>
     <details style="margin-top:8px"><summary style="font-size:10px;color:#64748B;cursor:pointer">Détail technique</summary>
       <div style="font-size:11px;color:#334155;margin-top:8px;line-height:1.8">
-        ${peSpan('amel_tech_detail','<strong>Capacité actuelle :</strong> ~40 utilisateurs simultanés.<br><strong>Objectif :</strong> ~800 utilisateurs (montée automatique après 46€ + 7 jours).<br><strong>Procédure :</strong> Créer un compte dédié → Carte bancaire → 46€ crédits → Clé API → Mise à jour serveur.')}
+        <strong>Capacité actuelle :</strong> ~40 utilisateurs simultanés.<br><strong>Objectif :</strong> ~800 utilisateurs (montée automatique après 46€ + 7 jours).<br><strong>Procédure :</strong> Créer un compte dédié → Carte bancaire → 46€ crédits → Clé API → Mise à jour serveur.
       </div>
     </details>
   </div>`;
