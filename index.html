@@ -309,7 +309,6 @@ th{color:#1D4ED8;font-weight:600;font-size:10px;text-transform:uppercase;letter-
   <a class="active" onclick="showTab('alertes')">Alertes</a>
   <a onclick="showTab('pole')">Pôle Acquisition</a>
   <a onclick="showTab('pitch')">Rubix Pitch</a>
-  <a onclick="showTab('retro')">Rétroplanning</a>
   <a onclick="showTab('smart')">Smart Content</a>
   <a onclick="showTab('vercel')">Capacité Vercel</a>
   <a onclick="showTab('couts')">Coûts</a>
@@ -536,476 +535,92 @@ th{color:#1D4ED8;font-weight:600;font-size:10px;text-transform:uppercase;letter-
   <div class="page" id="page-pitch">
   <div class="container">
     <div class="section-title">
-      <div class="st-bar" style="background:#8B5CF6"></div>
+      <div class="st-bar" style="background:#051E50"></div>
       Rubix Pitch
-      <span class="badge bo">OPENAI TIER 1</span>
     </div>
 
     <!-- Sous-onglets Rubix Pitch -->
     <div class="sub-tabs-nav">
-      <button class="sub-tab-btn active" onclick="showPitchTab('overview',this)">Vue d'ensemble</button>
-      <button class="sub-tab-btn" onclick="showPitchTab('openai',this)">OpenAI &amp; Tiers</button>
-      <button class="sub-tab-btn" onclick="showPitchTab('formations',this)">📅 Formations</button>
-      <button class="sub-tab-btn" onclick="showPitchTab('couts',this)">💰 Coûts globaux</button>
-      <button class="sub-tab-btn" onclick="showPitchTab('pilote',this)">🏁 Pilote &amp; IT</button>
-      <button class="sub-tab-btn" onclick="showPitchTab('checklist',this)">✅ Checklist</button>
-      <button class="sub-tab-btn" onclick="showPitchTab('chantiers',this)">⚙️ Chantiers</button>
+      <button class="sub-tab-btn active" onclick="showPitchTab('synthese',this)">Synthèse</button>
+      <button class="sub-tab-btn" onclick="showPitchTab('couts',this)">Coûts</button>
+      <button class="sub-tab-btn" onclick="showPitchTab('pilote',this)">Pilote &amp; Formations</button>
+      <button class="sub-tab-btn" onclick="showPitchTab('ameliorations',this)">Améliorations</button>
+      <button class="sub-tab-btn" onclick="showPitchTab('retro',this)">Rétroplanning</button>
     </div>
 
-    <!-- SUB-PAGE 1 : Vue d'ensemble -->
-    <div class="sub-page active" id="pitch-sub-overview">
+    <!-- SUB-PAGE 1 : Synthèse -->
+    <div class="sub-page active" id="pitch-sub-synthese">
       <div id="pitch-status-widget"></div>
+      <div id="pitch-synthese-hero"></div>
       <div class="app-meta">
         <div class="meta-card">
-          <div class="meta-label">Statut déploiement</div>
-          <div class="meta-val"><span class="status-dot" id="pitch-dot"></span> <span id="pitch-last-deploy">—</span></div>
-        </div>
-        <div class="meta-card">
-          <div class="meta-label">Coût / pitch complet (6 appels)</div>
+          <div class="meta-label">Coût par pitch généré</div>
           <div class="meta-val" id="pitch-cost-per-pitch">—</div>
         </div>
       </div>
       <div class="mini-metrics">
-        <div class="mini-metric"><div class="mini-val" id="pitch-build"></div><div class="mini-label">Build min</div></div>
-        <div class="mini-metric"><div class="mini-val" id="pitch-bw"></div><div class="mini-label">Bandwidth</div></div>
-        <div class="mini-metric"><div class="mini-val" id="pitch-fninv"></div><div class="mini-label">Fn Invocations</div></div>
-        <div class="mini-metric"><div class="mini-val" id="pitch-fndur"></div><div class="mini-label">Fn Duration</div></div>
+        <div class="mini-metric"><div class="mini-val" id="pitch-fninv"></div><div class="mini-label">Utilisations ce mois</div></div>
+        <div class="mini-metric"><div class="mini-val" id="pitch-fndur"></div><div class="mini-label">Temps de réponse</div></div>
       </div>
-      <div class="links">
-        <a href="https://platform.openai.com/usage" target="_blank" class="btn btn-o">OpenAI Usage</a>
-        <a href="https://platform.openai.com/settings/organization/limits" target="_blank" class="btn btn-o">Rate Limits</a>
-        <a href="https://vercel.com/dashboard" target="_blank" class="btn btn-o">Vercel Dashboard</a>
-      </div>
-    </div><!-- /overview -->
-
-    <!-- SUB-PAGE 2 : OpenAI & Tiers -->
-    <div class="sub-page" id="pitch-sub-openai">
-      <div style="margin-bottom:14px;padding:12px 14px;background:#FEF2F2;border-radius:8px;border:1px solid #FECACA">
-        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
-          <span style="font-size:13px;font-weight:700;color:#DC2626">🔴 Alerte — Compte OpenAI partagé avec Smart Spec</span>
-          <span class="proj-badge proj-danger">CRITIQUE</span>
+      <details style="margin-top:12px">
+        <summary style="font-size:11px;color:#64748B;cursor:pointer">Liens techniques</summary>
+        <div class="links" style="margin-top:8px">
+          <a href="https://platform.openai.com/usage" target="_blank" class="btn btn-o">OpenAI Usage</a>
+          <a href="https://platform.openai.com/settings/organization/limits" target="_blank" class="btn btn-o">Rate Limits</a>
+          <a href="https://vercel.com/dashboard" target="_blank" class="btn btn-o">Vercel Dashboard</a>
         </div>
-        <p style="font-size:12px;color:#78350F;margin:0 0 10px">Rubix Pitch utilise le même compte OpenAI que Smart Spec. Si Smart Spec consomme tous les crédits, <strong>Rubix Pitch tombe en erreur</strong> sans préavis.</p>
-        <div style="font-size:12px;font-weight:700;color:#334155;margin-bottom:6px">Actions — Créer un compte OpenAI dédié</div>
-        <ol style="margin:0;padding-left:18px;font-size:12px;color:#334155;line-height:2.1">
-          <li><strong>Étape 1 :</strong> Créer un compte OpenAI avec une adresse email Rubix dédiée (ex. <code style="background:#F1F5F9;padding:1px 4px;border-radius:3px">ai-pitch@rubix.fr</code>)</li>
-          <li><strong>Étape 2 :</strong> platform.openai.com → Billing → Ajouter une carte bancaire</li>
-          <li><strong>Étape 3 :</strong> Charger <strong>au moins 50 $ de crédits</strong> (condition pour Tier 2 automatique après 7 jours)</li>
-          <li><strong>Étape 4 :</strong> Settings → API Keys → Create new secret key</li>
-          <li><strong>Étape 5 :</strong> Mettre à jour <code style="background:#F1F5F9;padding:1px 4px;border-radius:3px">OPENAI_API_KEY</code> dans Vercel → Settings → Environment Variables → Redéployer</li>
-        </ol>
-      </div>
-      <div class="thr-i">
-        <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;flex-wrap:wrap">
-          <h4 style="margin:0">Capacité OpenAI — Tiers</h4>
-          <span class="proj-badge proj-warn">TIER 1 — 500 appels/min</span>
-        </div>
-        <div style="font-size:11px;color:#334155;margin-bottom:8px">Un pitch complet = <strong>6 appels API</strong>. En pic, le risque de blocage commence dès <strong>40-50 users simultanés</strong>.</div>
-        <table>
-          <thead><tr><th>Tier</th><th>Limite</th><th>Users simultanés (pic)</th><th>Statut</th></tr></thead>
-          <tbody>
-            <tr><td><strong>Tier 1</strong> (actuel)</td><td>500 appels/min</td><td>~40 en pic réel</td><td><span class="proj-badge proj-warn">Actif</span></td></tr>
-            <tr><td><strong>Tier 2</strong> (cible)</td><td>5 000 appels/min</td><td>~800 users</td><td><span class="proj-badge proj-ok">Objectif</span></td></tr>
-          </tbody>
-        </table>
-        <table style="margin-top:10px">
-          <thead><tr><th>Users simultanés</th><th>Appels/min</th><th>vs Limite 500</th><th>Statut</th></tr></thead>
-          <tbody>
-            <tr><td>1 à 10 users</td><td>6 à 60/min</td><td style="color:#059669">OK (12%)</td><td><span class="proj-badge proj-ok">OK</span></td></tr>
-            <tr><td>40-50 users (pic)</td><td>240-300/min</td><td style="color:#D97706;font-weight:700">Risque (60%)</td><td><span class="proj-badge proj-warn">ATTENTION</span></td></tr>
-            <tr><td>80+ users</td><td>480+/min</td><td style="color:#DC2626;font-weight:700">Limite (96%+)</td><td><span class="proj-badge proj-danger">BLOQUÉ</span></td></tr>
-          </tbody>
-        </table>
-        <div style="margin-top:10px;padding:8px 12px;background:#DBEAFE;border-radius:7px;border-left:3px solid #051E50;font-size:11px;color:#1D4ED8">
-          <strong>Passage Tier 2 automatique :</strong> 50$ dépenses cumulées + 7 jours d'ancienneté sur le compte dédié. Confortable jusqu'à 250+ users simultanés.
-        </div>
-        <div style="font-size:11px;color:#1D4ED8;margin-top:6px" id="pitch-cost-detail">Chargement des coûts...</div>
-      </div>
-    </div><!-- /openai -->
+      </details>
+      <!-- preserve hidden IDs for renderAll -->
+      <div style="display:none"><span id="pitch-dot"></span><span id="pitch-last-deploy"></span><span id="pitch-build"></span><span id="pitch-bw"></span></div>
+    </div><!-- /synthese -->
 
-    <!-- SUB-PAGE 3 : Formations -->
-    <div class="sub-page" id="pitch-sub-formations">
-      <div id="pitch-formations-widget"></div>
-    </div><!-- /formations -->
-
-    <!-- SUB-PAGE 4 : Coûts -->
+    <!-- SUB-PAGE 2 : Coûts -->
     <div class="sub-page" id="pitch-sub-couts">
       <div id="pitch-couts-widget"></div>
     </div><!-- /couts -->
 
-    <!-- SUB-PAGE 5 : Pilote & Transition IT -->
+    <!-- SUB-PAGE 3 : Pilote & Formations -->
     <div class="sub-page" id="pitch-sub-pilote">
+      <div id="pitch-formations-widget"></div>
       <div id="pitch-pilote-widget"></div>
+      <div style="margin-top:20px">
+        <div style="font-size:14px;font-weight:700;color:#051E50;margin-bottom:3px">Checklist pré-formation</div>
+        <div style="font-size:11px;color:#64748B;margin-bottom:14px">Cocher chaque item au fil de la préparation. Sauvegardé automatiquement.</div>
+        <div class="cl-cat-title">Technique</div>
+        <label class="cl-item" id="pitch-cl-c1" onclick="togglePitchCheck('c1')"><input type="checkbox" id="pitch-chk-c1" style="pointer-events:none;flex-shrink:0"><span>Tester la génération d'un pitch complet de bout en bout</span></label>
+        <label class="cl-item" id="pitch-cl-c2" onclick="togglePitchCheck('c2')"><input type="checkbox" id="pitch-chk-c2" style="pointer-events:none;flex-shrink:0"><span>Vérifier que l'application est bien en ligne</span></label>
+        <label class="cl-item" id="pitch-cl-c3" onclick="togglePitchCheck('c3')"><input type="checkbox" id="pitch-chk-c3" style="pointer-events:none;flex-shrink:0"><span>Confirmer que le compte IA a assez de crédits</span></label>
+        <label class="cl-item" id="pitch-cl-c4" onclick="togglePitchCheck('c4')"><input type="checkbox" id="pitch-chk-c4" style="pointer-events:none;flex-shrink:0"><span>Tester sur mobile et sur desktop</span></label>
+        <div class="cl-cat-title">Sécurité</div>
+        <label class="cl-item" id="pitch-cl-c5" onclick="togglePitchCheck('c5')"><input type="checkbox" id="pitch-chk-c5" style="pointer-events:none;flex-shrink:0"><span>Confirmer que le mot de passe de connexion fonctionne</span></label>
+        <label class="cl-item" id="pitch-cl-c6" onclick="togglePitchCheck('c6')"><input type="checkbox" id="pitch-chk-c6" style="pointer-events:none;flex-shrink:0"><span>Vérifier qu'aucune information sensible n'est visible</span></label>
+        <div class="cl-cat-title">Formation</div>
+        <label class="cl-item" id="pitch-cl-c7" onclick="togglePitchCheck('c7')"><input type="checkbox" id="pitch-chk-c7" style="pointer-events:none;flex-shrink:0"><span>Préparer 2-3 cas d'usage réels pour la démo</span></label>
+        <label class="cl-item" id="pitch-cl-c8" onclick="togglePitchCheck('c8')"><input type="checkbox" id="pitch-chk-c8" style="pointer-events:none;flex-shrink:0"><span>Envoyer le lien + mot de passe aux commerciaux J-1</span></label>
+        <label class="cl-item" id="pitch-cl-c9" onclick="togglePitchCheck('c9')"><input type="checkbox" id="pitch-chk-c9" style="pointer-events:none;flex-shrink:0"><span>Prévenir l'équipe du quota : 10 pitchs max/jour/user</span></label>
+        <label class="cl-item" id="pitch-cl-c10" onclick="togglePitchCheck('c10')"><input type="checkbox" id="pitch-chk-c10" style="pointer-events:none;flex-shrink:0"><span>Préparer un message de secours si le service IA est indisponible</span></label>
+        <div class="cl-footer">
+          <span id="pitch-cl-prog" style="color:#334155;font-weight:600"></span>
+          <button class="cl-reset-btn" onclick="resetPitchChecklist()">Réinitialiser</button>
+        </div>
+      </div>
     </div><!-- /pilote -->
 
-    <!-- SUB-PAGE 6 : Checklist -->
-    <div class="sub-page" id="pitch-sub-checklist">
-      <div style="font-size:14px;font-weight:700;color:#051E50;margin-bottom:3px">Checklist pré-formation</div>
-      <div style="font-size:11px;color:#64748B;margin-bottom:14px">Cocher chaque item au fil de la préparation. Sauvegardé automatiquement dans le navigateur.</div>
-      <div class="cl-cat-title">🛠️ Technique</div>
-      <label class="cl-item" id="pitch-cl-c1" onclick="togglePitchCheck('c1')"><input type="checkbox" id="pitch-chk-c1" style="pointer-events:none;flex-shrink:0"><span>Tester la génération d'un pitch complet de bout en bout</span></label>
-      <label class="cl-item" id="pitch-cl-c2" onclick="togglePitchCheck('c2')"><input type="checkbox" id="pitch-chk-c2" style="pointer-events:none;flex-shrink:0"><span>Vérifier que le déploiement Vercel est bien actif</span></label>
-      <label class="cl-item" id="pitch-cl-c3" onclick="togglePitchCheck('c3')"><input type="checkbox" id="pitch-chk-c3" style="pointer-events:none;flex-shrink:0"><span>Confirmer que le compte OpenAI a assez de crédits</span></label>
-      <label class="cl-item" id="pitch-cl-c4" onclick="togglePitchCheck('c4')"><input type="checkbox" id="pitch-chk-c4" style="pointer-events:none;flex-shrink:0"><span>Tester sur mobile (responsive) et sur desktop</span></label>
-      <div class="cl-cat-title">🔒 Sécurité</div>
-      <label class="cl-item" id="pitch-cl-c5" onclick="togglePitchCheck('c5')"><input type="checkbox" id="pitch-chk-c5" style="pointer-events:none;flex-shrink:0"><span>Confirmer que le mot de passe de connexion fonctionne</span></label>
-      <label class="cl-item" id="pitch-cl-c6" onclick="togglePitchCheck('c6')"><input type="checkbox" id="pitch-chk-c6" style="pointer-events:none;flex-shrink:0"><span>Vérifier qu'aucune clé API n'est visible dans le code front</span></label>
-      <div class="cl-cat-title">🎓 Formation</div>
-      <label class="cl-item" id="pitch-cl-c7" onclick="togglePitchCheck('c7')"><input type="checkbox" id="pitch-chk-c7" style="pointer-events:none;flex-shrink:0"><span>Préparer 2-3 cas d'usage réels pour la démo</span></label>
-      <label class="cl-item" id="pitch-cl-c8" onclick="togglePitchCheck('c8')"><input type="checkbox" id="pitch-chk-c8" style="pointer-events:none;flex-shrink:0"><span>Envoyer le lien + mot de passe aux commerciaux J-1</span></label>
-      <label class="cl-item" id="pitch-cl-c9" onclick="togglePitchCheck('c9')"><input type="checkbox" id="pitch-chk-c9" style="pointer-events:none;flex-shrink:0"><span>Prévenir l'équipe du quota : 10 pitchs max/jour/user</span></label>
-      <label class="cl-item" id="pitch-cl-c10" onclick="togglePitchCheck('c10')"><input type="checkbox" id="pitch-chk-c10" style="pointer-events:none;flex-shrink:0"><span>Préparer un message de secours si OpenAI est indisponible</span></label>
-      <div class="cl-footer">
-        <span id="pitch-cl-prog" style="color:#334155;font-weight:600"></span>
-        <button class="cl-reset-btn" onclick="resetPitchChecklist()">Réinitialiser</button>
-      </div>
-    </div><!-- /checklist -->
+    <!-- SUB-PAGE 4 : Améliorations -->
+    <div class="sub-page" id="pitch-sub-ameliorations">
+      <div id="pitch-ameliorations-widget"></div>
+    </div><!-- /ameliorations -->
 
-    <!-- SUB-PAGE 6 : Chantiers techniques -->
-    <div class="sub-page" id="pitch-sub-chantiers">
-      <table style="margin-bottom:16px">
-        <thead><tr><th>Action utilisateur</th><th>Appels IA</th><th>Modèle</th><th>Détail pipeline</th></tr></thead>
-        <tbody>
-          <tr><td style="font-weight:600">Analyser contexte</td><td>1 appel</td><td>gpt-3.5-turbo</td><td>Identification enjeux métier</td></tr>
-          <tr style="border-top:2px solid #E2E8F0">
-            <td style="font-weight:600" rowspan="3">Générer pitch (3 versions)</td>
-            <td style="font-weight:700;color:#D97706">6+ appels</td>
-            <td>gpt-3.5-turbo + Assistant</td>
-            <td style="font-size:10px;color:#D97706">Pipeline ci-dessous</td>
-          </tr>
-          <tr><td colspan="3" style="font-size:10px;color:#64748B;padding-left:20px">1. Prioriser solutions &nbsp; 2. Prioriser questions &nbsp; 3. Prioriser tendances &nbsp; 4. Prioriser crédibilité &nbsp; 5. Prioriser pyramide &nbsp; 6. Génération finale (Assistant API)</td></tr>
-          <tr><td colspan="3" style="font-size:10px;color:#059669;padding-left:20px">Les 5 priorisations peuvent être parallélisées avec Promise.all()</td></tr>
-          <tr><td style="font-weight:600">Générer one-pager</td><td>6+ appels</td><td>Assistant API</td><td>Même pipeline priorisation + fusion</td></tr>
-        </tbody>
-      </table>
-      <div style="margin-bottom:14px;padding:10px;background:#FEE2E2;border-radius:7px;border:1px solid #FECACA">
-        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
-          <span style="font-size:12px;font-weight:700;color:#DC2626">Timeout Vercel</span>
-          <span class="proj-badge proj-danger">FAIBLE</span>
-          <span style="font-size:11px;color:#64748B">55s / 60s = 92% de la limite</span>
-        </div>
-        <div class="pitch-prog-bar"><div class="pitch-prog-fill" style="width:92%"></div></div>
-        <table style="margin-top:10px">
-          <thead><tr><th>Situation</th><th>Temps</th><th>Marge</th><th>Sécurité</th></tr></thead>
-          <tbody>
-            <tr><td>Polling actuel (runs.retrieve)</td><td style="color:#DC2626;font-weight:700">~55s</td><td style="color:#DC2626">5s</td><td><span class="proj-badge proj-danger">FAIBLE</span></td></tr>
-            <tr><td>Promise.all() parallèle</td><td style="color:#D97706;font-weight:700">~25-30s</td><td style="color:#D97706">30s</td><td><span class="proj-badge proj-warn">MOYENNE</span></td></tr>
-            <tr><td>Streaming natif OpenAI</td><td style="color:#059669">connexion maintenue</td><td style="color:#059669">∞</td><td><span class="proj-badge proj-ok">HAUTE</span></td></tr>
-          </tbody>
-        </table>
-      </div>
-      <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;flex-wrap:wrap">
-        <div style="font-size:14px;font-weight:800;color:#051E50">Plan de scaling — 8 chantiers</div>
-        <span class="badge bd">3 CRITIQUES</span><span class="badge bw">3 IMPORTANTS</span><span class="badge bv">2 OPTIMISATIONS</span>
-      </div>
-      <table style="margin-bottom:14px">
-        <thead><tr><th>Priorité</th><th>Chantier</th><th>Impact</th><th>Effort</th><th>Statut</th></tr></thead>
-        <tbody>
-          <tr><td>1</td><td>Gestion d'erreur UX (messages + bouton réessayer)</td><td><span class="proj-badge proj-danger">CRITIQUE</span></td><td>Moyen</td><td><span class="proj-badge proj-warn">À FAIRE</span></td></tr>
-          <tr><td>2</td><td>Retry automatique exponential backoff (429/500)</td><td><span class="proj-badge proj-danger">CRITIQUE</span></td><td>Faible</td><td><span class="proj-badge proj-warn">À FAIRE</span></td></tr>
-          <tr><td>3</td><td>Compte OpenAI dédié Rubix Pitch</td><td><span class="proj-badge proj-danger">CRITIQUE</span></td><td>Faible</td><td><span class="proj-badge proj-warn">À FAIRE</span></td></tr>
-          <tr><td>4</td><td>Timeout : Promise.all() + streaming</td><td><span class="proj-badge proj-warn">IMPORTANT</span></td><td>Moyen</td><td><span class="proj-badge proj-warn">À FAIRE</span></td></tr>
-          <tr><td>5</td><td>Logging structuré des erreurs et métriques</td><td><span class="proj-badge proj-warn">IMPORTANT</span></td><td>Faible</td><td><span class="proj-badge proj-warn">À FAIRE</span></td></tr>
-          <tr><td>6</td><td>Endpoint health check /api/health</td><td><span class="proj-badge proj-warn">IMPORTANT</span></td><td>Moyen</td><td><span class="proj-badge proj-warn">À FAIRE</span></td></tr>
-          <tr><td>7</td><td>Cache priorisations par secteur/fonction (1h)</td><td><span class="proj-badge proj-ok">OPTIMISATION</span></td><td>Moyen</td><td><span class="proj-badge proj-warn">À FAIRE</span></td></tr>
-          <tr><td>8</td><td>Mode dégradé si OpenAI est down</td><td><span class="proj-badge proj-ok">OPTIMISATION</span></td><td>Moyen</td><td><span class="proj-badge proj-warn">À FAIRE</span></td></tr>
-        </tbody>
-      </table>
-      <div style="padding:12px;background:#FEE2E2;border-radius:8px;border-left:4px solid #DC2626;margin-bottom:8px">
-        <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;flex-wrap:wrap"><span style="font-size:12px;font-weight:800;color:#DC2626">Chantier 1 — Gestion d'erreur côté utilisateur</span><span class="proj-badge proj-danger">CRITIQUE</span></div>
-        <div style="font-size:11px;color:#334155;margin-bottom:8px">Quand OpenAI renvoie une erreur, le commercial voit un spinner infini ou un écran blanc. Pas de message d'erreur, pas de bouton réessayer.</div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;font-size:11px">
-          <div style="padding:6px 8px;background:#fff;border-radius:5px;border:1px solid #FECACA"><strong style="color:#DC2626">Timeout</strong><br>→ "La génération prend plus de temps que prévu. Veuillez réessayer."</div>
-          <div style="padding:6px 8px;background:#fff;border-radius:5px;border:1px solid #FECACA"><strong style="color:#DC2626">429 (trop de requêtes)</strong><br>→ "Forte affluence. Veuillez patienter quelques secondes puis réessayer."</div>
-          <div style="padding:6px 8px;background:#fff;border-radius:5px;border:1px solid #FECACA"><strong style="color:#DC2626">500 (erreur serveur)</strong><br>→ "Service temporairement indisponible. Réessayez dans quelques instants."</div>
-          <div style="padding:6px 8px;background:#fff;border-radius:5px;border:1px solid #FECACA"><strong style="color:#DC2626">Règle générale</strong><br>→ Spinner limité à 60s. Bouton "Réessayer" sans perdre les données saisies.</div>
-        </div>
-        <div style="font-size:10px;color:#64748B;margin-top:6px">Fichier : <code style="background:#F1F5F9;padding:1px 4px;border-radius:3px">useContentGeneration.js</code></div>
-      </div>
-      <div style="padding:12px;background:#FEE2E2;border-radius:8px;border-left:4px solid #DC2626;margin-bottom:8px">
-        <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;flex-wrap:wrap"><span style="font-size:12px;font-weight:800;color:#DC2626">Chantier 2 — Retry automatique (exponential backoff)</span><span class="proj-badge proj-danger">CRITIQUE</span></div>
-        <div style="font-size:11px;color:#334155;margin-bottom:6px">Si OpenAI renvoie 429, l'app abandonne immédiatement. À 50 users, les 429 arrivent régulièrement en pic.</div>
-        <div style="padding:8px;background:#fff;border-radius:5px;border:1px solid #FECACA;font-size:11px;color:#334155"><strong>Logique :</strong> 429 ou 500/502/503 → attendre 1s → réessayer → 2s → 4s. Max 3 retries.<br><code style="font-size:10px">callOpenAIWithRetry(params, maxRetries=3) — sleep(2^i × 1000ms)</code></div>
-        <div style="font-size:10px;color:#64748B;margin-top:6px">Fichiers : <code style="background:#F1F5F9;padding:1px 4px;border-radius:3px">api/generate-pitch.js</code> + <code style="background:#F1F5F9;padding:1px 4px;border-radius:3px">api/generate-fusion.js</code></div>
-      </div>
-      <div style="padding:12px;background:#FEFCE8;border-radius:8px;border-left:4px solid #FFD700;margin-bottom:8px">
-        <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;flex-wrap:wrap"><span style="font-size:12px;font-weight:800;color:#92400E">Chantier 3 — Compte OpenAI dédié</span><span class="proj-badge proj-danger">CRITIQUE</span></div>
-        <div style="font-size:11px;color:#334155">Compte partagé avec Smart Spec. <strong>Résolution (15 min) :</strong> voir onglet "OpenAI &amp; Tiers" pour les 5 étapes détaillées.</div>
-      </div>
-      <div style="padding:12px;background:#FEFCE8;border-radius:8px;border-left:4px solid #FFD700;margin-bottom:8px">
-        <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;flex-wrap:wrap"><span style="font-size:12px;font-weight:800;color:#92400E">Chantier 4 — Timeout : paralléliser + streaming</span><span class="proj-badge proj-warn">IMPORTANT</span></div>
-        <div style="font-size:11px;color:#334155"><strong style="color:#D97706">Étape 1 :</strong> <code style="background:#F1F5F9;padding:1px 4px;border-radius:3px">Promise.all()</code> dans <strong>useContentGeneration.js</strong> → 55s à 25-30s.<br><strong style="color:#059669">Étape 2 :</strong> Remplacer <code style="background:#F1F5F9;padding:1px 4px;border-radius:3px">runs.retrieve()</code> par <code style="background:#F1F5F9;padding:1px 4px;border-radius:3px">stream()</code> dans <strong>api/generate-pitch.js</strong> → plus aucun timeout.</div>
-      </div>
-      <div style="padding:12px;background:#EFF6FF;border-radius:8px;border-left:4px solid #1D4ED8;margin-bottom:8px">
-        <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;flex-wrap:wrap"><span style="font-size:12px;font-weight:800;color:#1D4ED8">Chantier 5 — Logging structuré</span><span class="proj-badge proj-warn">IMPORTANT</span></div>
-        <div style="padding:6px 8px;background:#fff;border-radius:5px;border:1px solid #BFDBFE;font-size:10px;color:#334155;font-family:monospace">&#123; "event": "pitch_generated", "secteur": "agroalimentaire", "duree_ms": 34500, "status": "success" &#125;<br>&#123; "event": "pitch_error", "error_type": "timeout|rate_limit", "retry_count": 2 &#125;</div>
-        <div style="font-size:10px;color:#64748B;margin-top:5px">Visible dans Vercel Dashboard → Functions → Logs. Aucune infra supplémentaire.</div>
-      </div>
-      <div style="padding:12px;background:#EFF6FF;border-radius:8px;border-left:4px solid #1D4ED8;margin-bottom:8px">
-        <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;flex-wrap:wrap"><span style="font-size:12px;font-weight:800;color:#1D4ED8">Chantier 6 — Health check /api/health</span><span class="proj-badge proj-warn">IMPORTANT</span></div>
-        <div style="font-size:11px;color:#334155">Créer <code style="background:#F1F5F9;padding:1px 4px;border-radius:3px">/api/health</code> → test OpenAI + Blob. Réponse : <code style="background:#F1F5F9;padding:1px 4px;border-radius:3px">&#123; status:"ok"|"degraded", openai:"ok"|"ko", blob:"ok"|"ko" &#125;</code><br>Brancher UptimeRobot (gratuit) → alerte email si KO.</div>
-      </div>
-      <div style="padding:12px;background:#ECFDF5;border-radius:8px;border-left:4px solid #059669;margin-bottom:8px">
-        <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;flex-wrap:wrap"><span style="font-size:12px;font-weight:800;color:#059669">Chantier 7 — Cache priorisations (1h)</span><span class="proj-badge proj-ok">OPTIMISATION</span></div>
-        <div style="font-size:11px;color:#334155">Clé : <code style="background:#F1F5F9;padding:1px 4px;border-radius:3px">${secteur}_${fonction}_${langue}</code>. TTL 1h. Stockage Vercel Blob JSON (gratuit).<br><strong>Gain estimé : divise les appels API par 3 à 5x en conditions réelles.</strong></div>
-      </div>
-      <div style="padding:12px;background:#ECFDF5;border-radius:8px;border-left:4px solid #059669;margin-bottom:8px">
-        <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;flex-wrap:wrap"><span style="font-size:12px;font-weight:800;color:#059669">Chantier 8 — Mode dégradé si OpenAI est down</span><span class="proj-badge proj-ok">OPTIMISATION</span></div>
-        <div style="font-size:11px;color:#334155">Sauvegarder chaque pitch généré dans Vercel Blob. Si OpenAI échoue après 3 retries → servir le cache avec bandeau : <strong>"⚠️ Service IA indisponible. Pitch basé sur une génération récente."</strong></div>
-      </div>
-      <div class="reco">
-        <h4>Recommandations pour scaler</h4>
-        <p>1. <strong>Paralléliser les 5 priorisations</strong> : Promise.all() (divise le temps par ~5, même nombre d'appels)</p>
-        <p>2. <strong>Remplacer polling par streaming</strong> : stream() au lieu de runs.retrieve() → sécurité haute</p>
-        <p>3. <strong>Monter de Tier OpenAI</strong> : Tier 2 = 5 000 appels/min. Automatique après 50$ + 7 jours</p>
-        <p>4. <strong>Cacher les priorisations</strong> : même secteur/fonction → même résultat → économise 3-5x les appels</p>
-      </div>
-      <div class="links">
-        <a href="https://platform.openai.com/usage" target="_blank" class="btn btn-o">OpenAI Usage</a>
-        <a href="https://platform.openai.com/settings/organization/limits" target="_blank" class="btn btn-o">Rate Limits</a>
-      </div>
-    </div><!-- /chantiers -->
+    <!-- SUB-PAGE 5 : Rétroplanning -->
+    <div class="sub-page" id="pitch-sub-retro">
+      <div style="font-size:12px;color:#64748B;margin:0 0 14px">Cliquez sur une semaine pour voir le détail jour par jour. Double-cliquez sur un texte pour l'éditer.</div>
+      <div id="retro-demandes-wrap" class="demandes-wrap"></div>
+      <div id="retro-prog-wrap" class="retro-prog-wrap"></div>
+      <div id="retro-filters-wrap" style="margin-bottom:14px"></div>
+      <div id="retro-calendar"></div>
+      <div id="retro-detail-container"></div>
+    </div><!-- /retro -->
 
-    <!-- (ancien contenu supprimé — contenu migré dans les sous-onglets ci-dessus) -->
-    <div style="display:none"><!-- dummy pour préserver les IDs dynamiques pitch-build etc. -->
-      <div class="section-body open" style="display:none">
-        <div class="app-meta">
-          <div class="meta-card">
-            <div class="meta-label">Dernier déploiement</div>
-            <div class="meta-val" id="pitch-last-deploy"></div>
-          </div>
-          <div class="meta-card">
-            <div class="meta-label">Coût / pitch complet (6 appels)</div>
-            <div class="meta-val" id="pitch-cost-per-pitch"></div>
-          </div>
-        </div>
-
-        <div style="margin-bottom:14px;padding:12px 14px;background:#FEFCE8;border-radius:8px;border:1px solid #FFD700">
-          <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
-            <span style="font-size:13px;font-weight:700;color:#92400E">⚠️ Compte OpenAI partagé — aucun budget dédié</span>
-            <span class="proj-badge proj-danger">RISQUE</span>
-          </div>
-          <div style="font-size:12px;color:#78350F;line-height:1.6">
-            Rubix Pitch est rattaché au compte OpenAI de <strong>Smart Spec</strong> (pas de compte séparé).<br>
-            Si Smart Spec consomme tous les crédits, <strong>Rubix Pitch s'arrête immédiatement</strong> sans préavis.
-          </div>
-          <div style="margin-top:8px;padding:8px;background:#FEFCE8;border-radius:6px;font-size:11px;color:#334155">
-            <strong style="color:#D97706">Action à faire :</strong> Créer un compte OpenAI dédié pour Rubix Pitch avec un budget séparé. Mettre à jour la variable d'environnement <code style="background:#F1F5F9;padding:1px 4px;border-radius:3px">OPENAI_API_KEY</code> dans Vercel.
-          </div>
-        </div>
-
-        <table>
-          <thead><tr><th>Action utilisateur</th><th>Appels IA</th><th>Modele</th><th>Detail pipeline</th></tr></thead>
-          <tbody>
-            <tr><td style="font-weight:600">Analyser contexte</td><td>1 appel</td><td>gpt-3.5-turbo</td><td>Identification enjeux metier</td></tr>
-            <tr style="border-top:2px solid #E2E8F0">
-              <td style="font-weight:600" rowspan="3">Générer pitch (3 versions)</td>
-              <td style="font-weight:700;color:#D97706">6+ appels</td>
-              <td>gpt-3.5-turbo + Assistant</td>
-              <td style="font-size:10px;color:#D97706">Pipeline ci-dessous</td>
-            </tr>
-            <tr><td colspan="3" style="font-size:10px;color:#64748B;padding-left:20px">1. Prioriser solutions &nbsp; 2. Prioriser questions &nbsp; 3. Prioriser tendances &nbsp; 4. Prioriser credibilite &nbsp; 5. Prioriser pyramide &nbsp; 6. Génération finale (Assistant API)</td></tr>
-            <tr><td colspan="3" style="font-size:10px;color:#059669;padding-left:20px">Les 5 priorisations peuvent etre parallélisées avec Promise.all()</td></tr>
-            <tr><td style="font-weight:600">Générer one-pager</td><td>6+ appels</td><td>Assistant API</td><td>Meme pipeline priorisation + fusion</td></tr>
-          </tbody>
-        </table>
-
-        <div class="thr-i">
-          <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;flex-wrap:wrap">
-            <h4 style="margin:0">Capacité OpenAI — Tier actuel</h4>
-            <span class="proj-badge proj-warn">TIER 1 — 500 appels/min</span>
-          </div>
-          <div style="font-size:11px;color:#334155;margin-bottom:8px">Un pitch complet = <strong>6 appels API</strong>. En pic (tout le monde génère en même temps le matin), le risque de blocage commence dès <strong>40-50 users simultanés</strong>.</div>
-          <table>
-            <thead><tr><th>Users simultanés</th><th>Appels/min</th><th>vs Limite 500</th><th>Statut</th></tr></thead>
-            <tbody>
-              <tr><td>1 à 10 users</td><td>6 à 60 appels/min</td><td style="color:#059669">OK (12%)</td><td><span class="proj-badge proj-ok">OK</span></td></tr>
-              <tr><td>40-50 users (pic)</td><td>240-300 appels/min</td><td style="color:#D97706;font-weight:700">Risque en pic (60%)</td><td><span class="proj-badge proj-warn">ATTENTION</span></td></tr>
-              <tr><td>80+ users</td><td>480+ appels/min</td><td style="color:#DC2626;font-weight:700">Limite dépassée (96%+)</td><td><span class="proj-badge proj-danger">BLOQUÉ</span></td></tr>
-            </tbody>
-          </table>
-          <div style="margin-top:10px;padding:8px 12px;background:#DBEAFE;border-radius:7px;border-left:3px solid #051E50;font-size:11px;color:#1D4ED8">
-            <strong>Pour scaler à 50 users en toute sécurité → Tier 2 OpenAI (5 000 appels/min)</strong><br>
-            Condition : <strong>50$ de dépenses cumulées + 7 jours d'ancienneté</strong> sur le compte. Passage automatique, aucune action manuelle. Tier 2 = confortable jusqu'à 250+ users simultanés.
-          </div>
-          <div style="font-size:11px;color:#1D4ED8;margin-top:6px" id="pitch-cost-detail">Chargement des coûts...</div>
-        </div>
-
-        <div style="margin-top:10px;padding:10px;background:#FEE2E2;border-radius:7px;border:1px solid #FECACA">
-          <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
-            <span style="font-size:12px;font-weight:700;color:#DC2626">Sécurité timeout Vercel</span>
-            <span class="proj-badge proj-danger">FAIBLE</span>
-            <span style="font-size:11px;color:#64748B">55s / 60s = 92% de la limite</span>
-          </div>
-          <table>
-            <thead><tr><th>Situation</th><th>Temps</th><th>Limite</th><th>Marge</th><th>Sécurité</th></tr></thead>
-            <tbody>
-              <tr><td style="font-weight:600">Polling Assistant API (actuel)</td><td style="color:#DC2626;font-weight:700">~55s</td><td>60s</td><td style="color:#DC2626;font-weight:700">5s</td><td><span class="proj-badge proj-danger">FAIBLE</span></td></tr>
-              <tr><td style="font-weight:600">Priorisations parallèles (Promise.all)</td><td style="color:#D97706;font-weight:700">~25-30s</td><td>60s</td><td style="color:#D97706">30s</td><td><span class="proj-badge proj-warn">MOYENNE</span></td></tr>
-              <tr><td style="font-weight:600">Streaming natif OpenAI (cible)</td><td style="color:#059669;font-weight:700">connexion maintenue</td><td>N/A</td><td style="color:#059669">illimitee</td><td><span class="proj-badge proj-ok">HAUTE</span></td></tr>
-            </tbody>
-          </table>
-          <div style="margin-top:10px;font-size:12px;font-weight:700;color:#051E50;margin-bottom:6px">Modifications a faire pour atteindre sécurité haute</div>
-          <div style="padding:8px;background:#FEFCE8;border-radius:6px;margin-bottom:6px;font-size:11px;color:#334155">
-            <strong style="color:#D97706">Étape 1 (rapide) :</strong> Paralléliser les 5 priorisations avec <code style="background:#F1F5F9;padding:1px 4px;border-radius:3px">Promise.all()</code> dans <strong>useContentGénération.js</strong>. Passe de 55s à 25-30s. Sécurité moyenne.</div>
-          <div style="padding:8px;background:#ECFDF5;border-radius:6px;font-size:11px;color:#334155">
-            <strong style="color:#059669">Étape 2 (sécurité haute) :</strong> Remplacer le polling <code style="background:#F1F5F9;padding:1px 4px;border-radius:3px">assistants.runs.retrieve()</code> par <code style="background:#F1F5F9;padding:1px 4px;border-radius:3px">stream()</code> de l'API OpenAI. Le streaming garde la connexion vivante, le timeout de 60s ne s'applique plus. Fichier à modifier : <strong>api/generate-pitch.js</strong> (ou équivalent backend).</div>
-        </div>
-
-        <div class="reco">
-          <h4>Recommandations pour scaler</h4>
-          <p>1. <strong>Paralléliser les 5 priorisations</strong> : Promise.all() au lieu de sequentiel (divise le temps par 5, même nombre d'appels)</p>
-          <p>2. <strong>Remplacer polling par streaming</strong> : utiliser stream() de l'API OpenAI Assistants à la place de runs.retrieve() — sécurité haute</p>
-          <p>3. <strong>Monter de tier OpenAI</strong> : Tier 2 = 5 000 appels/min (x10). Automatique apres 50$ dépenses + 7 jours</p>
-          <p>4. <strong>Cacher la matrice enrichie</strong> : les priorisations pour un même secteur/fonction sont identiques, cacher 1h</p>
-        </div>
-
-        <!-- PLAN DE SCALING -->
-        <div style="margin-top:16px">
-          <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;flex-wrap:wrap">
-            <div style="font-size:14px;font-weight:800;color:#051E50">Plan de scaling — 8 chantiers</div>
-            <span class="badge bd">2 CRITIQUES</span>
-            <span class="badge bw">3 IMPORTANTS</span>
-            <span class="badge bv">3 OPTIMISATIONS</span>
-          </div>
-
-          <!-- Tableau priorités -->
-          <table style="margin-bottom:14px">
-            <thead><tr><th>Priorité</th><th>Chantier</th><th>Impact</th><th>Effort</th><th>Statut</th></tr></thead>
-            <tbody>
-              <tr><td style="font-weight:700">1</td><td>Gestion d'erreur UX (messages + bouton réessayer)</td><td><span class="proj-badge proj-danger">CRITIQUE</span></td><td>Moyen</td><td><span class="proj-badge proj-warn">À FAIRE</span></td></tr>
-              <tr><td style="font-weight:700">2</td><td>Retry automatique exponential backoff (429/500)</td><td><span class="proj-badge proj-danger">CRITIQUE</span></td><td>Faible</td><td><span class="proj-badge proj-warn">À FAIRE</span></td></tr>
-              <tr><td style="font-weight:700">3</td><td>Compte OpenAI dédié Rubix Pitch</td><td><span class="proj-badge proj-danger">CRITIQUE</span></td><td>Faible</td><td><span class="proj-badge proj-warn">À FAIRE</span></td></tr>
-              <tr><td style="font-weight:700">4</td><td>Timeout Vercel : paralléliser + streaming</td><td><span class="proj-badge proj-warn">IMPORTANT</span></td><td>Moyen</td><td><span class="proj-badge proj-warn">À FAIRE</span></td></tr>
-              <tr><td style="font-weight:700">5</td><td>Logging structuré des erreurs et métriques</td><td><span class="proj-badge proj-warn">IMPORTANT</span></td><td>Faible</td><td><span class="proj-badge proj-warn">À FAIRE</span></td></tr>
-              <tr><td style="font-weight:700">6</td><td>Endpoint health check /api/health</td><td><span class="proj-badge proj-warn">IMPORTANT</span></td><td>Moyen</td><td><span class="proj-badge proj-warn">À FAIRE</span></td></tr>
-              <tr><td style="font-weight:700">7</td><td>Cache priorisations par secteur/fonction (1h)</td><td><span class="proj-badge proj-ok">OPTIMISATION</span></td><td>Moyen</td><td><span class="proj-badge proj-warn">À FAIRE</span></td></tr>
-              <tr><td style="font-weight:700">8</td><td>Mode dégradé si OpenAI est down</td><td><span class="proj-badge proj-ok">OPTIMISATION</span></td><td>Moyen</td><td><span class="proj-badge proj-warn">À FAIRE</span></td></tr>
-            </tbody>
-          </table>
-
-          <!-- Chantier 1 -->
-          <div style="padding:12px;background:#FEE2E2;border-radius:8px;border-left:4px solid #DC2626;margin-bottom:8px">
-            <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;flex-wrap:wrap">
-              <span style="font-size:12px;font-weight:800;color:#DC2626">Chantier 1 — Gestion d'erreur côté utilisateur</span>
-              <span class="proj-badge proj-danger">CRITIQUE</span><span class="proj-badge proj-warn">À FAIRE</span>
-            </div>
-            <div style="font-size:11px;color:#334155;margin-bottom:8px">Quand OpenAI renvoie une erreur (timeout, 429, 500), le commercial voit un spinner infini ou un écran blanc. Pas de message d'erreur, pas de bouton réessayer. L'app semble cassée.</div>
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;font-size:11px">
-              <div style="padding:6px 8px;background:#fff;border-radius:5px;border:1px solid #FECACA"><strong style="color:#DC2626">Timeout</strong><br>→ "La génération prend plus de temps que prévu. Veuillez réessayer."</div>
-              <div style="padding:6px 8px;background:#fff;border-radius:5px;border:1px solid #FECACA"><strong style="color:#DC2626">429 (trop de requêtes)</strong><br>→ "Forte affluence. Veuillez patienter quelques secondes puis réessayer."</div>
-              <div style="padding:6px 8px;background:#fff;border-radius:5px;border:1px solid #FECACA"><strong style="color:#DC2626">500 (erreur serveur)</strong><br>→ "Service temporairement indisponible. Réessayez dans quelques instants."</div>
-              <div style="padding:6px 8px;background:#fff;border-radius:5px;border:1px solid #FECACA"><strong style="color:#DC2626">Règle générale</strong><br>→ Spinner limité à 60s. Bouton "Réessayer" sans perdre les données saisies.</div>
-            </div>
-            <div style="font-size:10px;color:#64748B;margin-top:6px">Fichier : <code style="background:#F1F5F9;padding:1px 4px;border-radius:3px">useContentGeneration.js</code> (frontend) — Style : fond #FFF9E6, bouton réessayer bleu #051E50</div>
-          </div>
-
-          <!-- Chantier 2 -->
-          <div style="padding:12px;background:#FEE2E2;border-radius:8px;border-left:4px solid #DC2626;margin-bottom:8px">
-            <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;flex-wrap:wrap">
-              <span style="font-size:12px;font-weight:800;color:#DC2626">Chantier 2 — Retry automatique (exponential backoff)</span>
-              <span class="proj-badge proj-danger">CRITIQUE</span><span class="proj-badge proj-warn">À FAIRE</span>
-            </div>
-            <div style="font-size:11px;color:#334155;margin-bottom:8px">Si OpenAI renvoie 429, l'app abandonne immédiatement. À 50 users, les 429 arrivent régulièrement en pic. Il faut réessayer automatiquement avant d'afficher une erreur.</div>
-            <div style="padding:8px;background:#fff;border-radius:5px;border:1px solid #FECACA;font-size:11px;color:#334155">
-              <strong>Logique :</strong> 429 ou 500/502/503 → attendre 1s → réessayer → 2s → réessayer → 4s → réessayer. Max 3 retries. Erreurs 400/401 = ne pas réessayer (problème de requête ou auth).<br>
-              <code style="background:#F1F5F9;padding:2px 4px;border-radius:3px;font-size:10px">callOpenAIWithRetry(params, maxRetries=3) — sleep(2^i * 1000ms)</code>
-            </div>
-            <div style="font-size:10px;color:#64748B;margin-top:6px">Fichiers : <code style="background:#F1F5F9;padding:1px 4px;border-radius:3px">api/generate-pitch.js</code> + <code style="background:#F1F5F9;padding:1px 4px;border-radius:3px">api/generate-fusion.js</code></div>
-          </div>
-
-          <!-- Chantier 3 -->
-          <div style="padding:12px;background:#FEFCE8;border-radius:8px;border-left:4px solid #FFD700;margin-bottom:8px">
-            <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;flex-wrap:wrap">
-              <span style="font-size:12px;font-weight:800;color:#92400E">Chantier 3 — Compte OpenAI dédié Rubix Pitch</span>
-              <span class="proj-badge proj-danger">CRITIQUE</span><span class="proj-badge proj-warn">À FAIRE</span>
-            </div>
-            <div style="font-size:11px;color:#334155;margin-bottom:6px">Compte partagé avec Smart Spec. Si Smart Spec consomme tous les crédits, Rubix Pitch s'arrête immédiatement sans préavis. Aucun commercial ne comprendra pourquoi l'app ne répond plus.</div>
-            <div style="font-size:11px;color:#334155"><strong>Résolution (15 min) :</strong> 1. Créer un compte OpenAI dédié (email dédié Rubix Pitch) → 2. Ajouter moyen de paiement + budget mensuel → 3. Générer nouvelle clé API → 4. Mettre à jour <code style="background:#F1F5F9;padding:1px 4px;border-radius:3px">OPENAI_API_KEY</code> dans Vercel → 5. Redéployer</div>
-          </div>
-
-          <!-- Chantier 4 -->
-          <div style="padding:12px;background:#FEFCE8;border-radius:8px;border-left:4px solid #FFD700;margin-bottom:8px">
-            <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;flex-wrap:wrap">
-              <span style="font-size:12px;font-weight:800;color:#92400E">Chantier 4 — Timeout Vercel : paralléliser + streaming</span>
-              <span class="proj-badge proj-warn">IMPORTANT</span><span class="proj-badge proj-warn">À FAIRE</span>
-            </div>
-            <div style="font-size:11px;color:#334155;margin-bottom:6px">Pipeline actuel = ~55s. Limite Vercel = 60s. Marge = 5s. Si OpenAI ralentit légèrement, le commercial voit un écran blanc.</div>
-            <div style="font-size:11px;color:#334155">
-              <strong style="color:#D97706">Étape 1 (rapide) :</strong> Paralléliser les 5 priorisations avec <code style="background:#F1F5F9;padding:1px 4px;border-radius:3px">Promise.all()</code> dans <strong>useContentGeneration.js</strong>. Passe de 55s à 25-30s. Marge 30s.<br>
-              <strong style="color:#059669">Étape 2 (sécurité haute) :</strong> Remplacer le polling <code style="background:#F1F5F9;padding:1px 4px;border-radius:3px">runs.retrieve()</code> par <code style="background:#F1F5F9;padding:1px 4px;border-radius:3px">stream()</code> dans <strong>api/generate-pitch.js</strong>. Plus aucun timeout.
-            </div>
-          </div>
-
-          <!-- Chantier 5 -->
-          <div style="padding:12px;background:#EFF6FF;border-radius:8px;border-left:4px solid #1D4ED8;margin-bottom:8px">
-            <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;flex-wrap:wrap">
-              <span style="font-size:12px;font-weight:800;color:#1D4ED8">Chantier 5 — Logging structuré des erreurs et métriques</span>
-              <span class="proj-badge proj-warn">IMPORTANT</span><span class="proj-badge proj-warn">À FAIRE</span>
-            </div>
-            <div style="font-size:11px;color:#334155;margin-bottom:6px">Aujourd'hui on ne sait pas combien de pitchs sont générés, quels secteurs sont populaires, ni combien d'erreurs se produisent. Impossible de mesurer le ROI.</div>
-            <div style="padding:6px 8px;background:#fff;border-radius:5px;border:1px solid #BFDBFE;font-size:10px;color:#334155;font-family:monospace">
-              &#123; "event": "pitch_generated", "secteur": "agroalimentaire", "fonction": "resp-achats", "duree_ms": 34500, "status": "success", "appels_openai": 6 &#125;<br>
-              &#123; "event": "pitch_error", "error_type": "timeout|rate_limit|openai_500", "retry_count": 2 &#125;
-            </div>
-            <div style="font-size:10px;color:#64748B;margin-top:6px">Lisible dans Vercel Dashboard → Functions → Logs. Aucune infrastructure supplémentaire. Fichiers : <code style="background:#F1F5F9;padding:1px 4px;border-radius:3px">api/generate-pitch.js</code> + <code style="background:#F1F5F9;padding:1px 4px;border-radius:3px">api/generate-fusion.js</code></div>
-          </div>
-
-          <!-- Chantier 6 -->
-          <div style="padding:12px;background:#EFF6FF;border-radius:8px;border-left:4px solid #1D4ED8;margin-bottom:8px">
-            <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;flex-wrap:wrap">
-              <span style="font-size:12px;font-weight:800;color:#1D4ED8">Chantier 6 — Endpoint health check /api/health</span>
-              <span class="proj-badge proj-warn">IMPORTANT</span><span class="proj-badge proj-warn">À FAIRE</span>
-            </div>
-            <div style="font-size:11px;color:#334155;margin-bottom:6px">Aujourd'hui personne ne sait si l'app est up ou down avant qu'un commercial se plaigne.</div>
-            <div style="font-size:11px;color:#334155;margin-bottom:6px">Créer <code style="background:#F1F5F9;padding:1px 4px;border-radius:3px">/api/health</code> qui teste : connectivité OpenAI (1 appel minimal) + accès Vercel Blob. Réponse JSON : <code style="background:#F1F5F9;padding:1px 4px;border-radius:3px">&#123; status: "ok"|"degraded", openai: "ok"|"ko", blob: "ok"|"ko", timestamp &#125;</code></div>
-            <div style="font-size:10px;color:#64748B">Suggestion : brancher UptimeRobot (gratuit) → appelle <code style="background:#F1F5F9;padding:1px 4px;border-radius:3px">/api/health</code> toutes les 5 min → alerte email/Slack si KO</div>
-          </div>
-
-          <!-- Chantier 7 -->
-          <div style="padding:12px;background:#ECFDF5;border-radius:8px;border-left:4px solid #059669;margin-bottom:8px">
-            <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;flex-wrap:wrap">
-              <span style="font-size:12px;font-weight:800;color:#059669">Chantier 7 — Cache priorisations par secteur/fonction (1h)</span>
-              <span class="proj-badge proj-ok">OPTIMISATION</span><span class="proj-badge proj-warn">À FAIRE</span>
-            </div>
-            <div style="font-size:11px;color:#334155;margin-bottom:6px">Les 5 priorisations (solutions, questions, tendances, crédibilité, pyramide) donnent le même résultat pour un même secteur + fonction. 10 commerciaux sur le même secteur = 50 appels inutiles.</div>
-            <div style="font-size:11px;color:#334155">
-              Clé de cache : <code style="background:#F1F5F9;padding:1px 4px;border-radius:3px">${secteur}_${fonction}_${langue}</code> (ex: "agroalimentaire_resp-achats_fr")<br>
-              TTL : 1h. Stockage : Vercel KV (Redis, payant) ou Vercel Blob JSON (gratuit, moins rapide).<br>
-              Le contexte libre saisi par le commercial n'est PAS inclus dans la clé (envoyé uniquement à la génération finale).<br>
-              <strong>Gain estimé : divise les appels API par 3 à 5x en conditions réelles.</strong>
-            </div>
-          </div>
-
-          <!-- Chantier 8 -->
-          <div style="padding:12px;background:#ECFDF5;border-radius:8px;border-left:4px solid #059669;margin-bottom:8px">
-            <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;flex-wrap:wrap">
-              <span style="font-size:12px;font-weight:800;color:#059669">Chantier 8 — Mode dégradé si OpenAI est down</span>
-              <span class="proj-badge proj-ok">OPTIMISATION</span><span class="proj-badge proj-warn">À FAIRE</span>
-            </div>
-            <div style="font-size:11px;color:#334155;margin-bottom:6px">Si OpenAI tombe (pannes de quelques minutes à quelques heures), l'app est 100% inutilisable. Le commercial devant son client n'a rien.</div>
-            <div style="font-size:11px;color:#334155">
-              À chaque pitch généré avec succès → sauvegarder dans Vercel Blob : <code style="background:#F1F5F9;padding:1px 4px;border-radius:3px">cache_pitch_${secteur}_${fonction}_${langue}</code>.<br>
-              Si OpenAI échoue après 3 retries → servir le pitch en cache avec bandeau : <strong>"⚠️ Service IA indisponible. Ce pitch est basé sur une génération récente."</strong><br>
-              Si aucun cache disponible → message d'erreur standard (chantier 1).
-            </div>
-          </div>
-
-        </div>
-
-        <div class="mini-metrics">
-          <div class="mini-metric"><div class="mini-val" id="pitch-build"></div><div class="mini-label">Build min</div></div>
-          <div class="mini-metric"><div class="mini-val" id="pitch-bw"></div><div class="mini-label">Bandwidth</div></div>
-          <div class="mini-metric"><div class="mini-val" id="pitch-fninv"></div><div class="mini-label">Fn Invocations</div></div>
-          <div class="mini-metric"><div class="mini-val" id="pitch-fndur"></div><div class="mini-label">Fn Duration</div></div>
-        </div>
-
-        <div class="links">
-          <a href="https://platform.openai.com/usage" target="_blank" class="btn btn-o">OpenAI Usage</a>
-          <a href="https://platform.openai.com/settings/organization/limits" target="_blank" class="btn btn-o">Rate Limits</a>
-        </div>
-      </div>
-    </div>
   </div>
   </div>
 
@@ -1298,19 +913,6 @@ th{color:#1D4ED8;font-weight:600;font-size:10px;text-transform:uppercase;letter-
   </div>
   </div>
 
-  <!-- RETROPLANNING -->
-  <div class="page" id="page-retro">
-    <div class="container">
-      <div class="section-title" style="margin-top:20px"><span class="st-bar" style="background:#051E50"></span>📆 Rétroplanning — Vue Roadmap</div>
-      <div style="font-size:12px;color:#64748B;margin:6px 0 14px">Cliquez sur une semaine pour voir le détail jour par jour. Icônes : ⬜ → 🔄 → ✅ → ❌. Double-cliquez sur un texte pour l'éditer.</div>
-      <div id="retro-demandes-wrap" class="demandes-wrap"></div>
-      <div id="retro-prog-wrap" class="retro-prog-wrap"></div>
-      <div id="retro-filters-wrap" style="margin-bottom:14px"></div>
-      <div id="retro-calendar"></div>
-      <div id="retro-detail-container"></div>
-    </div>
-  </div>
-
 </div><!-- /main -->
 
 <div class="footer" id="footer">Rubix Monitoring</div>
@@ -1321,16 +923,11 @@ function showTab(id) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.nav a').forEach(a => a.classList.remove('active'));
   document.getElementById('page-' + id).classList.add('active');
-  const tabs = ['alertes','pole','pitch','smart','vercel','couts','retro'];
+  const tabs = ['alertes','pole','pitch','smart','vercel','couts'];
   const idx = tabs.indexOf(id);
   if (idx >= 0) document.querySelectorAll('.nav a')[idx].classList.add('active');
   if (id === 'pitch') {
     if (!pitchInitialized) { pitchInitialized = true; initPitchSubTabs(); }
-  }
-  if (id === 'retro') {
-    if (!retroInitialized) { retroInitialized = true; initRetro(); }
-    else { updateRetroProgress(); }
-    setTimeout(() => { const el = $('retro-today'); if (el) el.scrollIntoView({block:'nearest',inline:'center'}); }, 80);
   }
   window.scrollTo(0, 0);
 }
@@ -1791,7 +1388,7 @@ const PITCH_STATUSES = {
   formations:   'ok',
   couts:        'ok',
 };
-const PITCH_STATUS_LABELS = { compteOpenAI:'Compte OpenAI', timeout:'Timeout Vercel', formations:'Formations', couts:'Coûts API' };
+const PITCH_STATUS_LABELS = { compteOpenAI:'Compte IA', timeout:'Disponibilité', formations:'Formations', couts:'Budget' };
 const PITCH_STATUS_META   = { ok:{icon:'🟢',label:'OK',cls:'ok'}, warning:{icon:'🟡',label:'ATTENTION',cls:'warn'}, critical:{icon:'🔴',label:'CRITIQUE',cls:'danger'} };
 
 const PITCH_FORMATION_DATES = [
@@ -1812,6 +1409,11 @@ function showPitchTab(id, btn) {
   const page = document.getElementById('pitch-sub-' + id);
   if (page) page.classList.add('active');
   if (btn) btn.classList.add('active');
+  if (id === 'retro') {
+    if (!retroInitialized) { retroInitialized = true; initRetro(); }
+    else { updateRetroProgress(); }
+    setTimeout(() => { const el = $('retro-today'); if (el) el.scrollIntoView({block:'nearest',inline:'center'}); }, 80);
+  }
 }
 
 // ---- Statut global ----
@@ -2193,11 +1795,75 @@ function renderPitchPilote() {
 let pitchInitialized = false;
 let vercelBillingAPI = null;
 function initPitchSubTabs() {
+  renderPitchSynthese();
   renderPitchStatusWidget();
   renderPitchFormations();
   renderPitchCouts();
   renderPitchPilote();
   initPitchChecklist();
+  renderPitchAmeliorations();
+}
+
+/* ---- Synthèse hero (chiffre clé) ---- */
+function renderPitchSynthese() {
+  const el = $('pitch-synthese-hero');
+  if (!el) return;
+  const setupEUR = Math.ceil(COSTS.setup.reduce((s,r) => s + r.usd, 0) * COSTS.EUR_USD);
+  el.innerHTML = `<div style="background:#051E50;color:#fff;border-radius:12px;padding:28px 24px;text-align:center;margin-bottom:16px">
+    <div style="font-size:13px;opacity:.7;margin-bottom:8px">Le chiffre clé</div>
+    <div style="font-size:22px;font-weight:800">~${setupEUR}€ de set-up</div>
+    <div style="font-size:15px;margin:4px 0">+</div>
+    <div style="font-size:26px;font-weight:800">0,30€ / commercial / mois</div>
+    <div style="font-size:12px;opacity:.6;margin-top:6px">(base 5 pitchs/mois par commercial)</div>
+  </div>`;
+}
+
+/* ---- Améliorations prévues (ex-Chantiers) ---- */
+const PITCH_AMELIORATIONS = [
+  { id:1, label:'Meilleure expérience en cas de problème', detail:'Messages clairs et bouton réessayer quand le service est lent ou indisponible', impact:'critique', status:'a_faire' },
+  { id:2, label:'Relance automatique en cas de surcharge', detail:'Le système réessaye automatiquement au lieu d\'abandonner', impact:'critique', status:'a_faire' },
+  { id:3, label:'Compte IA dédié', detail:'Séparer le compte IA de Rubix Pitch de celui de Smart Spec pour éviter les conflits', impact:'critique', status:'a_faire' },
+  { id:4, label:'Accélération de la génération', detail:'Temps de génération divisé par 2 grâce à l\'exécution en parallèle', impact:'important', status:'a_faire' },
+  { id:5, label:'Suivi automatique des incidents', detail:'Journalisation automatique pour détecter et corriger les problèmes rapidement', impact:'important', status:'a_faire' },
+  { id:6, label:'Surveillance de la disponibilité', detail:'Alerte automatique par email si le service tombe en panne', impact:'important', status:'a_faire' },
+  { id:7, label:'Mise en cache intelligente', detail:'Réutilisation des analyses précédentes pour le même secteur (économie de coûts)', impact:'optimisation', status:'a_faire' },
+  { id:8, label:'Mode secours', detail:'Si le service IA est indisponible, l\'app propose le dernier pitch généré', impact:'optimisation', status:'a_faire' },
+];
+
+function renderPitchAmeliorations() {
+  const el = $('pitch-ameliorations-widget'); if (!el) return;
+  const impactLabel = { critique:'Critique', important:'Important', optimisation:'Optimisation' };
+  const impactCls   = { critique:'ar-crit', important:'ar-warn', optimisation:'ar-info' };
+
+  let h = `<div style="font-size:14px;font-weight:800;color:#051E50;margin-bottom:4px">Améliorations prévues</div>`;
+  h += `<div style="font-size:11px;color:#64748B;margin-bottom:12px">8 améliorations techniques planifiées pour renforcer la fiabilité et les performances.</div>`;
+
+  h += `<div style="display:flex;flex-direction:column;gap:6px">`;
+  for (const a of PITCH_AMELIORATIONS) {
+    h += `<div style="background:#fff;border:1px solid #E2E8F0;border-radius:8px;padding:10px 14px">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+        <span style="font-size:12px;font-weight:700;color:#051E50;flex:1">${a.id}. ${a.label}</span>
+        <span class="badge ${a.impact === 'critique' ? 'bd-crit' : ''}" style="font-size:9px">${impactLabel[a.impact]}</span>
+      </div>
+      <div style="font-size:11px;color:#64748B">${a.detail}</div>
+    </div>`;
+  }
+  h += `</div>`;
+
+  /* Alerte compte IA partagé — résumé business */
+  h += `<div style="margin-top:16px;padding:12px;background:#FEF2F2;border-radius:8px;border:1px solid #FECACA">
+    <div style="font-size:12px;font-weight:700;color:#991B1B;margin-bottom:4px">Action en cours : création d'un compte IA dédié</div>
+    <div style="font-size:11px;color:#334155">Actuellement Rubix Pitch partage son compte IA avec Smart Spec. Un compte séparé est en cours de création pour éviter tout risque de coupure.</div>
+    <details style="margin-top:8px"><summary style="font-size:10px;color:#64748B;cursor:pointer">Détail technique (capacité, tiers, procédure)</summary>
+      <div style="font-size:11px;color:#334155;margin-top:8px;line-height:1.8">
+        <strong>Capacité actuelle :</strong> ~40 utilisateurs simultanés (Tier 1).<br>
+        <strong>Objectif :</strong> ~800 utilisateurs (Tier 2, automatique après 46€ de dépenses + 7 jours).<br>
+        <strong>Procédure :</strong> Créer un compte OpenAI dédié → Ajouter une carte bancaire → Charger 46€ de crédits → Créer une clé API → Mettre à jour la configuration serveur.
+      </div>
+    </details>
+  </div>`;
+
+  el.innerHTML = h;
 }
 
 // ====================== RÉTROPLANNING ======================
