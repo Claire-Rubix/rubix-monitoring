@@ -2702,14 +2702,14 @@ function renderProgrammeSynth() {
     },
   ];
 
-  let h = '<div style="font-size:14px;font-weight:800;color:#051E50;margin-bottom:16px">Programme par option de déploiement</div>';
+  let h = '<div style="font-size:18px;font-weight:800;color:#051E50;margin-bottom:20px">Programme par option de déploiement</div>';
 
   // Prerequisite block
-  h += `<div style="background:#EFF6FF;border:1px solid #BFDBFE;border-radius:10px;padding:16px;margin-bottom:20px">
-    <div style="font-size:13px;font-weight:700;color:#1D4ED8;margin-bottom:10px">📋 Prérequis communs à toutes les options</div>`;
+  h += `<div style="background:#EFF6FF;border:1px solid #BFDBFE;border-radius:10px;padding:20px;margin-bottom:24px">
+    <div style="font-size:15px;font-weight:700;color:#1D4ED8;margin-bottom:12px">📋 Prérequis communs à toutes les options</div>`;
   for (const phase of common) {
-    h += `<div style="font-size:12px;font-weight:700;color:#334155;margin-bottom:4px">${phase.phase} <span style="font-weight:400;color:#64748B">${phase.dates}</span></div>`;
-    h += '<ul style="margin:0 0 10px 16px;padding:0;font-size:12px;color:#475569;line-height:1.8">';
+    h += `<div style="font-size:14px;font-weight:700;color:#334155;margin-bottom:6px">${phase.phase} <span style="font-weight:400;color:#64748B">${phase.dates}</span></div>`;
+    h += '<ul style="margin:0 0 12px 18px;padding:0;font-size:14px;color:#475569;line-height:2">';
     for (const item of phase.items) h += `<li>${item}</li>`;
     h += '</ul>';
   }
@@ -2717,31 +2717,31 @@ function renderProgrammeSynth() {
 
   // Options
   for (const opt of options) {
-    h += `<div style="background:${opt.bg};border:1px solid ${opt.border};border-radius:10px;margin-bottom:14px;overflow:hidden">`;
-    h += `<div style="padding:12px 16px;border-bottom:1px solid ${opt.border};display:flex;align-items:center;gap:10px">
-      <span style="background:${opt.color};color:#fff;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px">${opt.id}</span>
-      <span style="font-size:14px;font-weight:700;color:${opt.color}">${opt.titre}</span>
+    h += `<div style="background:${opt.bg};border:1px solid ${opt.border};border-radius:10px;margin-bottom:16px;overflow:hidden">`;
+    h += `<div style="padding:14px 20px;border-bottom:1px solid ${opt.border};display:flex;align-items:center;gap:12px">
+      <span style="background:${opt.color};color:#fff;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:15px">${opt.id}</span>
+      <span style="font-size:16px;font-weight:700;color:${opt.color}">${opt.titre}</span>
     </div>`;
 
     // Timeline (skip common phases already shown above)
     const specificPhases = opt.phases.filter(p => !common.includes(p));
     if (specificPhases.length) {
-      h += '<div style="padding:12px 16px">';
+      h += '<div style="padding:16px 20px">';
       for (let i = 0; i < specificPhases.length; i++) {
         const phase = specificPhases[i];
         const isLast = i === specificPhases.length - 1;
-        h += `<div style="display:flex;gap:12px;margin-bottom:${isLast?'0':'12px'}">`;
+        h += `<div style="display:flex;gap:14px;margin-bottom:${isLast?'0':'16px'}">`;
         // Timeline dot + line
-        h += `<div style="display:flex;flex-direction:column;align-items:center;min-width:14px">
-          <div style="width:10px;height:10px;border-radius:50%;background:${opt.color};flex-shrink:0;margin-top:4px"></div>
+        h += `<div style="display:flex;flex-direction:column;align-items:center;min-width:16px">
+          <div style="width:12px;height:12px;border-radius:50%;background:${opt.color};flex-shrink:0;margin-top:5px"></div>
           ${!isLast ? `<div style="width:2px;flex:1;background:${opt.border};margin-top:4px"></div>` : ''}
         </div>`;
         // Content
         h += `<div style="flex:1;padding-bottom:${isLast?'0':'4px'}">
-          <div style="font-size:12px;font-weight:700;color:${opt.color}">${phase.phase}</div>
-          <div style="font-size:11px;color:#64748B;margin-bottom:4px">${phase.dates}</div>`;
+          <div style="font-size:14px;font-weight:700;color:${opt.color}">${phase.phase}</div>
+          <div style="font-size:13px;color:#64748B;margin-bottom:6px">${phase.dates}</div>`;
         for (const item of phase.items) {
-          h += `<div style="font-size:11px;color:#475569;line-height:1.6;padding-left:8px">• ${item}</div>`;
+          h += `<div style="font-size:14px;color:#475569;line-height:1.7;padding-left:10px">• ${item}</div>`;
         }
         h += '</div></div>';
       }
