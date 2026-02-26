@@ -1890,9 +1890,10 @@ function renderPitchAValider() {
     { id:'av5', label:'Limites de capacité acceptées', desc:'L\'environnement actuel supporte un nombre limité d\'utilisateurs simultanés. En progressif c\'est gérable. Si tout le monde se connecte en même temps, il y aura des lenteurs ou des plantages.' },
     { id:'av6', label:'Pas de sauvegarde multi-appareil', desc:'L\'historique des pitchs générés est stocké dans le navigateur. Si un commercial change de poste, il perd son historique. Amélioration prévue mais pas disponible au lancement.' },
     { id:'av7', label:'Incidents possibles le jour J', desc:'C\'est un outil en phase pilote, pas un produit fini. Des lenteurs ou erreurs sont possibles lors d\'une utilisation intensive.' },
-    { id:'av8', label:'1 personne pour tester l\'app (vérification bugs)', desc:'Quelqu\'un qui parcourt l\'app et remonte les problèmes avant les formations. Effort : ~1h. Échéance : 10/03.' },
-    { id:'av9', label:'Canal Teams "Rubix Pitch — Retours & Support"', desc:'Demande à l\'IT. Centraliser les remontées de bugs pendant et après les formations. Échéance : 28/02.' },
-    { id:'av10', label:'Liste des 66 participants (options B, C, D)', desc:'Nom, prénom, profil, session attribuée. À demander aux organisateurs formation. Échéance : 20/03.' },
+    { id:'av8', label:'Suivi des bugs via Teams pendant tout le pilote', desc:'Un canal Teams dédié est nécessaire pour centraliser les remontées d\'incidents. Claire assure le suivi et les corrections tout au long des 6 semaines.' },
+    { id:'av9', label:'1 personne pour tester l\'app avant les formations', desc:'Quelqu\'un qui parcourt l\'app et remonte les problèmes. Effort : ~1h. Échéance : 10/03.' },
+    { id:'av10', label:'Canal Teams "Rubix Pitch — Retours & Support"', desc:'Demande à l\'IT. Nécessaire avant la 1re formation. Échéance : 28/02.' },
+    { id:'av11', label:'Liste des 66 participants (options B, C, D)', desc:'Nom, prénom, profil, session attribuée. À demander aux organisateurs formation. Échéance : 20/03.' },
   ];
 
   function getAVStatus(id) { return localStorage.getItem('av_check_' + id) || ''; }
