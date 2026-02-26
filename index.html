@@ -1852,13 +1852,32 @@ function renderPitchSynthese() {
   const setupEUR = Math.ceil(COSTS.setup.reduce((s,r) => s + r.usd, 0) * COSTS.EUR_USD);
   let h = '';
 
-  /* --- Bloc contexte --- */
+  /* --- Où on en est --- */
   h += `<div style="background:#F8FAFC;border:1px solid #E2E8F0;border-radius:12px;padding:20px;margin-bottom:16px">
-    <div style="font-size:14px;font-weight:800;color:#051E50;margin-bottom:10px">Contexte</div>
-    <div style="font-size:12px;color:#334155;line-height:1.7">
-      L'application est <strong>fonctionnelle et hébergée</strong> sur un environnement existant (Vercel).<br>
-      Pour la faire tester, on utilise cet environnement tel quel — <strong>pas besoin d'infrastructure IT supplémentaire</strong>.<br>
-      En revanche, cet environnement a des <strong>limites de scalabilité</strong> qu'il faut connaître avant de décider du périmètre de test.
+    <div style="font-size:14px;font-weight:800;color:#051E50;margin-bottom:10px">Où on en est</div>
+    <div style="display:flex;flex-direction:column;gap:8px;font-size:12px;color:#334155;line-height:1.6">
+      <div style="display:flex;gap:10px;align-items:flex-start">
+        <span style="font-size:15px;flex-shrink:0">✅</span>
+        <div><strong>L'application est développée et fonctionnelle</strong> — hébergée sur un environnement existant (Vercel), prête à être utilisée.</div>
+      </div>
+      <div style="display:flex;gap:10px;align-items:flex-start">
+        <span style="font-size:15px;flex-shrink:0">📞</span>
+        <div><strong>3 demandes de support IT depuis le 6 février</strong> — pour intégrer l'app dans l'infrastructure Rubix. Aucune avancée à date.</div>
+      </div>
+      <div style="display:flex;gap:10px;align-items:flex-start">
+        <span style="font-size:15px;flex-shrink:0">📅</span>
+        <div><strong>Les formations approchent</strong> — les dates sont fixées, les commerciaux attendent de tester l'outil.</div>
+      </div>
+    </div>
+  </div>`;
+
+  /* --- La question --- */
+  h += `<div style="background:#EFF6FF;border:1px solid #BFDBFE;border-radius:12px;padding:20px;margin-bottom:16px">
+    <div style="font-size:14px;font-weight:800;color:#1E40AF;margin-bottom:8px">La question</div>
+    <div style="font-size:13px;color:#334155;line-height:1.7">
+      On peut faire tester l'app <strong>dès maintenant</strong> sur l'environnement existant, sans attendre l'IT.<br>
+      Mais cet environnement a des <strong>limites de scalabilité</strong>.<br>
+      Tout dépend de <strong>comment on y va</strong> :
     </div>
   </div>`;
 
@@ -1869,17 +1888,16 @@ function renderPitchSynthese() {
   h += `<div style="background:#F0FDF4;border:1px solid #BBF7D0;border-radius:12px;padding:18px">
     <div style="font-size:13px;font-weight:800;color:#166534;margin-bottom:10px">Option A — Progressif</div>
     <div style="font-size:22px;font-weight:800;color:#166534;margin-bottom:4px">5 → 25 testeurs</div>
-    <div style="font-size:11px;color:#64748B;margin-bottom:12px">sur plusieurs semaines</div>
+    <div style="font-size:11px;color:#64748B;margin-bottom:12px">par vagues sur plusieurs semaines</div>
     <div style="display:flex;flex-direction:column;gap:6px;font-size:11px;color:#334155;line-height:1.5">
-      <div><strong>Set-up technique :</strong> minimal</div>
-      <div>• Compte IA actuel suffisant pour 5 à 10 users simultanés</div>
-      <div>• Montée progressive = le temps d'ajuster les quotas au fil de l'eau</div>
-      <div>• Budget IA maîtrisé (~0,30€/user/mois)</div>
-      <div>• Erreurs détectées et corrigées avant le groupe suivant</div>
+      <div>• <strong>Faisable immédiatement</strong> avec l'environnement actuel</div>
+      <div>• Compte IA actuel suffisant pour 5-10 users simultanés</div>
+      <div>• Montée progressive = quotas ajustés au fil de l'eau</div>
+      <div>• Budget maîtrisé (~0,30€/user/mois)</div>
+      <div>• Problèmes détectés et corrigés entre chaque vague</div>
     </div>
     <div style="margin-top:12px;padding:10px;background:#DCFCE7;border-radius:8px;text-align:center">
-      <div style="font-size:10px;color:#166534;font-weight:700">IMPACT</div>
-      <div style="font-size:12px;color:#166534;font-weight:600;margin-top:2px">Risque faible — faisable immédiatement</div>
+      <div style="font-size:12px;color:#166534;font-weight:700">Risque faible — je peux garantir que ça fonctionne</div>
     </div>
   </div>`;
 
@@ -1889,28 +1907,30 @@ function renderPitchSynthese() {
     <div style="font-size:22px;font-weight:800;color:#991B1B;margin-bottom:4px">25+ testeurs</div>
     <div style="font-size:11px;color:#64748B;margin-bottom:12px">une seule après-midi</div>
     <div style="display:flex;flex-direction:column;gap:6px;font-size:11px;color:#334155;line-height:1.5">
-      <div><strong>Set-up technique :</strong> important</div>
+      <div>• <strong>Nécessite 2-3 semaines de préparation</strong></div>
       <div>• Compte IA dédié obligatoire (carte bancaire + 7 jours d'activation)</div>
-      <div>• Quota IA à augmenter à l'avance pour supporter 25+ users simultanés</div>
-      <div>• Budget crédits IA à provisionner (~5-15€ pour la session)</div>
-      <div>• Gestion d'erreurs et relance automatique indispensables sinon l'app plante</div>
+      <div>• Quotas à augmenter à l'avance pour 25+ users simultanés</div>
+      <div>• Gestion d'erreurs et relance automatique à finaliser</div>
+      <div>• Budget crédits IA à provisionner (~5-15€ la session)</div>
     </div>
     <div style="margin-top:12px;padding:10px;background:#FEE2E2;border-radius:8px;text-align:center">
-      <div style="font-size:10px;color:#991B1B;font-weight:700">IMPACT</div>
-      <div style="font-size:12px;color:#991B1B;font-weight:600;margin-top:2px">Risque élevé sans préparation (2-3 semaines)</div>
+      <div style="font-size:12px;color:#991B1B;font-weight:700">Risque élevé si on y va sans cette préparation</div>
     </div>
   </div>`;
 
   h += `</div>`;
 
-  /* --- Limites de l'environnement actuel --- */
+  /* --- Ce qui ne dépend pas de moi --- */
   h += `<div style="background:#FFFBEB;border:1px solid #FDE68A;border-radius:12px;padding:20px;margin-bottom:16px">
-    <div style="font-size:13px;font-weight:700;color:#92400E;margin-bottom:10px">Limites de l'environnement actuel</div>
+    <div style="font-size:13px;font-weight:700;color:#92400E;margin-bottom:10px">Ce qui reste bloqué sans l'IT</div>
     <div style="display:flex;flex-direction:column;gap:6px;font-size:12px;color:#334155;line-height:1.5">
-      <div>• <strong>Compte IA partagé</strong> — Rubix Pitch partage son compte avec Smart Spec → risque de coupure si les deux tournent en même temps</div>
-      <div>• <strong>~40 requêtes/min max</strong> — au-delà, les requêtes IA sont rejetées (quota OpenAI Tier 1)</div>
-      <div>• <strong>Crédits limités</strong> — budget actuel ≈ 5$, chaque pitch coûte ~0,06$ → ~80 pitchs disponibles</div>
-      <div>• <strong>Pas de gestion d'erreur avancée</strong> — si l'IA est surchargée, l'utilisateur voit une erreur brute</div>
+      <div>• <strong>Domaine rubix officiel</strong> — l'app tourne sur une URL Vercel, pas sur rubix.fr</div>
+      <div>• <strong>SSO / authentification Rubix</strong> — aujourd'hui c'est un mot de passe partagé</div>
+      <div>• <strong>Hébergement pérenne</strong> — Vercel convient pour le pilote, pas pour un déploiement définitif</div>
+      <div>• <strong>Scalabilité illimitée</strong> — dépasser 50-100 users nécessite une infra dédiée</div>
+    </div>
+    <div style="margin-top:10px;font-size:11px;color:#92400E;font-style:italic">
+      → Ces sujets nécessitent une action côté IT. 3 demandes faites depuis le 6 février, sans retour.
     </div>
   </div>`;
 
