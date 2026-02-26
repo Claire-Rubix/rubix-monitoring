@@ -214,10 +214,12 @@ th{color:#1D4ED8;font-weight:600;font-size:10px;text-transform:uppercase;letter-
 }
 /* Sub-tabs (Rubix Pitch) */
 .sub-tabs-nav{display:flex;gap:0;flex-wrap:wrap;margin-bottom:16px;border-bottom:2px solid #E2E8F0}
-.sub-tab-btn{padding:7px 13px;border:1px solid transparent;border-bottom:none;border-radius:6px 6px 0 0;font-size:11px;font-weight:600;cursor:pointer;background:none;color:#64748B;transition:all .15s;margin-bottom:-2px;white-space:nowrap}
+.sub-tab-btn{padding:8px 16px;border:1px solid transparent;border-bottom:none;border-radius:6px 6px 0 0;font-size:13px;font-weight:600;cursor:pointer;background:none;color:#64748B;transition:all .15s;margin-bottom:-2px;white-space:nowrap}
 .sub-tab-btn.active{background:#fff;color:#051E50;border-color:#E2E8F0;border-bottom-color:#fff}
 .sub-tab-btn:hover:not(.active){background:#F8FAFC;color:#334155}
 .sub-page{display:none}.sub-page.active{display:block}
+#page-pitch .sub-page{font-size:14px;color:#1E293B}
+#page-pitch .sub-page div,#page-pitch .sub-page span,#page-pitch .sub-page td,#page-pitch .sub-page li{min-height:auto}
 .pitch-gs{padding:10px 14px;border-radius:8px;font-size:13px;font-weight:700;text-align:center;margin-bottom:10px}
 .pitch-gs-ok{background:#ECFDF5;color:#166534}.pitch-gs-warn{background:#FEFCE8;color:#92400E}.pitch-gs-danger{background:#FEF2F2;color:#DC2626}
 .pitch-sc-grid{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
@@ -1098,18 +1100,13 @@ function renderGlobalAlerts(proj) {
 
 const DEMANDES = [
   { id:'d1', titre:'Création canal Teams "Rubix Pitch — Retours & Support"', destinataire:'IT', deadline:'28/02',
-    pourquoi:'Centraliser les remontées de bugs des commerciaux pendant et après les formations. Sans canal dédié, les retours se perdent dans les emails et les conversations informelles.' },
-  { id:'d2', titre:'1 personne pour tester l\'app avant les formations (vérification bugs)', destinataire:'Manager', deadline:'10/03',
+    pourquoi:'Centraliser les remontées de bugs des commerciaux pendant et après les formations.' },
+  { id:'d2', titre:'1 personne pour tester l\'app avant les formations (vérification bugs)', destinataire:'À désigner', deadline:'10/03',
     detail:'Quelqu\'un qui parcourt l\'app, teste les fonctionnalités et remonte les problèmes. Effort : ~1h.',
-    pourquoi:'Vérifier que l\'application fonctionne correctement avant de la mettre dans les mains de 22 personnes. Permet de corriger les derniers bugs en amont.' },
+    pourquoi:'Vérifier que l\'application fonctionne correctement avant de la mettre dans les mains de 22 personnes.' },
   { id:'d3', titre:'Liste des 66 participants aux 3 sessions (options B, C, D)', destinataire:'Organisateurs formation', deadline:'20/03',
-    detail:'Données : nom, prénom, profil (RVE/DE), session attribuée (1, 2 ou 3). Nécessaire pour les options B, C et D.',
-    pourquoi:'Permet de créer les accès individuels, suivre l\'adoption et gérer le déploiement progressif.' },
-  { id:'d4', titre:'Validation budget 50$ (46€) pour compte IA dédié', destinataire:'Manager', deadline:'28/02',
-    detail:'Paiement unique par carte.',
-    pourquoi:'Séparer les crédits IA de Rubix Pitch de ceux de Smart Spec (risque de coupure). Ces 50$ sont aussi la condition pour monter en capacité (Tier 2 = 10× plus d\'utilisateurs simultanés). Les crédits sont consommés progressivement (~5$/mois pour 15 users).' },
-  { id:'d5', titre:'Suivre la consommation Vercel (plan Pro 20$/mois)', destinataire:'Claire (auto)', deadline:'Tous les vendredis',
-    pourquoi:'Le plan Pro inclut 20$ de crédit mensuel. En phase de développement, les Build Minutes peuvent faire dépasser ce crédit. Surplus actuel estimé : ~14$ ce mois (temporaire). Après le code freeze, la consommation redescend dans le crédit. Mettre à jour la jauge chaque vendredi dans la page monitoring.' },
+    detail:'Nom, prénom, profil (RVE/DE), session attribuée (1, 2 ou 3).',
+    pourquoi:'Permet de créer les accès individuels et gérer le déploiement progressif.' },
 ];
 
 const D_CYCLE = ['todo', 'inprogress', 'done'];
@@ -1118,6 +1115,13 @@ const D_LABELS = { todo:'À traiter', inprogress:'En cours', done:'Fait' };
 
 function getDStatus(id)      { return localStorage.getItem('demande_status_' + id) || 'todo'; }
 function setDStatus(id, val) { val === 'todo' ? localStorage.removeItem('demande_status_' + id) : localStorage.setItem('demande_status_' + id, val); }
+
+function toggleAVCheck(id, el) {
+  const cur = localStorage.getItem('av_check_' + id) || '';
+  const next = cur === 'done' ? '' : 'done';
+  next ? localStorage.setItem('av_check_' + id, next) : localStorage.removeItem('av_check_' + id);
+  renderPitchAValider();
+}
 
 function toggleDemandeStatus(id) {
   const cur  = getDStatus(id);
@@ -1625,27 +1629,27 @@ function renderPitchPilote() {
   let h = '';
 
   /* --- Périmètre pilote --- */
-  h += `<div style="font-size:15px;font-weight:800;color:#051E50;margin-bottom:12px">${peSpan('pil_header','Pilote')}</div>`;
-  h += `<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:12px">
-    <div style="background:#EFF6FF;border-radius:8px;padding:12px;text-align:center">
-      <div style="font-size:11px;color:#6B7280;margin-bottom:4px">Début pilote</div>
-      <div style="font-size:16px;font-weight:800;color:#1D4ED8">${peSpan('pil_debut','17/03/2026','color:#1D4ED8')}</div>
-      <div style="font-size:11px;color:#6B7280">${peSpan('pil_debut_sub','Session 1')}</div>
+  h += `<div style="font-size:18px;font-weight:800;color:#051E50;margin-bottom:14px">${peSpan('pil_header','Pilote')}</div>`;
+  h += `<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px">
+    <div style="background:#051E50;border-radius:8px;padding:14px;text-align:center">
+      <div style="font-size:12px;color:#FFD700;margin-bottom:4px">Début pilote</div>
+      <div style="font-size:18px;font-weight:800;color:#fff">${peSpan('pil_debut','17/03/2026','color:#fff')}</div>
+      <div style="font-size:12px;color:#94A3B8">${peSpan('pil_debut_sub','Session 1')}</div>
     </div>
-    <div style="background:#EFF6FF;border-radius:8px;padding:12px;text-align:center">
-      <div style="font-size:11px;color:#6B7280;margin-bottom:4px">Fin pilote</div>
-      <div style="font-size:16px;font-weight:800;color:#1D4ED8">${peSpan('pil_fin','30/04/2026','color:#1D4ED8')}</div>
-      <div style="font-size:11px;color:#6B7280">${peSpan('pil_fin_sub','Bilan GO/NO GO')}</div>
+    <div style="background:#051E50;border-radius:8px;padding:14px;text-align:center">
+      <div style="font-size:12px;color:#FFD700;margin-bottom:4px">Fin pilote</div>
+      <div style="font-size:18px;font-weight:800;color:#fff">${peSpan('pil_fin','30/04/2026','color:#fff')}</div>
+      <div style="font-size:12px;color:#94A3B8">${peSpan('pil_fin_sub','Bilan GO/NO GO')}</div>
     </div>
-    <div style="background:#EFF6FF;border-radius:8px;padding:12px;text-align:center">
-      <div style="font-size:11px;color:#6B7280;margin-bottom:4px">Durée</div>
-      <div style="font-size:16px;font-weight:800;color:#1D4ED8">${peSpan('pil_duree','6 semaines','color:#1D4ED8')}</div>
+    <div style="background:#051E50;border-radius:8px;padding:14px;text-align:center">
+      <div style="font-size:12px;color:#FFD700;margin-bottom:4px">Durée</div>
+      <div style="font-size:18px;font-weight:800;color:#fff">${peSpan('pil_duree','6 semaines','color:#fff')}</div>
     </div>
   </div>`;
-  h += `<p style="font-size:12px;color:#334155;margin:0 0 16px;line-height:1.6">${peSpan('pil_objectif','L\'objectif du pilote est de prouver que l\'application fonctionne en conditions réelles, que les commerciaux l\'adoptent, et que les coûts sont maîtrisés.')}</p>`;
+  h += `<p style="font-size:14px;color:#334155;margin:0 0 18px;line-height:1.7">${peSpan('pil_objectif','L\'objectif du pilote est de prouver que l\'application fonctionne en conditions réelles, que les commerciaux l\'adoptent, et que les coûts sont maîtrisés.')}</p>`;
 
   /* --- Set-up par option --- */
-  h += `<div style="font-size:14px;font-weight:800;color:#051E50;margin-bottom:12px">${peSpan('pil_titre','Set-up par option')}</div>`;
+  h += `<div style="font-size:16px;font-weight:800;color:#051E50;margin-bottom:14px">${peSpan('pil_titre','Set-up par option')}</div>`;
 
   const SETUPS = [
     { id:'A', titre:'On attend l\'IT', color:'#64748B', bg:'#F8FAFC', border:'#CBD5E1', items:[
@@ -1690,8 +1694,8 @@ function renderPitchPilote() {
       <div style="display:flex;flex-direction:column;gap:8px">`;
     for (let i = 0; i < s.items.length; i++) {
       const it = s.items[i];
-      h += `<div style="display:flex;gap:8px;font-size:12px;line-height:1.5">
-        <div style="font-weight:700;color:#334155;min-width:120px;flex-shrink:0">${peSpan('pil_'+s.id+'_l'+i, it.label)}</div>
+      h += `<div style="display:flex;gap:10px;font-size:14px;line-height:1.6">
+        <div style="font-weight:700;color:#334155;min-width:130px;flex-shrink:0">${peSpan('pil_'+s.id+'_l'+i, it.label)}</div>
         <div style="color:#64748B">${peSpan('pil_'+s.id+'_v'+i, it.val)}</div>
       </div>`;
     }
@@ -1699,7 +1703,7 @@ function renderPitchPilote() {
   }
 
   // ── Critères de succès (pour le suivi après) ──
-  h += `<details open style="margin-top:16px"><summary style="font-size:14px;font-weight:800;color:#051E50;cursor:pointer">Critères de succès du pilote</summary><div style="margin-top:12px">`;
+  h += `<details open style="margin-top:20px"><summary style="font-size:16px;font-weight:800;color:#051E50;cursor:pointer">Critères de succès du pilote</summary><div style="margin-top:14px">`;
   const CRITERES = [
     { critere:'Adoption', comment:'% d\'utilisateurs ayant généré au moins 1 pitch', cible:'> 80%' },
     { critere:'Usage', comment:'Nombre total de pitchs générés', cible:'> 100' },
@@ -1783,8 +1787,8 @@ function renderPitchSynthese() {
 
   /* --- Situation --- */
   h += `<div style="background:#F8FAFC;border:1px solid #E2E8F0;border-radius:12px;padding:20px;margin-bottom:16px">
-    <div style="font-size:15px;font-weight:800;color:#051E50;margin-bottom:12px">${peSpan('s_titre','Situation')}</div>
-    <div style="display:flex;flex-direction:column;gap:8px;font-size:13px;color:#334155;line-height:1.6">
+    <div style="font-size:18px;font-weight:800;color:#051E50;margin-bottom:14px">${peSpan('s_titre','Situation')}</div>
+    <div style="display:flex;flex-direction:column;gap:10px;font-size:14px;color:#334155;line-height:1.7">
       <div>${peSpan('s_1','L\'application Rubix Pitch est <strong>développée et fonctionnelle</strong>.')}</div>
       <div>${peSpan('s_2','3 demandes de support IT ont été faites depuis le 6 février. <strong>Aucune n\'a abouti.</strong>')}</div>
       <div>${peSpan('s_3','Les dates de formation sont fixées. Les commerciaux attendent de tester l\'outil.')}</div>
@@ -1793,7 +1797,7 @@ function renderPitchSynthese() {
   </div>`;
 
   /* --- 4 options --- */
-  h += `<div style="font-size:15px;font-weight:800;color:#051E50;margin-bottom:12px">${peSpan('s_opt_titre','4 options possibles')}</div>`;
+  h += `<div style="font-size:18px;font-weight:800;color:#051E50;margin-bottom:14px">${peSpan('s_opt_titre','4 options possibles')}</div>`;
 
   const opts = [
     { id:'A', color:'#64748B', bg:'#F8FAFC', border:'#CBD5E1',
@@ -1832,32 +1836,32 @@ function renderPitchSynthese() {
   ];
 
   for (const o of opts) {
-    h += `<div style="background:${o.bg};border:2px solid ${o.border};border-radius:12px;padding:18px;margin-bottom:12px">
-      <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
-        <span style="font-size:14px;font-weight:800;color:${o.color};background:#fff;border:2px solid ${o.border};border-radius:50%;width:28px;height:28px;display:flex;align-items:center;justify-content:center">${o.id}</span>
-        <span style="font-size:14px;font-weight:800;color:${o.color}">${peSpan('opt_'+o.id+'_titre', o.titre)}</span>
+    h += `<div style="background:${o.bg};border:2px solid ${o.border};border-radius:12px;padding:20px;margin-bottom:14px">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px">
+        <span style="font-size:15px;font-weight:800;color:${o.color};background:#fff;border:2px solid ${o.border};border-radius:50%;width:32px;height:32px;display:flex;align-items:center;justify-content:center">${o.id}</span>
+        <span style="font-size:16px;font-weight:800;color:${o.color}">${peSpan('opt_'+o.id+'_titre', o.titre)}</span>
       </div>
-      <div style="font-size:12px;color:#334155;margin-bottom:12px">${peSpan('opt_'+o.id+'_desc', o.desc)}</div>
-      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:10px">
-        <div style="background:#fff;border-radius:8px;padding:10px;text-align:center">
-          <div style="font-size:10px;color:#64748B;margin-bottom:2px">Testeurs</div>
-          <div style="font-size:14px;font-weight:800;color:${o.color}">${peSpan('opt_'+o.id+'_testeurs', o.testeurs)}</div>
+      <div style="font-size:14px;color:#334155;margin-bottom:14px">${peSpan('opt_'+o.id+'_desc', o.desc)}</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px">
+        <div style="background:#fff;border-radius:8px;padding:12px;text-align:center">
+          <div style="font-size:12px;color:#64748B;margin-bottom:4px">Testeurs</div>
+          <div style="font-size:16px;font-weight:800;color:${o.color}">${peSpan('opt_'+o.id+'_testeurs', o.testeurs)}</div>
         </div>
-        <div style="background:#fff;border-radius:8px;padding:10px;text-align:center">
-          <div style="font-size:10px;color:#64748B;margin-bottom:2px">Délai</div>
-          <div style="font-size:12px;font-weight:700;color:#334155">${peSpan('opt_'+o.id+'_delai', o.delai)}</div>
+        <div style="background:#fff;border-radius:8px;padding:12px;text-align:center">
+          <div style="font-size:12px;color:#64748B;margin-bottom:4px">Délai</div>
+          <div style="font-size:14px;font-weight:700;color:#334155">${peSpan('opt_'+o.id+'_delai', o.delai)}</div>
         </div>
-        <div style="background:#fff;border-radius:8px;padding:10px;text-align:center">
-          <div style="font-size:10px;color:#64748B;margin-bottom:2px">Coût</div>
-          <div style="font-size:12px;font-weight:700;color:#334155">${peSpan('opt_'+o.id+'_cout', o.cout)}</div>
+        <div style="background:#fff;border-radius:8px;padding:12px;text-align:center">
+          <div style="font-size:12px;color:#64748B;margin-bottom:4px">Coût</div>
+          <div style="font-size:14px;font-weight:700;color:#334155">${peSpan('opt_'+o.id+'_cout', o.cout)}</div>
         </div>
       </div>
-      <div style="display:flex;flex-direction:column;gap:6px;font-size:11px;color:#334155;line-height:1.5">
-        <div><strong>Charge de travail :</strong> ${peSpan('opt_'+o.id+'_charge', o.charge)}</div>
+      <div style="display:flex;flex-direction:column;gap:8px;font-size:14px;color:#334155;line-height:1.6">
+        <div><strong>Charge :</strong> ${peSpan('opt_'+o.id+'_charge', o.charge)}</div>
         <div><strong>Limites :</strong> ${peSpan('opt_'+o.id+'_limites', o.limites)}</div>
         <div><strong>Risque :</strong> ${peSpan('opt_'+o.id+'_risque', o.risque)}</div>
       </div>
-      <div style="margin-top:10px;padding:8px 12px;background:#fff;border-radius:6px;font-size:12px;font-weight:700;color:${o.color};text-align:center">
+      <div style="margin-top:12px;padding:10px 14px;background:#051E50;border-radius:8px;font-size:14px;font-weight:700;color:#FFD700;text-align:center">
         ${peSpan('opt_'+o.id+'_verdict', o.verdict)}
       </div>
     </div>`;
@@ -1876,80 +1880,34 @@ function renderPitchAValider() {
   if (!el) return;
   let h = '';
 
-  h += `<div style="font-size:15px;font-weight:800;color:#051E50;margin-bottom:14px">${peSpan('av_titre','Ce qu\'il faut valider pour avancer')}</div>`;
+  h += `<div style="font-size:18px;font-weight:800;color:#051E50;margin-bottom:18px">${peSpan('av_titre','Ce qu\'il faut valider pour avancer')}</div>`;
 
-  h += `<div style="background:#F8FAFC;border:1px solid #E2E8F0;border-radius:12px;padding:20px;margin-bottom:16px">
-    <div style="display:flex;flex-direction:column;gap:14px">
+  const AV_ITEMS = [
+    { id:'av1', label:'Budget validé', desc:'De ~65€ (option B) à ~85€ (option C) sur 6 semaines. Inclut crédits IA + surcoût Vercel temporaire. Détail dans l\'onglet Coûts.' },
+    { id:'av2', label:'Charge de travail acceptée', desc:'2-3 h/semaine pendant 6 semaines : préparation technique, fiabilisation, accompagnement formations.' },
+    { id:'av3', label:'Exclusivité projet', desc:'Pas de développement d\'autres applications pendant cette période. Le temps est dédié à la fiabilisation et au déploiement de Rubix Pitch.' },
+    { id:'av4', label:'Télétravail nécessaire', desc:'Le réseau Rubix bloque l\'accès aux outils de développement et d\'hébergement (Vercel, GitHub, API OpenAI). Le travail technique ne peut se faire qu\'en télétravail.' },
+    { id:'av5', label:'Limites de capacité acceptées', desc:'L\'environnement actuel supporte un nombre limité d\'utilisateurs simultanés. En progressif c\'est gérable. Si tout le monde se connecte en même temps, il y aura des lenteurs ou des plantages.' },
+    { id:'av6', label:'Pas de sauvegarde multi-appareil', desc:'L\'historique des pitchs générés est stocké dans le navigateur. Si un commercial change de poste, il perd son historique. Amélioration prévue mais pas disponible au lancement.' },
+    { id:'av7', label:'Incidents possibles le jour J', desc:'C\'est un outil en phase pilote, pas un produit fini. Des lenteurs ou erreurs sont possibles lors d\'une utilisation intensive.' },
+    { id:'av8', label:'1 personne pour tester l\'app (vérification bugs)', desc:'Quelqu\'un qui parcourt l\'app et remonte les problèmes avant les formations. Effort : ~1h. Échéance : 10/03.' },
+    { id:'av9', label:'Canal Teams "Rubix Pitch — Retours & Support"', desc:'Demande à l\'IT. Centraliser les remontées de bugs pendant et après les formations. Échéance : 28/02.' },
+    { id:'av10', label:'Liste des 66 participants (options B, C, D)', desc:'Nom, prénom, profil, session attribuée. À demander aux organisateurs formation. Échéance : 20/03.' },
+  ];
 
-      <div style="display:flex;gap:12px;align-items:flex-start">
-        <div style="width:30px;height:30px;border-radius:8px;background:#EFF6FF;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:15px">💰</div>
-        <div>
-          <div style="font-size:12px;font-weight:700;color:#334155">${peSpan('av_m_budget_t','Budget')}</div>
-          <div style="font-size:12px;color:#64748B;line-height:1.5;margin-top:2px">${peSpan('av_m_budget','De ~65€ (option B) à ~85€ (option C) sur la durée du pilote. Détail dans l\'onglet Coûts.')}</div>
-        </div>
+  function getAVStatus(id) { return localStorage.getItem('av_check_' + id) || ''; }
+
+  h += `<div style="display:flex;flex-direction:column;gap:6px">`;
+  for (const item of AV_ITEMS) {
+    const checked = getAVStatus(item.id) === 'done';
+    h += `<div style="background:${checked?'#F0FDF4':'#F8FAFC'};border:1px solid ${checked?'#86EFAC':'#E2E8F0'};border-radius:10px;padding:14px 18px;display:flex;gap:14px;align-items:flex-start;cursor:pointer;transition:all .15s" onclick="toggleAVCheck('${item.id}',this)">
+      <div style="width:22px;height:22px;border-radius:6px;border:2px solid ${checked?'#22C55E':'#CBD5E1'};background:${checked?'#22C55E':'#fff'};display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;transition:all .15s">
+        ${checked ? '<span style="color:#fff;font-size:14px;font-weight:800">✓</span>' : ''}
       </div>
-
-      <div style="display:flex;gap:12px;align-items:flex-start">
-        <div style="width:30px;height:30px;border-radius:8px;background:#EFF6FF;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:15px">⏱️</div>
-        <div>
-          <div style="font-size:12px;font-weight:700;color:#334155">${peSpan('av_m_temps_t','Charge de travail')}</div>
-          <div style="font-size:12px;color:#64748B;line-height:1.5;margin-top:2px">${peSpan('av_m_temps','2-3 h/semaine pendant 6 semaines : préparation technique, fiabilisation, accompagnement formations. Programme détaillé dans l\'onglet Programme.')}</div>
-        </div>
+      <div style="flex:1">
+        <div style="font-size:14px;font-weight:700;color:${checked?'#059669':'#051E50'};${checked?'text-decoration:line-through':''}">${peSpan('av_l_'+item.id, item.label)}</div>
+        <div style="font-size:13px;color:#64748B;line-height:1.6;margin-top:4px">${peSpan('av_d_'+item.id, item.desc)}</div>
       </div>
-
-      <div style="display:flex;gap:12px;align-items:flex-start">
-        <div style="width:30px;height:30px;border-radius:8px;background:#EFF6FF;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:15px">🚫</div>
-        <div>
-          <div style="font-size:12px;font-weight:700;color:#334155">${peSpan('av_m_exclu_t','Exclusivité projet')}</div>
-          <div style="font-size:12px;color:#64748B;line-height:1.5;margin-top:2px">${peSpan('av_m_exclu','Pas de développement d\'autres applications pendant cette période. Le temps est dédié à la fiabilisation et au déploiement de Rubix Pitch.')}</div>
-        </div>
-      </div>
-
-      <div style="display:flex;gap:12px;align-items:flex-start">
-        <div style="width:30px;height:30px;border-radius:8px;background:#EFF6FF;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:15px">🏠</div>
-        <div>
-          <div style="font-size:12px;font-weight:700;color:#334155">${peSpan('av_m_teletravail_t','Télétravail nécessaire')}</div>
-          <div style="font-size:12px;color:#64748B;line-height:1.5;margin-top:2px">${peSpan('av_m_teletravail','Le réseau Rubix bloque l\'accès aux outils de développement et d\'hébergement (Vercel, GitHub, API OpenAI). Le travail technique sur l\'application ne peut se faire qu\'en télétravail.')}</div>
-        </div>
-      </div>
-
-      <div style="display:flex;gap:12px;align-items:flex-start">
-        <div style="width:30px;height:30px;border-radius:8px;background:#FEF3C7;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:15px">⚡</div>
-        <div>
-          <div style="font-size:12px;font-weight:700;color:#334155">${peSpan('av_d_limites_t','Limites de capacité')}</div>
-          <div style="font-size:12px;color:#64748B;line-height:1.5;margin-top:2px">${peSpan('av_d_limites','L\'environnement actuel supporte un nombre limité d\'utilisateurs simultanés. En progressif c\'est gérable. Si tout le monde se connecte en même temps sans préparation, il y aura des lenteurs ou des plantages.')}</div>
-        </div>
-      </div>
-
-      <div style="display:flex;gap:12px;align-items:flex-start">
-        <div style="width:30px;height:30px;border-radius:8px;background:#FEF3C7;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:15px">🐛</div>
-        <div>
-          <div style="font-size:12px;font-weight:700;color:#334155">${peSpan('av_d_bugs_t','Incidents possibles le jour J')}</div>
-          <div style="font-size:12px;color:#64748B;line-height:1.5;margin-top:2px">${peSpan('av_d_bugs','C\'est un outil en phase pilote, pas un produit fini. Des lenteurs ou erreurs sont possibles lors d\'une utilisation intensive. C\'est normal pour cette phase.')}</div>
-        </div>
-      </div>
-
-    </div>
-  </div>`;
-
-  // ── Demandes intégrées ──
-  const doneCount = DEMANDES.filter(d => getDStatus(d.id) === 'done').length;
-  const pct = Math.round(doneCount / DEMANDES.length * 100);
-  h += `<div style="margin-top:8px">`;
-  for (const d of DEMANDES) {
-    const status = getDStatus(d.id);
-    const done = status === 'done';
-    h += `<div class="dem-row${done ? ' dem-done' : ''}" id="dc-${d.id}" style="border:1px solid #E2E8F0;border-radius:8px;margin-bottom:6px;overflow:hidden">
-      <div class="dem-row-main" onclick="toggleDemRow('${d.id}')" style="padding:10px 14px;display:flex;align-items:center;gap:10px;cursor:pointer">
-        <button class="dem-status-btn" id="db-${d.id}" onclick="event.stopPropagation();toggleDemandeStatus('${d.id}')" title="${D_LABELS[status]}" style="background:none;border:none;font-size:16px;cursor:pointer;flex-shrink:0">${D_ICONS[status]}</button>
-        <span style="font-size:13px;font-weight:600;color:${done?'#94A3B8':'#334155'};flex:1;${done?'text-decoration:line-through':''}">${d.titre}</span>
-        <span class="dem-badge ${demBadgeClass(d.destinataire)}" style="font-size:10px;padding:2px 8px;border-radius:10px;font-weight:700;white-space:nowrap">${d.destinataire}</span>
-        <span style="font-size:11px;color:#94A3B8;white-space:nowrap">${d.deadline}</span>
-      </div>
-      <div class="dem-expand"><div class="dem-expand-inner" style="padding:0 14px 10px 42px;font-size:12px;color:#64748B;line-height:1.6">
-        ${d.detail ? `<div>📋 ${d.detail}</div>` : ''}
-        <div>💬 ${d.pourquoi}</div>
-      </div></div>
     </div>`;
   }
   h += `</div>`;
@@ -2029,8 +1987,8 @@ function renderPitchAmeliorations() {
   const statusIcons = { a_faire:'⬜', en_cours:'🔄', fait:'✅' };
   const statusLabels = { a_faire:'À faire', en_cours:'En cours', fait:'Fait' };
 
-  let h = `<div style="font-size:14px;font-weight:800;color:#051E50;margin-bottom:4px">Améliorations prévues</div>`;
-  h += `<div style="font-size:11px;color:#64748B;margin-bottom:12px">8 améliorations techniques planifiées pour renforcer la fiabilité et les performances.</div>`;
+  let h = `<div style="font-size:18px;font-weight:800;color:#051E50;margin-bottom:6px">Améliorations prévues</div>`;
+  h += `<div style="font-size:13px;color:#64748B;margin-bottom:14px">8 améliorations techniques planifiées pour renforcer la fiabilité et les performances.</div>`;
 
   h += `<div style="display:flex;flex-direction:column;gap:6px">`;
   for (const a of PITCH_AMELIORATIONS) {
@@ -2042,13 +2000,13 @@ function renderPitchAmeliorations() {
     const retroTotal = a.retroIds ? a.retroIds.length : 0;
     const retroPct = retroTotal > 0 ? Math.round(retroDone / retroTotal * 100) : 0;
 
-    h += `<div style="background:#fff;border:1px solid ${st==='fait'?'#BBF7D0':st==='en_cours'?'#FDE68A':'#E2E8F0'};border-radius:8px;padding:10px 14px${st==='fait'?';opacity:.7':''}">
-      <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
-        <span style="font-size:14px">${statusIcons[st]}</span>
-        <span style="font-size:12px;font-weight:700;color:#051E50;flex:1">${a.id}. ${a.label}</span>
-        <span class="badge ${a.impact === 'critique' ? 'bd-crit' : ''}" style="font-size:9px">${impactLabel[a.impact]}</span>
+    h += `<div style="background:#fff;border:1px solid ${st==='fait'?'#BBF7D0':st==='en_cours'?'#FDE68A':'#E2E8F0'};border-radius:8px;padding:12px 16px${st==='fait'?';opacity:.7':''}">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
+        <span style="font-size:16px">${statusIcons[st]}</span>
+        <span style="font-size:14px;font-weight:700;color:#051E50;flex:1">${a.id}. ${a.label}</span>
+        <span class="badge ${a.impact === 'critique' ? 'bd-crit' : ''}" style="font-size:11px">${impactLabel[a.impact]}</span>
       </div>
-      <div style="font-size:11px;color:#64748B;padding-left:28px">${a.detail}</div>`;
+      <div style="font-size:13px;color:#64748B;padding-left:30px">${a.detail}</div>`;
     // Retro progress bar
     if (retroTotal > 0) {
       h += `<div style="padding-left:28px;margin-top:6px;display:flex;align-items:center;gap:8px">
@@ -2060,11 +2018,11 @@ function renderPitchAmeliorations() {
   }
   h += `</div>`;
 
-  h += `<div style="margin-top:16px;padding:12px;background:#FEF2F2;border-radius:8px;border:1px solid #FECACA">
-    <div style="font-size:12px;font-weight:700;color:#991B1B;margin-bottom:4px">Action en cours : création d'un compte IA dédié</div>
-    <div style="font-size:11px;color:#334155">Actuellement Rubix Pitch partage son compte IA avec Smart Spec. Un compte séparé est en cours de création pour éviter tout risque de coupure.</div>
-    <details style="margin-top:8px"><summary style="font-size:10px;color:#64748B;cursor:pointer">Détail technique</summary>
-      <div style="font-size:11px;color:#334155;margin-top:8px;line-height:1.8">
+  h += `<div style="margin-top:18px;padding:16px;background:#EFF6FF;border-radius:10px;border:1px solid #BFDBFE">
+    <div style="font-size:14px;font-weight:700;color:#051E50;margin-bottom:6px">Action en cours : création d'un compte IA dédié</div>
+    <div style="font-size:13px;color:#334155;line-height:1.6">Actuellement Rubix Pitch partage son compte IA avec Smart Spec. Un compte séparé est en cours de création pour éviter tout risque de coupure.</div>
+    <details style="margin-top:10px"><summary style="font-size:12px;color:#64748B;cursor:pointer">Détail technique</summary>
+      <div style="font-size:13px;color:#334155;margin-top:8px;line-height:1.8">
         <strong>Capacité actuelle :</strong> ~40 utilisateurs simultanés.<br><strong>Objectif :</strong> ~800 utilisateurs (montée automatique après 46€ + 7 jours).<br><strong>Procédure :</strong> Créer un compte dédié → Carte bancaire → 46€ crédits → Clé API → Mise à jour serveur.
       </div>
     </details>
@@ -2636,9 +2594,11 @@ function renderProgrammeSynth() {
     'Ouverture compte OpenAI dédié + crédits',
     peSpan('prog_matrice','Réception nouvelle matrice (<strong>~02/03</strong>) + encodage et tests'),
     'Corrections bugs + fiabilisation',
+    'Configuration des appels IA par lots (batch) pour gérer la charge',
     'Login individuel par utilisateur',
-    peSpan('prog_qa','Demander 1 personne pour tester l\'app et vérifier les bugs avant les formations'),
+    peSpan('prog_qa','1 personne pour tester l\'app et vérifier les bugs avant les formations'),
     'Création canal Teams support',
+    'Déploiement obligatoire via Vercel (proxy réseau Rubix bloque les outils de dev)',
   ];
 
   const options = [
