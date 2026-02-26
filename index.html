@@ -550,7 +550,7 @@ th{color:#1D4ED8;font-weight:600;font-size:10px;text-transform:uppercase;letter-
       <button class="sub-tab-btn" onclick="showPitchTab('avalider',this)">À valider</button>
       <button class="sub-tab-btn" onclick="showPitchTab('programme',this)" style="border-left:2px solid #E2E8F0;margin-left:6px;padding-left:14px">Programme</button>
       <button class="sub-tab-btn" onclick="showPitchTab('couts',this)">Coûts</button>
-      <button class="sub-tab-btn" onclick="showPitchTab('ameliorations',this)">Améliorations</button>
+      <button class="sub-tab-btn" onclick="showPitchTab('ameliorations',this)">Améliorations techniques</button>
       <button class="sub-tab-btn" onclick="showPitchTab('pilote',this)">Pilote</button>
     </div>
 
@@ -1678,105 +1678,73 @@ function initPitchChecklist() {
 
 // ---- Pilote & Transition IT ----
 function renderPitchPilote() {
-  const CRITERES = [
-    { critere:'Adoption',   comment:'% d\'ambassadeurs ayant généré ≥1 pitch', cible:'> 80%' },
-    { critere:'Usage',      comment:'Nombre total de pitchs générés',           cible:'> 100' },
-    { critere:'Stabilité',  comment:'Erreurs 429 ou timeout en production',     cible:'< 5'   },
-    { critere:'Coût réel',  comment:'Facture Vercel + OpenAI sur la période',   cible:'< 50€' },
-    { critere:'Satisfaction', comment:'Feedback qualitatif canal Teams',        cible:'Positif' },
+  let h = `<div style="font-size:15px;font-weight:800;color:#051E50;margin-bottom:14px">${peSpan('pil_titre','Set-up par option')}</div>`;
+
+  const SETUPS = [
+    { id:'A', titre:'On attend l\'IT', color:'#64748B', bg:'#F8FAFC', border:'#CBD5E1', items:[
+      { label:'Préparation', val:'Aucune' },
+      { label:'Compte IA', val:'Pas de changement' },
+      { label:'Formations', val:'Reportées' },
+      { label:'Infrastructure', val:'En attente IT' },
+      { label:'Support', val:'Aucun' },
+    ]},
+    { id:'B', titre:'Progressif (5 → 25)', color:'#166534', bg:'#F0FDF4', border:'#22C55E', items:[
+      { label:'Préparation', val:'Créer un compte IA dédié (7 jours) + tester la génération avec 5 users' },
+      { label:'Compte IA', val:'Compte OpenAI dédié Rubix Pitch — carte bancaire + 46€ crédits' },
+      { label:'Formations', val:'Vague 1 : 5 users → Vague 2 : 10 users → Vague 3 : 25 users' },
+      { label:'Gestion d\'erreurs', val:'Messages clairs + relance automatique (à déployer avant vague 2)' },
+      { label:'Monitoring', val:'Surveillance manuelle entre chaque vague, ajustements au fil de l\'eau' },
+      { label:'Support', val:'Claire seule — charge estimée : 2-3h/semaine' },
+    ]},
+    { id:'C', titre:'Tous en live (25+)', color:'#991B1B', bg:'#FEF2F2', border:'#EF4444', items:[
+      { label:'Préparation', val:'Compte IA dédié + gestion d\'erreurs + relance automatique + test de charge — 2 à 3 semaines minimum' },
+      { label:'Compte IA', val:'Compte OpenAI dédié — quota augmenté pour 25+ users simultanés (7 jours d\'activation)' },
+      { label:'Formations', val:'Session unique : tous les commerciaux testent le même jour et repartent avec l\'app' },
+      { label:'Gestion d\'erreurs', val:'Indispensable — sinon l\'app plante devant 25 personnes' },
+      { label:'Crédits IA', val:'Provisionner 5-15€ de crédits pour la session' },
+      { label:'Support', val:'Claire temps plein pendant la préparation + jour J' },
+    ]},
+    { id:'D', titre:'Hybride (test live → accès restreint)', color:'#92400E', bg:'#FFFBEB', border:'#F59E0B', items:[
+      { label:'Préparation', val:'Identique à l\'option C — 2 à 3 semaines' },
+      { label:'Compte IA', val:'Identique à l\'option C' },
+      { label:'Formations', val:'Tout le monde teste le jour J, mais seuls 5-10 commerciaux gardent l\'accès ensuite' },
+      { label:'Gestion des accès', val:'Retirer l\'accès à une partie des commerciaux après la session — communication à prévoir' },
+      { label:'Risque humain', val:'Frustration des commerciaux qui perdent l\'accès après avoir testé' },
+      { label:'Support', val:'Claire temps plein + gestion post-formation' },
+    ]},
   ];
-  const TRANSITION = [
-    { composant:'Hébergement',    pilote:'Vercel (compte Claire)',          cible:'URL groupe ou hébergement interne' },
-    { composant:'Compte IA',      pilote:'OpenAI dédié Rubix Digital',      cible:'Azure OpenAI entreprise' },
-    { composant:'Authentification', pilote:'Mot de passe simple → login JSON', cible:'SSO Microsoft' },
-    { composant:'Données matrice', pilote:'Vercel Blob',                   cible:'SharePoint Rubix' },
-    { composant:'Monitoring',     pilote:'Page monitoring manuelle',        cible:'Alertes automatiques IT' },
-    { composant:'Support',        pilote:'Claire seule',                    cible:'IT niveau 1 + Claire niveau 2' },
-  ];
 
-  let h = `<div style="border-left:4px solid #3B82F6;background:#fff;border-radius:8px;border:1px solid #E2E8F0;padding:16px;margin-bottom:16px">`;
-  h += `<div style="font-size:14px;font-weight:800;color:#051E50;margin-bottom:4px">${peSpan('pil_titre','🏁 Pilote & Transition IT')}</div>`;
-
-  // ── 1. Périmètre pilote ────────────────────────────────────────────────
-  h += sectionSep('PÉRIMÈTRE PILOTE', '');
-  h += `<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:12px">
-    <div style="background:#EFF6FF;border-radius:8px;padding:12px;text-align:center">
-      <div style="font-size:11px;color:#6B7280;margin-bottom:4px">Début pilote</div>
-      <div style="font-size:16px;font-weight:800;color:#1D4ED8">${peSpan('pil_debut','17/03/2026','color:#1D4ED8')}</div>
-      <div style="font-size:11px;color:#6B7280">${peSpan('pil_debut_sub','Session 1')}</div>
-    </div>
-    <div style="background:#EFF6FF;border-radius:8px;padding:12px;text-align:center">
-      <div style="font-size:11px;color:#6B7280;margin-bottom:4px">Fin pilote</div>
-      <div style="font-size:16px;font-weight:800;color:#1D4ED8">${peSpan('pil_fin','30/04/2026','color:#1D4ED8')}</div>
-      <div style="font-size:11px;color:#6B7280">${peSpan('pil_fin_sub','Bilan GO/NO GO')}</div>
-    </div>
-    <div style="background:#EFF6FF;border-radius:8px;padding:12px;text-align:center">
-      <div style="font-size:11px;color:#6B7280;margin-bottom:4px">Durée</div>
-      <div style="font-size:16px;font-weight:800;color:#1D4ED8">${peSpan('pil_duree','6 semaines','color:#1D4ED8')}</div>
-      <div style="font-size:11px;color:#6B7280">${peSpan('pil_ambassadeurs','22 ambassadeurs')}</div>
-    </div>
-  </div>`;
-  h += `<p style="font-size:12px;color:#334155;margin:0 0 12px;line-height:1.6">${peSpan('pil_objectif','L\'objectif du pilote est de prouver que l\'application fonctionne en conditions réelles, que les commerciaux l\'adoptent, et que les coûts sont maîtrisés.')}</p>`;
-
-  // ── 2. Critères de succès ──────────────────────────────────────────────
-  h += sectionSep('CRITÈRES DE SUCCÈS DU PILOTE', '');
-  h += `<table style="margin-bottom:12px"><thead><tr><th>Critère</th><th>Comment on mesure</th><th>Cible</th></tr></thead><tbody>`;
-  CRITERES.forEach((r, i) => {
-    h += `<tr><td style="font-weight:700">${peSpan('crit_name_'+i, r.critere)}</td><td style="font-size:11px;color:#334155">${peSpan('crit_comment_'+i, r.comment)}</td><td style="font-weight:700;color:#1D4ED8">${peSpan('crit_cible_'+i, r.cible, 'color:#1D4ED8')}</td></tr>`;
-  });
-  h += '</tbody></table>';
-
-  // ── 3. Timeline transition IT ──────────────────────────────────────────
-  h += sectionSep('TIMELINE TRANSITION IT', '');
-  const TL = [
-    { date:'17/03', label:'Session 1', sub:'5 users',      color:'#1D4ED8' },
-    { date:'08/04', label:'Session 3', sub:'15 users',     color:'#1D4ED8' },
-    { date:'30/04', label:'Bilan pilote', sub:'Décision GO/NO GO', color:'#166534' },
-    { date:'Mai',   label:'Cadrage IT',  sub:'',           color:'#6B7280' },
-    { date:'Juin',  label:'Migration infra', sub:'',       color:'#6B7280' },
-    { date:'Juillet', label:'Bascule IT', sub:'',          color:'#6B7280' },
-  ];
-  h += `<div style="overflow-x:auto;margin-bottom:12px"><div style="display:flex;align-items:flex-start;gap:0;min-width:480px;padding:8px 0 4px">`;
-  for (let i = 0; i < TL.length; i++) {
-    const t = TL[i];
-    const isLast = i === TL.length - 1;
-    h += `<div style="display:flex;flex-direction:column;align-items:center;flex:1;position:relative">`;
-    h += `<div style="display:flex;align-items:center;width:100%">`;
-    h += `<div style="width:14px;height:14px;border-radius:50%;background:${t.color};flex-shrink:0;border:2px solid #fff;box-shadow:0 0 0 2px ${t.color}"></div>`;
-    if (!isLast) h += `<div style="flex:1;height:2px;background:#D1D5DB"></div>`;
-    h += `</div>`;
-    h += `<div style="margin-top:6px;text-align:center;padding:0 2px">`;
-    h += `<div style="font-size:11px;font-weight:800;color:${t.color}">${peSpan('tl_date_'+i, t.date, 'color:'+t.color)}</div>`;
-    h += `<div style="font-size:11px;font-weight:700;color:#051E50;margin-top:2px">${peSpan('tl_label_'+i, t.label)}</div>`;
-    if (t.sub) h += `<div style="font-size:10px;color:#9CA3AF">${peSpan('tl_sub_'+i, t.sub)}</div>`;
+  for (const s of SETUPS) {
+    h += `<div style="background:${s.bg};border:2px solid ${s.border};border-radius:12px;padding:18px;margin-bottom:12px">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+        <span style="font-size:13px;font-weight:800;color:${s.color};background:#fff;border:2px solid ${s.border};border-radius:50%;width:26px;height:26px;display:flex;align-items:center;justify-content:center">${s.id}</span>
+        <span style="font-size:14px;font-weight:800;color:${s.color}">${peSpan('pil_'+s.id+'_titre', s.titre)}</span>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px">`;
+    for (let i = 0; i < s.items.length; i++) {
+      const it = s.items[i];
+      h += `<div style="display:flex;gap:8px;font-size:12px;line-height:1.5">
+        <div style="font-weight:700;color:#334155;min-width:120px;flex-shrink:0">${peSpan('pil_'+s.id+'_l'+i, it.label)}</div>
+        <div style="color:#64748B">${peSpan('pil_'+s.id+'_v'+i, it.val)}</div>
+      </div>`;
+    }
     h += `</div></div>`;
   }
-  h += `</div></div>`;
 
-  // ── 4. Ce qui change avec l'IT ─────────────────────────────────────────
-  h += sectionSep('CE QUI CHANGE AVEC L\'IT', '');
-  h += `<table style="margin-bottom:12px"><thead><tr><th>Composant</th><th>Pilote (aujourd\'hui)</th><th>Cible IT (industrialisé)</th></tr></thead><tbody>`;
-  TRANSITION.forEach((r, i) => {
-    h += `<tr>
-      <td style="font-weight:700">${peSpan('trans_comp_'+i, r.composant)}</td>
-      <td style="font-size:11px;color:#6B7280">${peSpan('trans_pilote_'+i, r.pilote)}</td>
-      <td style="font-size:11px;color:#166534;font-weight:600">${peSpan('trans_cible_'+i, r.cible, 'color:#166534')}</td>
-    </tr>`;
+  // ── Critères de succès (pour le suivi après) ──
+  h += `<details style="margin-top:8px"><summary style="font-size:12px;font-weight:700;color:#051E50;cursor:pointer">Critères de succès du pilote</summary><div style="margin-top:10px">`;
+  const CRITERES = [
+    { critere:'Adoption', comment:'% d\'utilisateurs ayant généré au moins 1 pitch', cible:'> 80%' },
+    { critere:'Usage', comment:'Nombre total de pitchs générés', cible:'> 100' },
+    { critere:'Stabilité', comment:'Erreurs ou lenteurs en production', cible:'< 5' },
+    { critere:'Coût réel', comment:'Facture hébergement + IA sur la période', cible:'< 50€' },
+    { critere:'Satisfaction', comment:'Retour qualitatif des commerciaux', cible:'Positif' },
+  ];
+  h += `<table><thead><tr><th>Critère</th><th>Mesure</th><th>Cible</th></tr></thead><tbody>`;
+  CRITERES.forEach((r, i) => {
+    h += `<tr><td style="font-weight:700">${peSpan('crit_name_'+i, r.critere)}</td><td style="font-size:11px;color:#334155">${peSpan('crit_comment_'+i, r.comment)}</td><td style="font-weight:700;color:#1D4ED8">${peSpan('crit_cible_'+i, r.cible,'color:#1D4ED8')}</td></tr>`;
   });
-  h += '</tbody></table>';
-
-  // ── 5. Statut ──────────────────────────────────────────────────────────
-  h += sectionSep('STATUT', '');
-  h += `<div style="display:flex;gap:16px;align-items:center;flex-wrap:wrap">
-    <div style="background:#EFF6FF;border-radius:8px;padding:10px 16px;border:1px solid #BFDBFE">
-      <span style="font-size:11px;color:#6B7280">Statut pilote : </span>
-      <span style="font-size:12px;font-weight:800;color:#1D4ED8">${peSpan('pil_statut','● EN COURS','color:#1D4ED8')}</span>
-    </div>
-    <div style="background:#F8FAFC;border-radius:8px;padding:10px 16px;border:1px solid #E2E8F0">
-      <span style="font-size:11px;color:#6B7280">Date de bilan : </span>
-      <span style="font-size:12px;font-weight:800;color:#051E50">${peSpan('pil_bilan','30/04/2026','color:#051E50')}</span>
-    </div>
-  </div>`;
+  h += '</tbody></table></div></details>';
 
   h += '</div>'; // fin carte
   html('pitch-pilote-widget', h);
@@ -2027,9 +1995,9 @@ function renderPitchDemandes() {
 
 /* ---- Améliorations prévues (ex-Chantiers) ---- */
 const PITCH_AMELIORATIONS = [
-  { id:1, label:'Meilleure expérience en cas de problème', detail:'Messages clairs et bouton réessayer quand le service est lent ou indisponible', impact:'critique', status:'a_faire', retroIds:['s1-10','s1-11'] },
-  { id:2, label:'Relance automatique en cas de surcharge', detail:'Le système réessaye automatiquement au lieu d\'abandonner', impact:'critique', status:'a_faire', retroIds:['s1-12','s1-13','s1-14'] },
-  { id:3, label:'Compte IA dédié', detail:'Séparer le compte IA de Rubix Pitch de celui de Smart Spec pour éviter les conflits', impact:'critique', status:'a_faire', retroIds:['s1-1','s1-2','s1-3','s1-4'] },
+  { id:1, label:'Ouverture d\'un compte OpenAI dédié', detail:'Séparer le compte IA de Rubix Pitch de celui de Smart Spec pour éviter les conflits et lever les limites de capacité', impact:'critique', status:'a_faire', retroIds:['s1-1','s1-2','s1-3','s1-4'] },
+  { id:2, label:'Meilleure expérience en cas de problème', detail:'Messages clairs et bouton réessayer quand le service est lent ou indisponible', impact:'critique', status:'a_faire', retroIds:['s1-10','s1-11'] },
+  { id:3, label:'Relance automatique en cas de surcharge', detail:'Le système réessaye automatiquement au lieu d\'abandonner', impact:'critique', status:'a_faire', retroIds:['s1-12','s1-13','s1-14'] },
   { id:4, label:'Accélération de la génération', detail:'Temps de génération divisé par 2 grâce à l\'exécution en parallèle', impact:'important', status:'a_faire', retroIds:['s2-9'] },
   { id:5, label:'Suivi automatique des incidents', detail:'Journalisation automatique pour détecter et corriger les problèmes rapidement', impact:'important', status:'a_faire', retroIds:['s2-11'] },
   { id:6, label:'Surveillance de la disponibilité', detail:'Alerte automatique par email si le service tombe en panne', impact:'important', status:'a_faire', retroIds:['s2-14'] },
