@@ -547,11 +547,11 @@ th{color:#1D4ED8;font-weight:600;font-size:10px;text-transform:uppercase;letter-
     <!-- Sous-onglets Rubix Pitch -->
     <div class="sub-tabs-nav">
       <button class="sub-tab-btn active" onclick="showPitchTab('synthese',this)">Synthèse</button>
-      <button class="sub-tab-btn" onclick="showPitchTab('avalider',this)">À valider</button>
-      <button class="sub-tab-btn" onclick="showPitchTab('programme',this)" style="border-left:2px solid #E2E8F0;margin-left:6px;padding-left:14px">Programme</button>
-      <button class="sub-tab-btn" onclick="showPitchTab('couts',this)">Coûts</button>
       <button class="sub-tab-btn" onclick="showPitchTab('ameliorations',this)">Améliorations techniques</button>
       <button class="sub-tab-btn" onclick="showPitchTab('pilote',this)">Pilote</button>
+      <button class="sub-tab-btn" onclick="showPitchTab('programme',this)">Programme</button>
+      <button class="sub-tab-btn" onclick="showPitchTab('couts',this)">Coûts</button>
+      <button class="sub-tab-btn" onclick="showPitchTab('avalider',this)">À valider</button>
     </div>
 
     <!-- ===== RÉUNION : ce qu'ils voient ===== -->
@@ -1904,6 +1904,22 @@ function renderPitchAValider() {
         <div>
           <div style="font-size:12px;font-weight:700;color:#334155">${peSpan('av_m_temps_t','Charge de travail')}</div>
           <div style="font-size:12px;color:#64748B;line-height:1.5;margin-top:2px">${peSpan('av_m_temps','2-3 h/semaine pendant 6 semaines : préparation technique, fiabilisation, accompagnement formations. Programme détaillé dans l\'onglet Programme.')}</div>
+        </div>
+      </div>
+
+      <div style="display:flex;gap:12px;align-items:flex-start">
+        <div style="width:30px;height:30px;border-radius:8px;background:#EFF6FF;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:15px">🚫</div>
+        <div>
+          <div style="font-size:12px;font-weight:700;color:#334155">${peSpan('av_m_exclu_t','Exclusivité projet')}</div>
+          <div style="font-size:12px;color:#64748B;line-height:1.5;margin-top:2px">${peSpan('av_m_exclu','Pas de développement d\'autres applications pendant cette période. Le temps est dédié à la fiabilisation et au déploiement de Rubix Pitch.')}</div>
+        </div>
+      </div>
+
+      <div style="display:flex;gap:12px;align-items:flex-start">
+        <div style="width:30px;height:30px;border-radius:8px;background:#EFF6FF;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:15px">🏠</div>
+        <div>
+          <div style="font-size:12px;font-weight:700;color:#334155">${peSpan('av_m_teletravail_t','Télétravail nécessaire')}</div>
+          <div style="font-size:12px;color:#64748B;line-height:1.5;margin-top:2px">${peSpan('av_m_teletravail','Le réseau Rubix bloque l\'accès aux outils de développement et d\'hébergement (Vercel, GitHub, API OpenAI). Le travail technique sur l\'application ne peut se faire qu\'en télétravail.')}</div>
         </div>
       </div>
 
