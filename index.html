@@ -1546,7 +1546,7 @@ function renderPitchCouts() {
   // ══════════════════════════════════════════════════════════════════════
   h += `<div style="background:#fff;border-radius:8px;border:1px solid #E2E8F0;padding:16px;margin-bottom:16px">`;
   h += `<div style="font-size:14px;font-weight:800;color:#051E50;margin-bottom:4px">${peSpan('sit_titre','Situation actuelle')}</div>`;
-  h += `<div style="font-size:11px;color:#64748B;margin-bottom:14px">${peSpan('sit_intro','Rubix Pitch utilise l\\'API OpenAI pour générer les pitchs. Les coûts ci-dessous sont spécifiques à cette application.')}</div>`;
+  h += `<div style="font-size:11px;color:#64748B;margin-bottom:14px">${peSpan('sit_intro','Rubix Pitch utilise l\'API OpenAI pour générer les pitchs. Les coûts ci-dessous sont spécifiques à cette application.')}</div>`;
 
   // Badges
   h += `<div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px">
@@ -1591,7 +1591,7 @@ function renderPitchCouts() {
   h += `<div style="background:#F8FAFC;border-radius:8px;padding:12px;border:1px solid #E2E8F0;font-size:12px;color:#334155;margin-top:4px">
     <strong>Crédits IA :</strong> ${peSpan('sit_credits','$'+C.openaiCredits.loaded+' chargés, $'+C.openaiCredits.consumed+' consommés, reste ~$'+oaiRem.toFixed(0))}
     <div class="vercel-prog-bar" style="margin-top:6px"><div class="vercel-prog-fill" style="width:${Math.max(1, Math.round(oaiPct))}%;background:#22C55E"></div></div>
-    <div style="font-size:11px;color:#059669;margin-top:4px">${peSpan('sit_credits_note','Ces crédits couvrent plusieurs années d\\'utilisation au rythme actuel.')}</div>
+    <div style="font-size:11px;color:#059669;margin-top:4px">${peSpan('sit_credits_note','Ces crédits couvrent plusieurs années d\'utilisation au rythme actuel.')}</div>
   </div>`;
 
   h += '</div>'; // fin bloc situation
@@ -1601,7 +1601,7 @@ function renderPitchCouts() {
   // ══════════════════════════════════════════════════════════════════════
   h += `<div style="background:#fff;border-radius:8px;border:1px solid #E2E8F0;padding:16px;margin-bottom:16px">`;
   h += `<div style="font-size:14px;font-weight:800;color:#051E50;margin-bottom:4px">${peSpan('montee_titre','Montée en charge')}</div>`;
-  h += `<div style="font-size:11px;color:#64748B;margin-bottom:14px">${peSpan('montee_desc','Projection des coûts IA selon le nombre d\\'utilisateurs. Base : 5 pitchs/mois par commercial.')}</div>`;
+  h += `<div style="font-size:11px;color:#64748B;margin-bottom:14px">${peSpan('montee_desc','Projection des coûts IA selon le nombre d\'utilisateurs. Base : 5 pitchs/mois par commercial.')}</div>`;
 
   h += `<table style="margin-bottom:12px"><thead><tr><th>Palier</th><th>Users</th><th>Builds Vercel</th><th>IA OpenAI</th><th>Total/mois</th><th>Par commercial</th><th>Risque</th><th>Prérequis</th></tr></thead><tbody>`;
   MONTEE.forEach((m, i) => {
