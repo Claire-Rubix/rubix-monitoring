@@ -547,6 +547,7 @@ th{color:#1D4ED8;font-weight:600;font-size:10px;text-transform:uppercase;letter-
     <!-- Sous-onglets Rubix Pitch -->
     <div class="sub-tabs-nav">
       <button class="sub-tab-btn active" onclick="showPitchTab('synthese',this)">Synthèse</button>
+      <button class="sub-tab-btn" onclick="showPitchTab('demandes',this)">Demandes</button>
       <button class="sub-tab-btn" onclick="showPitchTab('couts',this)">Situation &amp; Coûts</button>
       <button class="sub-tab-btn" onclick="showPitchTab('pilote',this)">Pilote &amp; Formations</button>
       <button class="sub-tab-btn" onclick="showPitchTab('ameliorations',this)">Améliorations</button>
@@ -578,6 +579,11 @@ th{color:#1D4ED8;font-weight:600;font-size:10px;text-transform:uppercase;letter-
       <!-- preserve hidden IDs for renderAll -->
       <div style="display:none"><span id="pitch-dot"></span><span id="pitch-last-deploy"></span><span id="pitch-build"></span><span id="pitch-bw"></span></div>
     </div><!-- /synthese -->
+
+    <!-- SUB-PAGE : Demandes -->
+    <div class="sub-page" id="pitch-sub-demandes">
+      <div id="pitch-demandes-widget"></div>
+    </div><!-- /demandes -->
 
     <!-- SUB-PAGE 2 : Coûts -->
     <div class="sub-page" id="pitch-sub-couts">
@@ -1786,6 +1792,7 @@ let pitchInitialized = false;
 let vercelBillingAPI = null;
 function initPitchSubTabs() {
   renderPitchSynthese();
+  renderPitchDemandes();
   renderPitchStatusWidget();
   renderPitchFormations();
   renderPitchCouts();
@@ -1843,16 +1850,113 @@ function renderPitchSynthese() {
   const el = $('pitch-synthese-hero');
   if (!el) return;
   const setupEUR = Math.ceil(COSTS.setup.reduce((s,r) => s + r.usd, 0) * COSTS.EUR_USD);
-  el.innerHTML = `<div style="background:#051E50;color:#fff;border-radius:12px;padding:28px 24px;text-align:center;margin-bottom:16px">
-    <div style="font-size:13px;opacity:.7;margin-bottom:8px">${peSpan('synth_title','Le chiffre clé','color:#fff')}</div>
-    <div style="font-size:22px;font-weight:800">${peSpan('synth_setup','~'+setupEUR+'€ de set-up','color:#fff')}</div>
-    <div style="font-size:15px;margin:4px 0">+</div>
-    <div style="font-size:26px;font-weight:800">${peSpan('synth_running','0,30€ / commercial / mois','color:#fff')}</div>
-    <div style="font-size:12px;opacity:.6;margin-top:6px">${peSpan('synth_base','(base 5 pitchs/mois par commercial)','color:#fff')}</div>
-  </div>
-  <div style="text-align:right;margin-top:-10px;margin-bottom:8px">
+  let h = '';
+
+  /* --- Bloc situation --- */
+  h += `<div style="background:#FEF2F2;border:1px solid #FECACA;border-radius:12px;padding:20px;margin-bottom:16px">
+    <div style="font-size:14px;font-weight:800;color:#991B1B;margin-bottom:12px">⚠️ Situation actuelle</div>
+    <div style="display:flex;flex-direction:column;gap:10px;font-size:12px;color:#334155;line-height:1.6">
+      <div style="display:flex;gap:10px;align-items:flex-start">
+        <span style="font-size:16px;flex-shrink:0">📞</span>
+        <div><strong>Demande de support IT :</strong> 3 calls depuis le 6 février — pas d'avancées à date.</div>
+      </div>
+      <div style="display:flex;gap:10px;align-items:flex-start">
+        <span style="font-size:16px;flex-shrink:0">🎯</span>
+        <div><strong>Besoin :</strong> mettre l'application dans les mains de testeurs pour avancer.</div>
+      </div>
+      <div style="display:flex;gap:10px;align-items:flex-start">
+        <span style="font-size:16px;flex-shrink:0">✅</span>
+        <div><strong>Possibilité :</strong> des testeurs peuvent commencer, mais avec des limites à connaître (voir ci-dessous) et un temps de préparation nécessaire en amont.</div>
+      </div>
+    </div>
+  </div>`;
+
+  /* --- Limites à connaître --- */
+  h += `<div style="background:#FFFBEB;border:1px solid #FDE68A;border-radius:12px;padding:20px;margin-bottom:16px">
+    <div style="font-size:13px;font-weight:700;color:#92400E;margin-bottom:10px">Limites actuelles pour les testeurs</div>
+    <div style="display:flex;flex-direction:column;gap:6px;font-size:12px;color:#334155;line-height:1.5">
+      <div>• <strong>Compte IA partagé</strong> — Rubix Pitch partage son compte avec Smart Spec → risque de coupure si les deux tournent en même temps</div>
+      <div>• <strong>~40 utilisateurs simultanés max</strong> — au-delà, les requêtes IA sont rejetées (le temps de monter le quota)</div>
+      <div>• <strong>Crédits limités</strong> — budget test actuel ≈ 5$, chaque pitch coûte ~0,06$ → ~80 pitchs de test disponibles</div>
+      <div>• <strong>Pas de monitoring centralisé</strong> — en cas de problème, pas d'alerte automatique (prévu dans les améliorations)</div>
+    </div>
+  </div>`;
+
+  /* --- Temps de préparation nécessaire --- */
+  h += `<div style="background:#EFF6FF;border:1px solid #BFDBFE;border-radius:12px;padding:20px;margin-bottom:16px">
+    <div style="font-size:13px;font-weight:700;color:#1E40AF;margin-bottom:10px">Temps de mise en production nécessaire</div>
+    <div style="display:flex;flex-direction:column;gap:6px;font-size:12px;color:#334155;line-height:1.5">
+      <div>• Créer un <strong>compte IA dédié</strong> (carte bancaire + 7 jours d'activation) → lever la limite utilisateurs</div>
+      <div>• <strong>Améliorer la gestion d'erreurs</strong> → messages clairs + bouton réessayer</div>
+      <div>• <strong>Mettre en place la relance automatique</strong> → l'app réessaye au lieu d'abandonner</div>
+      <div>• <strong>Préparer le pilote</strong> : accès, mot de passe, cas d'usage de démo</div>
+    </div>
+  </div>`;
+
+  /* --- Chiffre clé --- */
+  h += `<div style="background:#051E50;color:#fff;border-radius:12px;padding:22px 20px;text-align:center;margin-bottom:16px">
+    <div style="font-size:11px;opacity:.7;margin-bottom:6px">Coût</div>
+    <div style="font-size:20px;font-weight:800">~${setupEUR}€ de set-up</div>
+    <div style="font-size:13px;margin:3px 0;opacity:.5">+</div>
+    <div style="font-size:22px;font-weight:800">0,30€ / commercial / mois</div>
+    <div style="font-size:11px;opacity:.5;margin-top:4px">(base 5 pitchs/mois par commercial)</div>
+  </div>`;
+
+  h += `<div style="text-align:right;margin-bottom:8px">
     <button onclick="peReset()" style="font-size:10px;background:none;border:1px solid #E2E8F0;border-radius:4px;padding:2px 8px;color:#94A3B8;cursor:pointer">Réinitialiser les modifications</button>
   </div>`;
+
+  el.innerHTML = h;
+}
+
+/* ---- Demandes ---- */
+function renderPitchDemandes() {
+  const el = $('pitch-demandes-widget');
+  if (!el) return;
+
+  const DEMANDES = [
+    { date:'06/02/2026', type:'Call', objet:'Demande initiale de support IT pour mise en production Rubix Pitch', statut:'sans_suite', detail:'Présentation du besoin, demande d\'accès serveur et domaine. Pas de retour.' },
+    { date:'13/02/2026', type:'Call', objet:'Relance — besoin d\'un environnement de test', statut:'sans_suite', detail:'Relance sur les accès. Discussion sur les contraintes sécurité. Toujours en attente.' },
+    { date:'20/02/2026', type:'Call', objet:'3e relance — blocage persistant', statut:'sans_suite', detail:'Aucune avancée côté IT. Proposition de lancer un pilote en autonomie avec Vercel en attendant.' },
+  ];
+
+  const statutMeta = {
+    sans_suite: { icon:'🔴', label:'Sans suite', bg:'#FEF2F2', border:'#FECACA', color:'#991B1B' },
+    en_cours: { icon:'🟡', label:'En cours', bg:'#FFFBEB', border:'#FDE68A', color:'#92400E' },
+    resolu: { icon:'🟢', label:'Résolu', bg:'#F0FDF4', border:'#BBF7D0', color:'#166534' },
+  };
+
+  let h = `<div style="font-size:14px;font-weight:800;color:#051E50;margin-bottom:4px">Historique des demandes</div>`;
+  h += `<div style="font-size:11px;color:#64748B;margin-bottom:14px">Suivi des échanges avec le support IT depuis le lancement du projet.</div>`;
+
+  /* --- Résumé --- */
+  const total = DEMANDES.length;
+  const sansSuite = DEMANDES.filter(d => d.statut === 'sans_suite').length;
+  h += `<div style="background:#FEF2F2;border:1px solid #FECACA;border-radius:10px;padding:16px;margin-bottom:16px;display:flex;align-items:center;gap:14px">
+    <div style="font-size:32px;font-weight:800;color:#DC2626;line-height:1">${total}</div>
+    <div>
+      <div style="font-size:13px;font-weight:700;color:#991B1B">demandes depuis le 6 février 2026</div>
+      <div style="font-size:11px;color:#64748B;margin-top:2px">${sansSuite} sans suite à ce jour</div>
+    </div>
+  </div>`;
+
+  /* --- Timeline --- */
+  h += `<div style="display:flex;flex-direction:column;gap:10px">`;
+  for (const d of DEMANDES) {
+    const sm = statutMeta[d.statut];
+    h += `<div style="background:${sm.bg};border:1px solid ${sm.border};border-radius:10px;padding:14px 16px">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+        <span style="font-size:14px">${sm.icon}</span>
+        <span style="font-size:12px;font-weight:700;color:${sm.color}">${d.date} — ${d.type}</span>
+        <span style="margin-left:auto;font-size:10px;padding:2px 8px;border-radius:20px;background:${sm.border};color:${sm.color};font-weight:600">${sm.label}</span>
+      </div>
+      <div style="font-size:12px;font-weight:600;color:#334155;margin-bottom:4px">${d.objet}</div>
+      <div style="font-size:11px;color:#64748B">${d.detail}</div>
+    </div>`;
+  }
+  h += `</div>`;
+
+  el.innerHTML = h;
 }
 
 /* ---- Améliorations prévues (ex-Chantiers) ---- */
