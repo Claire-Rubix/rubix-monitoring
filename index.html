@@ -1852,44 +1852,65 @@ function renderPitchSynthese() {
   const setupEUR = Math.ceil(COSTS.setup.reduce((s,r) => s + r.usd, 0) * COSTS.EUR_USD);
   let h = '';
 
-  /* --- Bloc situation --- */
-  h += `<div style="background:#FEF2F2;border:1px solid #FECACA;border-radius:12px;padding:20px;margin-bottom:16px">
-    <div style="font-size:14px;font-weight:800;color:#991B1B;margin-bottom:12px">⚠️ Situation actuelle</div>
-    <div style="display:flex;flex-direction:column;gap:10px;font-size:12px;color:#334155;line-height:1.6">
-      <div style="display:flex;gap:10px;align-items:flex-start">
-        <span style="font-size:16px;flex-shrink:0">📞</span>
-        <div><strong>Demande de support IT :</strong> 3 calls depuis le 6 février — pas d'avancées à date.</div>
-      </div>
-      <div style="display:flex;gap:10px;align-items:flex-start">
-        <span style="font-size:16px;flex-shrink:0">🎯</span>
-        <div><strong>Besoin :</strong> mettre l'application dans les mains de testeurs pour avancer.</div>
-      </div>
-      <div style="display:flex;gap:10px;align-items:flex-start">
-        <span style="font-size:16px;flex-shrink:0">✅</span>
-        <div><strong>Possibilité :</strong> des testeurs peuvent commencer, mais avec des limites à connaître (voir ci-dessous) et un temps de préparation nécessaire en amont.</div>
-      </div>
+  /* --- Bloc contexte --- */
+  h += `<div style="background:#F8FAFC;border:1px solid #E2E8F0;border-radius:12px;padding:20px;margin-bottom:16px">
+    <div style="font-size:14px;font-weight:800;color:#051E50;margin-bottom:10px">Contexte</div>
+    <div style="font-size:12px;color:#334155;line-height:1.7">
+      L'application est <strong>fonctionnelle et hébergée</strong> sur un environnement existant (Vercel).<br>
+      Pour la faire tester, on utilise cet environnement tel quel — <strong>pas besoin d'infrastructure IT supplémentaire</strong>.<br>
+      En revanche, cet environnement a des <strong>limites de scalabilité</strong> qu'il faut connaître avant de décider du périmètre de test.
     </div>
   </div>`;
 
-  /* --- Limites à connaître --- */
+  /* --- Deux scénarios --- */
+  h += `<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">`;
+
+  /* Scénario A : progressif */
+  h += `<div style="background:#F0FDF4;border:1px solid #BBF7D0;border-radius:12px;padding:18px">
+    <div style="font-size:13px;font-weight:800;color:#166534;margin-bottom:10px">Option A — Progressif</div>
+    <div style="font-size:22px;font-weight:800;color:#166534;margin-bottom:4px">5 → 25 testeurs</div>
+    <div style="font-size:11px;color:#64748B;margin-bottom:12px">sur plusieurs semaines</div>
+    <div style="display:flex;flex-direction:column;gap:6px;font-size:11px;color:#334155;line-height:1.5">
+      <div><strong>Set-up technique :</strong> minimal</div>
+      <div>• Compte IA actuel suffisant pour 5 à 10 users simultanés</div>
+      <div>• Montée progressive = le temps d'ajuster les quotas au fil de l'eau</div>
+      <div>• Budget IA maîtrisé (~0,30€/user/mois)</div>
+      <div>• Erreurs détectées et corrigées avant le groupe suivant</div>
+    </div>
+    <div style="margin-top:12px;padding:10px;background:#DCFCE7;border-radius:8px;text-align:center">
+      <div style="font-size:10px;color:#166534;font-weight:700">IMPACT</div>
+      <div style="font-size:12px;color:#166534;font-weight:600;margin-top:2px">Risque faible — faisable immédiatement</div>
+    </div>
+  </div>`;
+
+  /* Scénario B : tous en même temps */
+  h += `<div style="background:#FEF2F2;border:1px solid #FECACA;border-radius:12px;padding:18px">
+    <div style="font-size:13px;font-weight:800;color:#991B1B;margin-bottom:10px">Option B — Tous en même temps</div>
+    <div style="font-size:22px;font-weight:800;color:#991B1B;margin-bottom:4px">25+ testeurs</div>
+    <div style="font-size:11px;color:#64748B;margin-bottom:12px">une seule après-midi</div>
+    <div style="display:flex;flex-direction:column;gap:6px;font-size:11px;color:#334155;line-height:1.5">
+      <div><strong>Set-up technique :</strong> important</div>
+      <div>• Compte IA dédié obligatoire (carte bancaire + 7 jours d'activation)</div>
+      <div>• Quota IA à augmenter à l'avance pour supporter 25+ users simultanés</div>
+      <div>• Budget crédits IA à provisionner (~5-15€ pour la session)</div>
+      <div>• Gestion d'erreurs et relance automatique indispensables sinon l'app plante</div>
+    </div>
+    <div style="margin-top:12px;padding:10px;background:#FEE2E2;border-radius:8px;text-align:center">
+      <div style="font-size:10px;color:#991B1B;font-weight:700">IMPACT</div>
+      <div style="font-size:12px;color:#991B1B;font-weight:600;margin-top:2px">Risque élevé sans préparation (2-3 semaines)</div>
+    </div>
+  </div>`;
+
+  h += `</div>`;
+
+  /* --- Limites de l'environnement actuel --- */
   h += `<div style="background:#FFFBEB;border:1px solid #FDE68A;border-radius:12px;padding:20px;margin-bottom:16px">
-    <div style="font-size:13px;font-weight:700;color:#92400E;margin-bottom:10px">Limites actuelles pour les testeurs</div>
+    <div style="font-size:13px;font-weight:700;color:#92400E;margin-bottom:10px">Limites de l'environnement actuel</div>
     <div style="display:flex;flex-direction:column;gap:6px;font-size:12px;color:#334155;line-height:1.5">
       <div>• <strong>Compte IA partagé</strong> — Rubix Pitch partage son compte avec Smart Spec → risque de coupure si les deux tournent en même temps</div>
-      <div>• <strong>~40 utilisateurs simultanés max</strong> — au-delà, les requêtes IA sont rejetées (le temps de monter le quota)</div>
-      <div>• <strong>Crédits limités</strong> — budget test actuel ≈ 5$, chaque pitch coûte ~0,06$ → ~80 pitchs de test disponibles</div>
-      <div>• <strong>Pas de monitoring centralisé</strong> — en cas de problème, pas d'alerte automatique (prévu dans les améliorations)</div>
-    </div>
-  </div>`;
-
-  /* --- Temps de préparation nécessaire --- */
-  h += `<div style="background:#EFF6FF;border:1px solid #BFDBFE;border-radius:12px;padding:20px;margin-bottom:16px">
-    <div style="font-size:13px;font-weight:700;color:#1E40AF;margin-bottom:10px">Temps de mise en production nécessaire</div>
-    <div style="display:flex;flex-direction:column;gap:6px;font-size:12px;color:#334155;line-height:1.5">
-      <div>• Créer un <strong>compte IA dédié</strong> (carte bancaire + 7 jours d'activation) → lever la limite utilisateurs</div>
-      <div>• <strong>Améliorer la gestion d'erreurs</strong> → messages clairs + bouton réessayer</div>
-      <div>• <strong>Mettre en place la relance automatique</strong> → l'app réessaye au lieu d'abandonner</div>
-      <div>• <strong>Préparer le pilote</strong> : accès, mot de passe, cas d'usage de démo</div>
+      <div>• <strong>~40 requêtes/min max</strong> — au-delà, les requêtes IA sont rejetées (quota OpenAI Tier 1)</div>
+      <div>• <strong>Crédits limités</strong> — budget actuel ≈ 5$, chaque pitch coûte ~0,06$ → ~80 pitchs disponibles</div>
+      <div>• <strong>Pas de gestion d'erreur avancée</strong> — si l'IA est surchargée, l'utilisateur voit une erreur brute</div>
     </div>
   </div>`;
 
