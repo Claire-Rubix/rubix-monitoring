@@ -593,30 +593,30 @@ th{color:#1D4ED8;font-weight:600;font-size:10px;text-transform:uppercase;letter-
 
     <!-- Pilote -->
     <div class="sub-page" id="pitch-sub-pilote">
-      <div id="pitch-status-widget"></div>
-      <div id="pitch-formations-widget"></div>
       <div id="pitch-pilote-widget"></div>
-      <div style="margin-top:20px">
-        <div style="font-size:14px;font-weight:700;color:#051E50;margin-bottom:3px">Checklist pré-formation</div>
-        <div style="font-size:11px;color:#64748B;margin-bottom:14px">Cocher chaque item au fil de la préparation. Sauvegardé automatiquement.</div>
-        <div class="cl-cat-title">Technique</div>
-        <label class="cl-item" id="pitch-cl-c1" onclick="togglePitchCheck('c1')"><input type="checkbox" id="pitch-chk-c1" style="pointer-events:none;flex-shrink:0"><span>Tester la génération d'un pitch complet de bout en bout</span></label>
-        <label class="cl-item" id="pitch-cl-c2" onclick="togglePitchCheck('c2')"><input type="checkbox" id="pitch-chk-c2" style="pointer-events:none;flex-shrink:0"><span>Vérifier que l'application est bien en ligne</span></label>
-        <label class="cl-item" id="pitch-cl-c3" onclick="togglePitchCheck('c3')"><input type="checkbox" id="pitch-chk-c3" style="pointer-events:none;flex-shrink:0"><span>Confirmer que le compte IA a assez de crédits</span></label>
-        <label class="cl-item" id="pitch-cl-c4" onclick="togglePitchCheck('c4')"><input type="checkbox" id="pitch-chk-c4" style="pointer-events:none;flex-shrink:0"><span>Tester sur mobile et sur desktop</span></label>
-        <div class="cl-cat-title">Sécurité</div>
-        <label class="cl-item" id="pitch-cl-c5" onclick="togglePitchCheck('c5')"><input type="checkbox" id="pitch-chk-c5" style="pointer-events:none;flex-shrink:0"><span>Confirmer que le mot de passe de connexion fonctionne</span></label>
-        <label class="cl-item" id="pitch-cl-c6" onclick="togglePitchCheck('c6')"><input type="checkbox" id="pitch-chk-c6" style="pointer-events:none;flex-shrink:0"><span>Vérifier qu'aucune information sensible n'est visible</span></label>
-        <div class="cl-cat-title">Formation</div>
-        <label class="cl-item" id="pitch-cl-c7" onclick="togglePitchCheck('c7')"><input type="checkbox" id="pitch-chk-c7" style="pointer-events:none;flex-shrink:0"><span>Préparer 2-3 cas d'usage réels pour la démo</span></label>
-        <label class="cl-item" id="pitch-cl-c8" onclick="togglePitchCheck('c8')"><input type="checkbox" id="pitch-chk-c8" style="pointer-events:none;flex-shrink:0"><span>Envoyer le lien + mot de passe aux commerciaux J-1</span></label>
-        <label class="cl-item" id="pitch-cl-c9" onclick="togglePitchCheck('c9')"><input type="checkbox" id="pitch-chk-c9" style="pointer-events:none;flex-shrink:0"><span>Prévenir l'équipe du quota : 10 pitchs max/jour/user</span></label>
-        <label class="cl-item" id="pitch-cl-c10" onclick="togglePitchCheck('c10')"><input type="checkbox" id="pitch-chk-c10" style="pointer-events:none;flex-shrink:0"><span>Préparer un message de secours si le service IA est indisponible</span></label>
-        <div class="cl-footer">
-          <span id="pitch-cl-prog" style="color:#334155;font-weight:600"></span>
-          <button class="cl-reset-btn" onclick="resetPitchChecklist()">Réinitialiser</button>
+      <details style="margin-top:16px">
+        <summary style="font-size:13px;font-weight:700;color:#051E50;cursor:pointer">Checklist pré-formation <span id="pitch-cl-prog" style="color:#64748B;font-weight:600;font-size:11px"></span></summary>
+        <div style="margin-top:10px">
+          <div class="cl-cat-title">Technique</div>
+          <label class="cl-item" id="pitch-cl-c1" onclick="togglePitchCheck('c1')"><input type="checkbox" id="pitch-chk-c1" style="pointer-events:none;flex-shrink:0"><span>Tester la génération d'un pitch complet de bout en bout</span></label>
+          <label class="cl-item" id="pitch-cl-c2" onclick="togglePitchCheck('c2')"><input type="checkbox" id="pitch-chk-c2" style="pointer-events:none;flex-shrink:0"><span>Vérifier que l'application est bien en ligne</span></label>
+          <label class="cl-item" id="pitch-cl-c3" onclick="togglePitchCheck('c3')"><input type="checkbox" id="pitch-chk-c3" style="pointer-events:none;flex-shrink:0"><span>Confirmer que le compte IA a assez de crédits</span></label>
+          <label class="cl-item" id="pitch-cl-c4" onclick="togglePitchCheck('c4')"><input type="checkbox" id="pitch-chk-c4" style="pointer-events:none;flex-shrink:0"><span>Tester sur mobile et sur desktop</span></label>
+          <div class="cl-cat-title">Sécurité</div>
+          <label class="cl-item" id="pitch-cl-c5" onclick="togglePitchCheck('c5')"><input type="checkbox" id="pitch-chk-c5" style="pointer-events:none;flex-shrink:0"><span>Confirmer que le mot de passe de connexion fonctionne</span></label>
+          <label class="cl-item" id="pitch-cl-c6" onclick="togglePitchCheck('c6')"><input type="checkbox" id="pitch-chk-c6" style="pointer-events:none;flex-shrink:0"><span>Vérifier qu'aucune information sensible n'est visible</span></label>
+          <div class="cl-cat-title">Formation</div>
+          <label class="cl-item" id="pitch-cl-c7" onclick="togglePitchCheck('c7')"><input type="checkbox" id="pitch-chk-c7" style="pointer-events:none;flex-shrink:0"><span>Préparer 2-3 cas d'usage réels pour la démo</span></label>
+          <label class="cl-item" id="pitch-cl-c8" onclick="togglePitchCheck('c8')"><input type="checkbox" id="pitch-chk-c8" style="pointer-events:none;flex-shrink:0"><span>Envoyer le lien + mot de passe aux commerciaux J-1</span></label>
+          <label class="cl-item" id="pitch-cl-c9" onclick="togglePitchCheck('c9')"><input type="checkbox" id="pitch-chk-c9" style="pointer-events:none;flex-shrink:0"><span>Prévenir l'équipe du quota : 10 pitchs max/jour/user</span></label>
+          <label class="cl-item" id="pitch-cl-c10" onclick="togglePitchCheck('c10')"><input type="checkbox" id="pitch-chk-c10" style="pointer-events:none;flex-shrink:0"><span>Préparer un message de secours si le service IA est indisponible</span></label>
+          <div class="cl-footer">
+            <button class="cl-reset-btn" onclick="resetPitchChecklist()">Réinitialiser</button>
+          </div>
         </div>
-      </div>
+      </details>
+      <!-- IDs cachés pour renderAll -->
+      <div style="display:none"><div id="pitch-status-widget"></div><div id="pitch-formations-widget"></div></div>
       <details style="margin-top:12px">
         <summary style="font-size:11px;color:#64748B;cursor:pointer">Liens techniques</summary>
         <div class="links" style="margin-top:8px">
