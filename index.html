@@ -1520,116 +1520,63 @@ function sectionSep(title, sub) {
 }
 
 function renderPitchCouts() {
-  const C   = COSTS;
+  const C = COSTS;
   const EUR = C.EUR_USD;
-
-  // Calculs IA uniquement
+  const cppEUR = C.running.costPerPitch * EUR; // coût par pitch en EUR
   const oaiRem = C.openaiCredits.loaded - C.openaiCredits.consumed;
   const oaiPct = Math.round(C.openaiCredits.consumed / C.openaiCredits.loaded * 1000) / 10;
 
-  const VERCEL_SURCHAGE = 14; // surcoût Vercel builds lié à Rubix Pitch ($/mois)
-
-  // Scénarios montée en charge
-  const MONTEE = [
-    { palier:'Pilote actuel',      users:5,   pitchs:25,  risqueLabel:'Aucun',  risqueColor:'#059669', note:'Configuration actuelle' },
-    { palier:'Fin pilote',         users:22,  pitchs:110, risqueLabel:'Aucun',  risqueColor:'#059669', note:'Aucun changement requis' },
-    { palier:'Equipe commerciale', users:50,  pitchs:250, risqueLabel:'Faible', risqueColor:'#D97706', note:'Compte IA dedié recommandé' },
-    { palier:'Cible groupe',       users:66,  pitchs:330, risqueLabel:'Faible', risqueColor:'#D97706', note:'Compte IA dedié + SSO' },
-    { palier:'Extension large',    users:100, pitchs:500, risqueLabel:'Modéré', risqueColor:'#DC2626', note:'Azure OpenAI entreprise' },
+  const OPTS = [
+    { id:'A', titre:'On attend l\'IT', color:'#64748B', bg:'#F8FAFC', border:'#CBD5E1',
+      setup:'0€', mensuel:'0€', parUser:'—', credits:'—',
+      detail:'Aucun coût. Le projet est en pause.' },
+    { id:'B', titre:'Progressif (5 → 25)', color:'#166534', bg:'#F0FDF4', border:'#22C55E',
+      setup:'~46€', mensuel:'~13€ → ~13€', parUser:'~0,30€ → ~0,50€', credits:'46€ crédits OpenAI (durée ~2 ans au rythme pilote)',
+      detail:'Set-up : création d\'un compte OpenAI dédié (46€ de crédits prépayés).<br>Mensuel : hébergement (~13€ builds Vercel) + IA (~0,06€/pitch).<br>Le coût par commercial baisse au fur et à mesure qu\'on élargit.' },
+    { id:'C', titre:'Tous en live (25+)', color:'#991B1B', bg:'#FEF2F2', border:'#EF4444',
+      setup:'~46€ + 5-15€', mensuel:'~15€', parUser:'~0,30€', credits:'46€ crédits + 5-15€ provision session jour J',
+      detail:'Set-up identique à B + provision de crédits supplémentaires pour la session de test (25+ pitchs en une après-midi).<br>Mensuel : identique à B si les 25 restent actifs.' },
+    { id:'D', titre:'Hybride', color:'#92400E', bg:'#FFFBEB', border:'#F59E0B',
+      setup:'~46€ + 5-15€', mensuel:'~13€', parUser:'~0,50€ → ~1,30€', credits:'Identique à C',
+      detail:'Set-up identique à C.<br>Mensuel : seuls 5-10 users restent actifs, le coût par commercial est plus élevé car les frais fixes (hébergement) sont répartis sur moins de monde.' },
   ];
 
-  let h = '';
+  let h = `<div style="font-size:15px;font-weight:800;color:#051E50;margin-bottom:14px">${peSpan('c_titre','Coûts par option')}</div>`;
 
-  // ══════════════════════════════════════════════════════════════════════
-  // BLOC 1 — SITUATION ACTUELLE
-  // ══════════════════════════════════════════════════════════════════════
-  h += `<div style="background:#fff;border-radius:8px;border:1px solid #E2E8F0;padding:16px;margin-bottom:16px">`;
-  h += `<div style="font-size:14px;font-weight:800;color:#051E50;margin-bottom:4px">${peSpan('sit_titre','Situation actuelle')}</div>`;
-  h += `<div style="font-size:11px;color:#64748B;margin-bottom:14px">${peSpan('sit_intro','Rubix Pitch utilise l\'API OpenAI pour générer les pitchs. Les coûts ci-dessous sont spécifiques à cette application.')}</div>`;
+  for (const o of OPTS) {
+    h += `<div style="background:${o.bg};border:2px solid ${o.border};border-radius:12px;padding:18px;margin-bottom:12px">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+        <span style="font-size:13px;font-weight:800;color:${o.color};background:#fff;border:2px solid ${o.border};border-radius:50%;width:26px;height:26px;display:flex;align-items:center;justify-content:center">${o.id}</span>
+        <span style="font-size:14px;font-weight:800;color:${o.color}">${peSpan('c_'+o.id+'_titre', o.titre)}</span>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px">
+        <div style="background:#fff;border-radius:8px;padding:10px;text-align:center">
+          <div style="font-size:10px;color:#64748B;margin-bottom:2px">Set-up</div>
+          <div style="font-size:16px;font-weight:800;color:${o.color}">${peSpan('c_'+o.id+'_setup', o.setup)}</div>
+        </div>
+        <div style="background:#fff;border-radius:8px;padding:10px;text-align:center">
+          <div style="font-size:10px;color:#64748B;margin-bottom:2px">Mensuel</div>
+          <div style="font-size:14px;font-weight:800;color:#334155">${peSpan('c_'+o.id+'_mensuel', o.mensuel)}</div>
+        </div>
+        <div style="background:#fff;border-radius:8px;padding:10px;text-align:center">
+          <div style="font-size:10px;color:#64748B;margin-bottom:2px">Par commercial</div>
+          <div style="font-size:14px;font-weight:800;color:#334155">${peSpan('c_'+o.id+'_paruser', o.parUser)}</div>
+        </div>
+      </div>
+      <div style="font-size:12px;color:#334155;line-height:1.6">${peSpan('c_'+o.id+'_detail', o.detail)}</div>`;
+    if (o.credits !== '—') {
+      h += `<div style="margin-top:8px;font-size:11px;color:#64748B"><strong>Crédits :</strong> ${peSpan('c_'+o.id+'_credits', o.credits)}</div>`;
+    }
+    h += `</div>`;
+  }
 
-  // Badges
-  h += `<div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px">
-    <div style="background:#F0FDF4;border:1px solid #BBF7D0;border-radius:8px;padding:10px 16px;flex:1;min-width:140px;text-align:center">
-      <div style="font-size:10px;color:#6B7280;text-transform:uppercase;letter-spacing:.5px">Phase</div>
-      <div style="font-size:13px;font-weight:800;color:#059669;margin-top:4px">${peSpan('sit_phase','Pilote en cours','color:#059669')}</div>
+  /* --- Crédits actuels --- */
+  h += `<details style="margin-top:4px"><summary style="font-size:12px;font-weight:700;color:#051E50;cursor:pointer">Crédits IA actuels</summary>
+    <div style="background:#F8FAFC;border-radius:8px;padding:12px;border:1px solid #E2E8F0;font-size:12px;color:#334155;margin-top:8px">
+      <strong>Crédits OpenAI :</strong> ${peSpan('sit_credits','$'+C.openaiCredits.loaded+' chargés, $'+C.openaiCredits.consumed.toFixed(2)+' consommés, reste ~$'+oaiRem.toFixed(2))}
+      <div class="vercel-prog-bar" style="margin-top:6px"><div class="vercel-prog-fill" style="width:${Math.max(1, Math.round(oaiPct))}%;background:#22C55E"></div></div>
     </div>
-    <div style="background:#EFF6FF;border:1px solid #BFDBFE;border-radius:8px;padding:10px 16px;flex:1;min-width:140px;text-align:center">
-      <div style="font-size:10px;color:#6B7280;text-transform:uppercase;letter-spacing:.5px">Utilisateurs</div>
-      <div style="font-size:13px;font-weight:800;color:#1D4ED8;margin-top:4px">${peSpan('sit_users','5 ambassadeurs','color:#1D4ED8')}</div>
-    </div>
-    <div style="background:#F8FAFC;border:1px solid #E2E8F0;border-radius:8px;padding:10px 16px;flex:1;min-width:140px;text-align:center">
-      <div style="font-size:10px;color:#6B7280;text-transform:uppercase;letter-spacing:.5px">Compte IA</div>
-      <div style="font-size:13px;font-weight:800;color:#051E50;margin-top:4px">${peSpan('sit_ia','OpenAI (dedié Rubix Digital)')}</div>
-    </div>
-  </div>`;
-
-  // Coûts spécifiques Rubix Pitch
-  h += `<div style="font-size:12px;font-weight:700;color:#6B7280;text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px">Coûts mensuels Rubix Pitch</div>`;
-  const oaiMonth5 = (25 * C.running.costPerPitch * EUR).toFixed(2);
-  const vercelEUR = Math.round(VERCEL_SURCHAGE * EUR);
-  const totalMonth = (parseFloat(oaiMonth5) + vercelEUR).toFixed(2);
-  h += `<table style="margin-bottom:12px"><thead><tr><th>Poste</th><th>Coût/mois</th><th>Détail</th></tr></thead><tbody>`;
-  h += `<tr>
-    <td style="font-weight:700">${peSpan('sit_c_vercel','Surcoût Vercel (builds)')}</td>
-    <td style="font-weight:700;color:#051E50">${peSpan('sit_c_vercel_prix','~'+vercelEUR+'€/mois','color:#051E50')}</td>
-    <td style="font-size:11px;color:#334155">${peSpan('sit_c_vercel_detail','+14$ de builds liés à Rubix Pitch sur le forfait Vercel Pro partagé')}</td>
-  </tr>`;
-  h += `<tr>
-    <td style="font-weight:700">${peSpan('sit_c_oai','OpenAI (IA)')}</td>
-    <td style="font-weight:700;color:#051E50">${peSpan('sit_c_oai_prix','~'+oaiMonth5+'€/mois','color:#051E50')}</td>
-    <td style="font-size:11px;color:#334155">${peSpan('sit_c_oai_detail','5 users x 5 pitchs/mois — ~0,007€ par pitch')}</td>
-  </tr>`;
-  h += `<tr style="font-weight:700;background:#F0FDF4;border-top:2px solid #E2E8F0">
-    <td>TOTAL Rubix Pitch</td>
-    <td style="color:#059669">${peSpan('sit_c_total','~'+totalMonth+'€/mois','color:#059669')}</td>
-    <td style="font-size:11px;color:#059669">${peSpan('sit_c_total_detail','soit ~'+((parseFloat(totalMonth))/5).toFixed(2)+'€ par commercial')}</td>
-  </tr>`;
-  h += '</tbody></table>';
-
-  // Crédits prépayés
-  h += `<div style="background:#F8FAFC;border-radius:8px;padding:12px;border:1px solid #E2E8F0;font-size:12px;color:#334155;margin-top:4px">
-    <strong>Crédits IA :</strong> ${peSpan('sit_credits','$'+C.openaiCredits.loaded+' chargés, $'+C.openaiCredits.consumed+' consommés, reste ~$'+oaiRem.toFixed(0))}
-    <div class="vercel-prog-bar" style="margin-top:6px"><div class="vercel-prog-fill" style="width:${Math.max(1, Math.round(oaiPct))}%;background:#22C55E"></div></div>
-    <div style="font-size:11px;color:#059669;margin-top:4px">${peSpan('sit_credits_note','Ces crédits couvrent plusieurs années d\'utilisation au rythme actuel.')}</div>
-  </div>`;
-
-  h += '</div>'; // fin bloc situation
-
-  // ══════════════════════════════════════════════════════════════════════
-  // BLOC 2 — MONTÉE EN CHARGE
-  // ══════════════════════════════════════════════════════════════════════
-  h += `<div style="background:#fff;border-radius:8px;border:1px solid #E2E8F0;padding:16px;margin-bottom:16px">`;
-  h += `<div style="font-size:14px;font-weight:800;color:#051E50;margin-bottom:4px">${peSpan('montee_titre','Montée en charge')}</div>`;
-  h += `<div style="font-size:11px;color:#64748B;margin-bottom:14px">${peSpan('montee_desc','Projection des coûts IA selon le nombre d\'utilisateurs. Base : 5 pitchs/mois par commercial.')}</div>`;
-
-  h += `<table style="margin-bottom:12px"><thead><tr><th>Palier</th><th>Users</th><th>Builds Vercel</th><th>IA OpenAI</th><th>Total/mois</th><th>Par commercial</th><th>Risque</th><th>Prérequis</th></tr></thead><tbody>`;
-  MONTEE.forEach((m, i) => {
-    const oaiEUR = (m.pitchs * C.running.costPerPitch * EUR).toFixed(2);
-    const totalEUR = (VERCEL_SURCHAGE * EUR + m.pitchs * C.running.costPerPitch * EUR).toFixed(2);
-    const perUser = (parseFloat(totalEUR) / m.users).toFixed(2);
-    const isCurrent = i === 0;
-    const rowBg = isCurrent ? 'background:#F0FDF4;' : '';
-    h += `<tr style="${rowBg}">
-      <td style="font-weight:700">${peSpan('montee_palier_'+i, m.palier)}${isCurrent ? ' <span style="font-size:9px;background:#059669;color:#fff;border-radius:3px;padding:1px 5px;margin-left:4px">ACTUEL</span>' : ''}</td>
-      <td style="font-weight:700;text-align:center">${peSpan('montee_users_'+i, m.users)}</td>
-      <td style="text-align:center">${peSpan('montee_vercel_'+i, '~'+vercelEUR+'€')}</td>
-      <td style="text-align:center">${peSpan('montee_oai_'+i, '~'+oaiEUR+'€')}</td>
-      <td style="font-weight:700;text-align:center">${peSpan('montee_total_'+i, '~'+totalEUR+'€')}</td>
-      <td style="font-weight:700;text-align:center;color:#059669">${peSpan('montee_peruser_'+i, '~'+perUser+'€','color:#059669')}</td>
-      <td style="text-align:center"><span style="display:inline-block;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:700;color:${m.risqueColor};border:1px solid ${m.risqueColor}">${peSpan('montee_risque_'+i, m.risqueLabel, 'color:'+m.risqueColor)}</span></td>
-      <td style="font-size:11px;color:#334155">${peSpan('montee_note_'+i, m.note)}</td>
-    </tr>`;
-  });
-  h += '</tbody></table>';
-
-  // Chiffre clé
-  h += `<div style="background:#051E50;color:#fff;border-radius:12px;padding:24px;text-align:center;margin-top:4px">
-    <div style="font-size:12px;opacity:.7;margin-bottom:6px">${peSpan('montee_key_label','A retenir','color:#fff')}</div>
-    <div style="font-size:24px;font-weight:800">${peSpan('montee_key_value','~13€/mois pour 66 commerciaux','color:#fff')}</div>
-    <div style="font-size:13px;opacity:.7;margin-top:8px">${peSpan('montee_key_sub','Soit ~0,20€ par commercial par mois (builds + IA)','color:#fff')}</div>
-  </div>`;
-
-  h += '</div>'; // fin bloc montée
+  </details>`;
 
   html('pitch-couts-widget', h);
 }
