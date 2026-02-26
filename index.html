@@ -575,15 +575,15 @@ th{color:#1D4ED8;font-weight:600;font-size:10px;text-transform:uppercase;letter-
     <!-- Programme (ex-Rétroplanning) -->
     <div class="sub-page" id="pitch-sub-programme">
       <div id="programme-synth"></div>
-      <details style="margin-top:24px;border:1px solid #E2E8F0;border-radius:10px;background:#F8FAFC;overflow:hidden">
-        <summary style="padding:12px 16px;font-weight:700;font-size:13px;color:#051E50;cursor:pointer;background:#F1F5F9">Planning détaillé semaine par semaine</summary>
-        <div style="padding:14px">
-          <div id="retro-prog-wrap" class="retro-prog-wrap"></div>
-          <div id="retro-filters-wrap" style="margin-bottom:14px"></div>
-          <div id="retro-calendar"></div>
-          <div id="retro-detail-container"></div>
-        </div>
-      </details>
+      <div style="margin-top:20px;text-align:center">
+        <button onclick="const w=document.getElementById('retro-detail-full');w.style.display=w.style.display==='none'?'block':'none'" style="background:none;border:none;color:#64748B;font-size:13px;cursor:pointer;padding:6px 12px;border-radius:6px;transition:all .15s" onmouseover="this.style.color='#051E50';this.style.background='#F1F5F9'" onmouseout="this.style.color='#64748B';this.style.background='none'">Voir le planning détaillé ▾</button>
+      </div>
+      <div id="retro-detail-full" style="display:none;margin-top:16px">
+        <div id="retro-prog-wrap" class="retro-prog-wrap"></div>
+        <div id="retro-filters-wrap" style="margin-bottom:14px"></div>
+        <div id="retro-calendar"></div>
+        <div id="retro-detail-container"></div>
+      </div>
     </div>
 
     <!-- Coûts -->
@@ -2628,7 +2628,7 @@ function renderProgrammeSynth() {
   const common = [
     { phase:'Préparation technique', dates:'25/02 → 14/03 (~3 semaines)', items:[
       'Ouverture compte OpenAI dédié + chargement crédits',
-      peSpan('prog_matrice','Réception nouvelle matrice (prévu ~02/03) + encodage et tests'),
+      peSpan('prog_matrice','Réception nouvelle matrice (<strong>prévu ~02/03</strong>) + encodage et tests'),
       'Corrections bugs identifiés + fiabilisation',
       'Mise en place login individuel par utilisateur',
       peSpan('prog_qa','Demander un testeur QA pour valider les modifications avant formation'),
