@@ -1859,15 +1859,27 @@ function renderPitchSynthese() {
 
 /* ---- Améliorations prévues (ex-Chantiers) ---- */
 const PITCH_AMELIORATIONS = [
-  { id:1, label:'Meilleure expérience en cas de problème', detail:'Messages clairs et bouton réessayer quand le service est lent ou indisponible', impact:'critique', status:'a_faire' },
-  { id:2, label:'Relance automatique en cas de surcharge', detail:'Le système réessaye automatiquement au lieu d\'abandonner', impact:'critique', status:'a_faire' },
-  { id:3, label:'Compte IA dédié', detail:'Séparer le compte IA de Rubix Pitch de celui de Smart Spec pour éviter les conflits', impact:'critique', status:'a_faire' },
-  { id:4, label:'Accélération de la génération', detail:'Temps de génération divisé par 2 grâce à l\'exécution en parallèle', impact:'important', status:'a_faire' },
-  { id:5, label:'Suivi automatique des incidents', detail:'Journalisation automatique pour détecter et corriger les problèmes rapidement', impact:'important', status:'a_faire' },
-  { id:6, label:'Surveillance de la disponibilité', detail:'Alerte automatique par email si le service tombe en panne', impact:'important', status:'a_faire' },
-  { id:7, label:'Mise en cache intelligente', detail:'Réutilisation des analyses précédentes pour le même secteur (économie de coûts)', impact:'optimisation', status:'a_faire' },
-  { id:8, label:'Mode secours', detail:'Si le service IA est indisponible, l\'app propose le dernier pitch généré', impact:'optimisation', status:'a_faire' },
+  { id:1, label:'Meilleure expérience en cas de problème', detail:'Messages clairs et bouton réessayer quand le service est lent ou indisponible', impact:'critique', status:'a_faire', retroIds:['s1-10','s1-11'] },
+  { id:2, label:'Relance automatique en cas de surcharge', detail:'Le système réessaye automatiquement au lieu d\'abandonner', impact:'critique', status:'a_faire', retroIds:['s1-12','s1-13','s1-14'] },
+  { id:3, label:'Compte IA dédié', detail:'Séparer le compte IA de Rubix Pitch de celui de Smart Spec pour éviter les conflits', impact:'critique', status:'a_faire', retroIds:['s1-1','s1-2','s1-3','s1-4'] },
+  { id:4, label:'Accélération de la génération', detail:'Temps de génération divisé par 2 grâce à l\'exécution en parallèle', impact:'important', status:'a_faire', retroIds:['s2-9'] },
+  { id:5, label:'Suivi automatique des incidents', detail:'Journalisation automatique pour détecter et corriger les problèmes rapidement', impact:'important', status:'a_faire', retroIds:['s2-11'] },
+  { id:6, label:'Surveillance de la disponibilité', detail:'Alerte automatique par email si le service tombe en panne', impact:'important', status:'a_faire', retroIds:['s2-14'] },
+  { id:7, label:'Mise en cache intelligente', detail:'Réutilisation des analyses précédentes pour le même secteur (économie de coûts)', impact:'optimisation', status:'a_faire', retroIds:['s7-3'] },
+  { id:8, label:'Mode secours', detail:'Si le service IA est indisponible, l\'app propose le dernier pitch généré', impact:'optimisation', status:'a_faire', retroIds:['s10-4'] },
 ];
+
+// Compute amélioration status from linked retro actions
+function getAmelRetroStatus(amelId) {
+  const amel = PITCH_AMELIORATIONS.find(a => a.id === amelId);
+  if (!amel || !amel.retroIds || !amel.retroIds.length) return null;
+  const statuses = amel.retroIds.map(id => getRS(id));
+  const allDone = statuses.every(s => s === 'done');
+  const anyStarted = statuses.some(s => s === 'done' || s === 'inprogress');
+  if (allDone) return 'fait';
+  if (anyStarted) return 'en_cours';
+  return 'a_faire';
+}
 
 function renderPitchAmeliorations() {
   const el = $('pitch-ameliorations-widget'); if (!el) return;
@@ -1881,15 +1893,29 @@ function renderPitchAmeliorations() {
 
   h += `<div style="display:flex;flex-direction:column;gap:6px">`;
   for (const a of PITCH_AMELIORATIONS) {
-    const st = pe('amel_status_'+a.id, a.status);
-    h += `<div style="background:#fff;border:1px solid #E2E8F0;border-radius:8px;padding:10px 14px${st==='fait'?';opacity:.6':''}">
+    // Status from retro actions (auto) or manual override
+    const retroSt = getAmelRetroStatus(a.id);
+    const st = retroSt || pe('amel_status_'+a.id, a.status);
+    // Retro progress
+    const retroDone = a.retroIds ? a.retroIds.filter(id => getRS(id) === 'done').length : 0;
+    const retroTotal = a.retroIds ? a.retroIds.length : 0;
+    const retroPct = retroTotal > 0 ? Math.round(retroDone / retroTotal * 100) : 0;
+
+    h += `<div style="background:#fff;border:1px solid ${st==='fait'?'#BBF7D0':st==='en_cours'?'#FDE68A':'#E2E8F0'};border-radius:8px;padding:10px 14px${st==='fait'?';opacity:.7':''}">
       <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
-        <button onclick="peToggleAmel(${a.id})" style="background:none;border:none;cursor:pointer;font-size:14px;padding:0" title="${statusLabels[st]}">${statusIcons[st]}</button>
+        <span style="font-size:14px">${statusIcons[st]}</span>
         <span style="font-size:12px;font-weight:700;color:#051E50;flex:1">${peSpan('amel_label_'+a.id, a.id+'. '+a.label)}</span>
         <span class="badge ${a.impact === 'critique' ? 'bd-crit' : ''}" style="font-size:9px">${impactLabel[a.impact]}</span>
       </div>
-      <div style="font-size:11px;color:#64748B;padding-left:28px">${peSpan('amel_detail_'+a.id, a.detail)}</div>
-    </div>`;
+      <div style="font-size:11px;color:#64748B;padding-left:28px">${peSpan('amel_detail_'+a.id, a.detail)}</div>`;
+    // Retro progress bar
+    if (retroTotal > 0) {
+      h += `<div style="padding-left:28px;margin-top:6px;display:flex;align-items:center;gap:8px">
+        <div style="flex:1;height:4px;background:#E5E7EB;border-radius:2px;overflow:hidden;max-width:120px"><div style="width:${retroPct}%;height:100%;background:${retroPct===100?'#22C55E':'#3B82F6'};border-radius:2px"></div></div>
+        <span style="font-size:10px;color:${retroPct===100?'#059669':'#64748B'};font-weight:600">${retroDone}/${retroTotal} actions</span>
+      </div>`;
+    }
+    h += `</div>`;
   }
   h += `</div>`;
 
