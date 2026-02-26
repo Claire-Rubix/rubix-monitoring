@@ -1533,61 +1533,51 @@ function renderPitchCouts() {
 
   const OPTS = [
     { id:'A', titre:'On attend l\'IT', color:'#64748B', bg:'#F8FAFC', border:'#CBD5E1',
-      setup:'0€', mensuel:'0€', parUser:'—', credits:'—', vercel:'Aucun impact',
-      detail:'Aucun coût. Le projet est en pause, aucune modification n\'est faite sur l\'application.' },
+      openai_setup:'0€', vercel_mois:'20€/mois (déjà payé)', ia_mois:'0€', total_setup:'0€', total_mois:'0€', total_pilote:'0€',
+      detail:'Aucun coût supplémentaire. Le projet est en pause, l\'hébergement Vercel Pro (20€/mois) est déjà souscrit.' },
     { id:'B', titre:'Progressif (5 → 25)', color:'#166534', bg:'#F0FDF4', border:'#22C55E',
-      setup:'~46€', mensuel:'~13€', parUser:'~0,50€', credits:'46€ crédits OpenAI prépayés (durée ~2 ans au rythme pilote)',
-      vercel:'Surcoût temporaire pendant la phase de préparation (~13€/mois de builds). Baisse une fois l\'app stabilisée.',
-      detail:'<strong>Set-up :</strong> compte OpenAI dédié (46€ de crédits).<br><strong>IA :</strong> ~0,06€ par pitch généré — négligeable.<br><strong>Hébergement :</strong> chaque amélioration déclenche une reconstruction Vercel. Pendant la phase active (6 semaines), les builds augmentent → surcoût ~13€/mois. <strong>Après stabilisation, ce surcoût disparaît.</strong>' },
+      openai_setup:'~46€', vercel_mois:'20€ + ~13€ surcoût builds', ia_mois:'~3€', total_setup:'~46€', total_mois:'~36€', total_pilote:'~260€',
+      detail:'<strong>Crédits IA :</strong> 46€ de crédits OpenAI prépayés (durée ~2 ans au rythme pilote).<br><strong>Hébergement Vercel :</strong> abonnement Pro 20€/mois (déjà payé) + surcoût temporaire ~13€/mois pendant la phase de développement (les builds augmentent). <strong>Ce surcoût disparaît après stabilisation.</strong><br><strong>Consommation IA :</strong> ~0,06€ par pitch — négligeable (~3€/mois pour 25 users).' },
     { id:'C', titre:'Tous en live (25+)', color:'#991B1B', bg:'#FEF2F2', border:'#EF4444',
-      setup:'~46€ + 5-15€', mensuel:'~15€', parUser:'~0,30€', credits:'46€ crédits + 5-15€ provision pour la session jour J',
-      vercel:'Identique à B + pic de consommation le jour J (25+ utilisateurs simultanés = appels serveur en hausse).',
-      detail:'<strong>Set-up :</strong> identique à B + provision de crédits supplémentaires.<br><strong>IA :</strong> le jour J, 25+ pitchs en quelques heures → 5-15€ de crédits consommés.<br><strong>Hébergement :</strong> surcoût builds identique à B pendant la préparation + surcoût serveur le jour J.' },
+      openai_setup:'~46€ + 5-15€', vercel_mois:'20€ + ~13€ + pic jour J', ia_mois:'~5€', total_setup:'~60€', total_mois:'~38€', total_pilote:'~290€',
+      detail:'<strong>Crédits IA :</strong> 46€ + provision 5-15€ pour la session jour J (25+ pitchs simultanés).<br><strong>Hébergement Vercel :</strong> 20€/mois (existant) + surcoût builds ~13€/mois + pic de consommation serveur le jour J (25+ utilisateurs en même temps).<br><strong>Consommation IA :</strong> ~5€/mois si tout le monde utilise.' },
     { id:'D', titre:'Hybride', color:'#92400E', bg:'#FFFBEB', border:'#F59E0B',
-      setup:'~46€ + 5-15€', mensuel:'~13€', parUser:'~1,30€', credits:'Identique à C',
-      vercel:'Identique à C pendant la préparation et le jour J. Après : retour au niveau B car seuls 5-10 users restent.',
-      detail:'<strong>Set-up :</strong> identique à C.<br><strong>Après le jour J :</strong> seuls 5-10 users restent actifs. Coût mensuel identique à B, mais réparti sur moins de monde → coût par commercial plus élevé.' },
+      openai_setup:'~46€ + 5-15€', vercel_mois:'20€ + ~13€ + pic jour J', ia_mois:'~3€', total_setup:'~60€', total_mois:'~36€', total_pilote:'~275€',
+      detail:'<strong>Crédits IA :</strong> identique à C pour le jour J.<br><strong>Hébergement Vercel :</strong> identique à C pendant la préparation + jour J. Après : retour au niveau de B (5-10 users seulement).<br><strong>Consommation IA :</strong> après le jour J, seuls 5-10 users restent → ~3€/mois.' },
   ];
 
-  let h = `<div style="font-size:15px;font-weight:800;color:#051E50;margin-bottom:14px">${peSpan('c_titre','Coûts par option')}</div>`;
+  let h = `<div style="font-size:18px;font-weight:800;color:#051E50;margin-bottom:18px">${peSpan('c_titre','Coûts par option')}</div>`;
 
   for (const o of OPTS) {
-    h += `<div style="background:${o.bg};border:2px solid ${o.border};border-radius:12px;padding:18px;margin-bottom:12px">
-      <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
-        <span style="font-size:13px;font-weight:800;color:${o.color};background:#fff;border:2px solid ${o.border};border-radius:50%;width:26px;height:26px;display:flex;align-items:center;justify-content:center">${o.id}</span>
-        <span style="font-size:14px;font-weight:800;color:${o.color}">${peSpan('c_'+o.id+'_titre', o.titre)}</span>
+    h += `<div style="background:${o.bg};border:2px solid ${o.border};border-radius:12px;padding:20px;margin-bottom:16px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+        <div style="display:flex;align-items:center;gap:10px">
+          <span style="font-size:15px;font-weight:800;color:${o.color};background:#fff;border:2px solid ${o.border};border-radius:50%;width:32px;height:32px;display:flex;align-items:center;justify-content:center">${o.id}</span>
+          <span style="font-size:16px;font-weight:800;color:${o.color}">${peSpan('c_'+o.id+'_titre', o.titre)}</span>
+        </div>
+        <div style="background:${o.color};color:#fff;padding:6px 14px;border-radius:20px;font-size:14px;font-weight:800">Total pilote : ${peSpan('c_'+o.id+'_total_pilote', o.total_pilote)}</div>
       </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px">
-        <div style="background:#fff;border-radius:8px;padding:10px;text-align:center">
-          <div style="font-size:10px;color:#64748B;margin-bottom:2px">Set-up</div>
-          <div style="font-size:16px;font-weight:800;color:${o.color}">${peSpan('c_'+o.id+'_setup', o.setup)}</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:8px;margin-bottom:14px">
+        <div style="background:#fff;border-radius:8px;padding:12px;text-align:center">
+          <div style="font-size:11px;color:#64748B;margin-bottom:4px">Crédits IA (set-up)</div>
+          <div style="font-size:16px;font-weight:800;color:${o.color}">${peSpan('c_'+o.id+'_openai', o.openai_setup)}</div>
         </div>
-        <div style="background:#fff;border-radius:8px;padding:10px;text-align:center">
-          <div style="font-size:10px;color:#64748B;margin-bottom:2px">Mensuel</div>
-          <div style="font-size:14px;font-weight:800;color:#334155">${peSpan('c_'+o.id+'_mensuel', o.mensuel)}</div>
+        <div style="background:#fff;border-radius:8px;padding:12px;text-align:center">
+          <div style="font-size:11px;color:#64748B;margin-bottom:4px">Vercel / mois</div>
+          <div style="font-size:14px;font-weight:800;color:#334155">${peSpan('c_'+o.id+'_vercel', o.vercel_mois)}</div>
         </div>
-        <div style="background:#fff;border-radius:8px;padding:10px;text-align:center">
-          <div style="font-size:10px;color:#64748B;margin-bottom:2px">Par commercial</div>
-          <div style="font-size:14px;font-weight:800;color:#334155">${peSpan('c_'+o.id+'_paruser', o.parUser)}</div>
+        <div style="background:#fff;border-radius:8px;padding:12px;text-align:center">
+          <div style="font-size:11px;color:#64748B;margin-bottom:4px">IA / mois</div>
+          <div style="font-size:14px;font-weight:800;color:#334155">${peSpan('c_'+o.id+'_ia_mois', o.ia_mois)}</div>
+        </div>
+        <div style="background:#fff;border-radius:8px;padding:12px;text-align:center">
+          <div style="font-size:11px;color:#64748B;margin-bottom:4px">Total / mois</div>
+          <div style="font-size:16px;font-weight:800;color:${o.color}">${peSpan('c_'+o.id+'_total_mois', o.total_mois)}</div>
         </div>
       </div>
-      <div style="font-size:12px;color:#334155;line-height:1.6">${peSpan('c_'+o.id+'_detail', o.detail)}</div>
-      <div style="margin-top:8px;padding:8px 12px;background:#fff;border-radius:6px;border:1px solid #E2E8F0;font-size:11px;color:#64748B;line-height:1.5">
-        <strong>Vercel (hébergement) :</strong> ${peSpan('c_'+o.id+'_vercel', o.vercel)}
-      </div>`;
-    if (o.credits !== '—') {
-      h += `<div style="margin-top:6px;font-size:11px;color:#64748B"><strong>Crédits :</strong> ${peSpan('c_'+o.id+'_credits', o.credits)}</div>`;
-    }
-    h += `</div>`;
+      <div style="font-size:13px;color:#334155;line-height:1.7">${peSpan('c_'+o.id+'_detail', o.detail)}</div>
+    </div>`;
   }
-
-  /* --- Crédits actuels --- */
-  h += `<details style="margin-top:4px"><summary style="font-size:12px;font-weight:700;color:#051E50;cursor:pointer">Crédits IA actuels</summary>
-    <div style="background:#F8FAFC;border-radius:8px;padding:12px;border:1px solid #E2E8F0;font-size:12px;color:#334155;margin-top:8px">
-      <strong>Crédits OpenAI :</strong> ${peSpan('sit_credits','$'+C.openaiCredits.loaded+' chargés, $'+C.openaiCredits.consumed.toFixed(2)+' consommés, reste ~$'+oaiRem.toFixed(2))}
-      <div class="vercel-prog-bar" style="margin-top:6px"><div class="vercel-prog-fill" style="width:${Math.max(1, Math.round(oaiPct))}%;background:#22C55E"></div></div>
-    </div>
-  </details>`;
 
   html('pitch-couts-widget', h);
 }
