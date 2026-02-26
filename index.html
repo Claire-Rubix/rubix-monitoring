@@ -1099,9 +1099,9 @@ function renderGlobalAlerts(proj) {
 const DEMANDES = [
   { id:'d1', titre:'Création canal Teams "Rubix Pitch — Retours & Support"', destinataire:'IT', deadline:'28/02',
     pourquoi:'Centraliser les remontées de bugs des commerciaux pendant et après les formations. Sans canal dédié, les retours se perdent dans les emails et les conversations informelles.' },
-  { id:'d2', titre:'1 testeur commercial volontaire pour valider l\'app', destinataire:'Manager', deadline:'06/03',
-    detail:'Profil : 1 commercial terrain (RVE ou DE). Effort : 1h entre le 7 et le 10/03.',
-    pourquoi:'Valider l\'app en conditions réelles avant la formation. Son retour permet de corriger les derniers bugs sur un vrai cas métier.' },
+  { id:'d2', titre:'1 personne pour tester l\'app avant les formations (vérification bugs)', destinataire:'Manager', deadline:'10/03',
+    detail:'Quelqu\'un qui parcourt l\'app, teste les fonctionnalités et remonte les problèmes. Effort : ~1h.',
+    pourquoi:'Vérifier que l\'application fonctionne correctement avant de la mettre dans les mains de 22 personnes. Permet de corriger les derniers bugs en amont.' },
   { id:'d3', titre:'Liste des 66 participants aux 3 sessions (options B, C, D)', destinataire:'Organisateurs formation', deadline:'20/03',
     detail:'Données : nom, prénom, profil (RVE/DE), session attribuée (1, 2 ou 3). Nécessaire pour les options B, C et D.',
     pourquoi:'Permet de créer les accès individuels, suivre l\'adoption et gérer le déploiement progressif.' },
@@ -1532,46 +1532,43 @@ function renderPitchCouts() {
 
   const OPTS = [
     { id:'A', titre:'On attend l\'IT', color:'#64748B', bg:'#F8FAFC', border:'#CBD5E1',
-      openai_setup:'0€', vercel_mois:'20€/mois (déjà payé)', ia_mois:'0€', total_setup:'0€', total_mois:'0€', total_pilote:'0€',
-      detail:'Aucun coût supplémentaire. Le projet est en pause, l\'hébergement Vercel Pro (20€/mois) est déjà souscrit.' },
+      openai_setup:'0€', vercel_surcout:'0€', ia_mois:'0€', total_pilote:'0€',
+      detail:'Aucun coût additionnel. Le projet est en pause.' },
     { id:'B', titre:'Progressif (5 → 25)', color:'#166534', bg:'#F0FDF4', border:'#22C55E',
-      openai_setup:'~46€', vercel_mois:'20€ + ~13€ surcoût builds', ia_mois:'~3€', total_setup:'~46€', total_mois:'~36€', total_pilote:'~260€',
-      detail:'<strong>Crédits IA :</strong> 46€ de crédits OpenAI prépayés (durée ~2 ans au rythme pilote).<br><strong>Hébergement Vercel :</strong> abonnement Pro 20€/mois (déjà payé) + surcoût temporaire ~13€/mois pendant la phase de développement (les builds augmentent). <strong>Ce surcoût disparaît après stabilisation.</strong><br><strong>Consommation IA :</strong> ~0,06€ par pitch — négligeable (~3€/mois pour 25 users).' },
+      openai_setup:'~46€', vercel_surcout:'~13€ (temporaire)', ia_mois:'~3€', total_pilote:'~65€',
+      detail:'<strong>Crédits IA :</strong> 46€ prépayés (durée ~2 ans au rythme pilote).<br><strong>Surcoût Vercel :</strong> chaque amélioration déclenche une reconstruction. Pendant la phase de préparation (~1 mois), les builds augmentent → surcoût ~13€. <strong>Ce surcoût disparaît après stabilisation.</strong><br><strong>Consommation IA :</strong> ~0,06€/pitch, soit ~3€/mois pour 5-25 utilisateurs actifs.' },
     { id:'C', titre:'Tous en live (25+)', color:'#991B1B', bg:'#FEF2F2', border:'#EF4444',
-      openai_setup:'~46€ + 5-15€', vercel_mois:'20€ + ~13€ + pic jour J', ia_mois:'~5€', total_setup:'~60€', total_mois:'~38€', total_pilote:'~290€',
-      detail:'<strong>Crédits IA :</strong> 46€ + provision 5-15€ pour la session jour J (25+ pitchs simultanés).<br><strong>Hébergement Vercel :</strong> 20€/mois (existant) + surcoût builds ~13€/mois + pic de consommation serveur le jour J (25+ utilisateurs en même temps).<br><strong>Consommation IA :</strong> ~5€/mois si tout le monde utilise.' },
+      openai_setup:'~55€', vercel_surcout:'~15€', ia_mois:'~5€', total_pilote:'~85€',
+      detail:'<strong>Crédits IA :</strong> 46€ + provision ~10€ pour les sessions jour J (25+ pitchs en quelques heures).<br><strong>Surcoût Vercel :</strong> ~13€ de builds (préparation) + pic de consommation serveur les jours de formation (25+ utilisateurs simultanés).<br><strong>Consommation IA :</strong> ~5€/mois si tout le monde utilise régulièrement.' },
     { id:'D', titre:'Hybride', color:'#92400E', bg:'#FFFBEB', border:'#F59E0B',
-      openai_setup:'~46€ + 5-15€', vercel_mois:'20€ + ~13€ + pic jour J', ia_mois:'~3€', total_setup:'~60€', total_mois:'~36€', total_pilote:'~275€',
-      detail:'<strong>Crédits IA :</strong> identique à C pour le jour J.<br><strong>Hébergement Vercel :</strong> identique à C pendant la préparation + jour J. Après : retour au niveau de B (5-10 users seulement).<br><strong>Consommation IA :</strong> après le jour J, seuls 5-10 users restent → ~3€/mois.' },
+      openai_setup:'~55€', vercel_surcout:'~15€', ia_mois:'~3€', total_pilote:'~80€',
+      detail:'<strong>Crédits IA :</strong> identique à C (même risque le jour J).<br><strong>Surcoût Vercel :</strong> identique à C pendant la préparation. Après : retour au niveau de B (5-10 utilisateurs actifs seulement).<br><strong>Consommation IA :</strong> après le jour J, seuls 5-10 utilisateurs restent → ~3€/mois.' },
   ];
 
-  let h = `<div style="font-size:18px;font-weight:800;color:#051E50;margin-bottom:18px">${peSpan('c_titre','Coûts par option')}</div>`;
+  let h = `<div style="font-size:18px;font-weight:800;color:#051E50;margin-bottom:6px">${peSpan('c_titre','Coûts additionnels par option')}</div>`;
+  h += `<div style="font-size:13px;color:#64748B;margin-bottom:18px">Hors abonnement Vercel Pro (20€/mois) déjà en place pour toutes les applications.</div>`;
 
   for (const o of OPTS) {
     h += `<div style="background:${o.bg};border:2px solid ${o.border};border-radius:12px;padding:20px;margin-bottom:16px">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px">
         <div style="display:flex;align-items:center;gap:10px">
           <span style="font-size:15px;font-weight:800;color:${o.color};background:#fff;border:2px solid ${o.border};border-radius:50%;width:32px;height:32px;display:flex;align-items:center;justify-content:center">${o.id}</span>
           <span style="font-size:16px;font-weight:800;color:${o.color}">${peSpan('c_'+o.id+'_titre', o.titre)}</span>
         </div>
-        <div style="background:${o.color};color:#fff;padding:6px 14px;border-radius:20px;font-size:14px;font-weight:800">Total pilote : ${peSpan('c_'+o.id+'_total_pilote', o.total_pilote)}</div>
+        <div style="background:${o.color};color:#fff;padding:6px 14px;border-radius:20px;font-size:14px;font-weight:800">Coût total : ${peSpan('c_'+o.id+'_total_pilote', o.total_pilote)}</div>
       </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:8px;margin-bottom:14px">
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:14px">
         <div style="background:#fff;border-radius:8px;padding:12px;text-align:center">
           <div style="font-size:11px;color:#64748B;margin-bottom:4px">Crédits IA (set-up)</div>
           <div style="font-size:16px;font-weight:800;color:${o.color}">${peSpan('c_'+o.id+'_openai', o.openai_setup)}</div>
         </div>
         <div style="background:#fff;border-radius:8px;padding:12px;text-align:center">
-          <div style="font-size:11px;color:#64748B;margin-bottom:4px">Vercel / mois</div>
-          <div style="font-size:14px;font-weight:800;color:#334155">${peSpan('c_'+o.id+'_vercel', o.vercel_mois)}</div>
+          <div style="font-size:11px;color:#64748B;margin-bottom:4px">Surcoût Vercel</div>
+          <div style="font-size:14px;font-weight:800;color:#334155">${peSpan('c_'+o.id+'_vercel', o.vercel_surcout)}</div>
         </div>
         <div style="background:#fff;border-radius:8px;padding:12px;text-align:center">
-          <div style="font-size:11px;color:#64748B;margin-bottom:4px">IA / mois</div>
+          <div style="font-size:11px;color:#64748B;margin-bottom:4px">Consommation IA / mois</div>
           <div style="font-size:14px;font-weight:800;color:#334155">${peSpan('c_'+o.id+'_ia_mois', o.ia_mois)}</div>
-        </div>
-        <div style="background:#fff;border-radius:8px;padding:12px;text-align:center">
-          <div style="font-size:11px;color:#64748B;margin-bottom:4px">Total / mois</div>
-          <div style="font-size:16px;font-weight:800;color:${o.color}">${peSpan('c_'+o.id+'_total_mois', o.total_mois)}</div>
         </div>
       </div>
       <div style="font-size:13px;color:#334155;line-height:1.7">${peSpan('c_'+o.id+'_detail', o.detail)}</div>
@@ -1707,7 +1704,7 @@ function renderPitchPilote() {
     { critere:'Adoption', comment:'% d\'utilisateurs ayant généré au moins 1 pitch', cible:'> 80%' },
     { critere:'Usage', comment:'Nombre total de pitchs générés', cible:'> 100' },
     { critere:'Stabilité', comment:'Erreurs ou lenteurs en production', cible:'< 5' },
-    { critere:'Coût réel', comment:'Facture hébergement + IA sur la période', cible:'< 50€' },
+    { critere:'Coût réel', comment:'Coûts additionnels IA + surcoût Vercel sur la période', cible:'< 90€' },
     { critere:'Satisfaction', comment:'Retour qualitatif des commerciaux', cible:'Positif' },
   ];
   h += `<table><thead><tr><th>Critère</th><th>Mesure</th><th>Cible</th></tr></thead><tbody>`;
@@ -1810,7 +1807,7 @@ function renderPitchSynthese() {
       titre: 'Scalabilité progressive',
       desc: 'On ouvre l\'app par vagues : 5, puis 10, puis 25 utilisateurs.',
       testeurs: '5 → 25', delai: 'Immédiat',
-      cout: '~46€ set-up + 0,30€/user/mois', charge: '2-3 h/semaine pendant 6 semaines',
+      cout: '~65€ sur 6 semaines', charge: '2-3 h/semaine pendant 6 semaines',
       limites: 'Max 5-10 utilisateurs simultanés au départ. Ajustement entre chaque vague.',
       risque: 'Faible. Les problèmes sont détectés et corrigés entre chaque vague.',
       verdict: 'Recommandé — risque maîtrisé, résultats rapides' },
@@ -1818,7 +1815,7 @@ function renderPitchSynthese() {
       titre: 'Tout le monde en live',
       desc: 'Tous les commerciaux testent l\'app le même jour et repartent avec.',
       testeurs: '25+', delai: '2-3 semaines de préparation',
-      cout: '~46€ set-up + 5-15€ crédits session + 0,30€/user/mois',
+      cout: '~85€ sur 6 semaines',
       charge: 'Temps plein pendant 2-3 semaines (compte dédié, fiabilisation, tests de charge)',
       limites: 'Si la préparation n\'est pas terminée : lenteurs, erreurs, app qui plante devant les commerciaux.',
       risque: 'Élevé sans préparation complète. L\'image du projet est en jeu.',
@@ -1827,7 +1824,7 @@ function renderPitchSynthese() {
       titre: 'Hybride',
       desc: 'Tout le monde teste le jour J, mais seul un petit groupe repart avec l\'app.',
       testeurs: '25+ le jour J → 5-10 ensuite', delai: '2-3 semaines de préparation',
-      cout: '~46€ set-up + 5-15€ crédits session + 0,30€/user/mois',
+      cout: '~80€ sur 6 semaines',
       charge: 'Temps plein 2-3 semaines + gestion accès post-formation',
       limites: 'Mêmes risques que l\'option C le jour J. Frustration possible des commerciaux qui n\'ont plus accès ensuite.',
       risque: 'Élevé le jour J + risque d\'incompréhension sur le périmètre.',
@@ -1888,7 +1885,7 @@ function renderPitchAValider() {
         <div style="width:30px;height:30px;border-radius:8px;background:#EFF6FF;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:15px">💰</div>
         <div>
           <div style="font-size:12px;font-weight:700;color:#334155">${peSpan('av_m_budget_t','Budget')}</div>
-          <div style="font-size:12px;color:#64748B;line-height:1.5;margin-top:2px">${peSpan('av_m_budget','~46€ pour créer un compte IA dédié + 0,30€/commercial/mois. Détail dans l\'onglet Coûts.')}</div>
+          <div style="font-size:12px;color:#64748B;line-height:1.5;margin-top:2px">${peSpan('av_m_budget','De ~65€ (option B) à ~85€ (option C) sur la durée du pilote. Détail dans l\'onglet Coûts.')}</div>
         </div>
       </div>
 
@@ -2640,7 +2637,7 @@ function renderProgrammeSynth() {
     peSpan('prog_matrice','Réception nouvelle matrice (<strong>~02/03</strong>) + encodage et tests'),
     'Corrections bugs + fiabilisation',
     'Login individuel par utilisateur',
-    peSpan('prog_qa','Demander 1 testeur QA pour valider les modifications'),
+    peSpan('prog_qa','Demander 1 personne pour tester l\'app et vérifier les bugs avant les formations'),
     'Création canal Teams support',
   ];
 
