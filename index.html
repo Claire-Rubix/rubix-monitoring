@@ -566,7 +566,6 @@ th{color:#1D4ED8;font-weight:600;font-size:10px;text-transform:uppercase;letter-
     <!-- À valider -->
     <div class="sub-page" id="pitch-sub-avalider">
       <div id="pitch-avalider-widget"></div>
-      <div id="avalider-demandes-wrap" class="demandes-wrap" style="margin-top:16px"></div>
     </div>
 
 
@@ -1100,12 +1099,12 @@ function renderGlobalAlerts(proj) {
 const DEMANDES = [
   { id:'d1', titre:'Création canal Teams "Rubix Pitch — Retours & Support"', destinataire:'IT', deadline:'28/02',
     pourquoi:'Centraliser les remontées de bugs des commerciaux pendant et après les formations. Sans canal dédié, les retours se perdent dans les emails et les conversations informelles.' },
-  { id:'d2', titre:'3 à 5 testeurs commerciaux volontaires', destinataire:'Manager (point du 05/03)', deadline:'06/03',
-    detail:'Profils : 2 RVE terrain + 1 DE minimum. Effort : 1h de leur temps entre le 7 et le 10/03.',
-    pourquoi:'Valider l\'app en conditions réelles avant la formation. Leurs retours permettent de corriger les derniers bugs sur des vrais cas métier.' },
-  { id:'d3', titre:'Liste des 66 participants aux 3 sessions', destinataire:'Organisateurs formation', deadline:'20/03',
-    detail:'Données : nom, prénom, profil (RVE/DE), session attribuée (1, 2 ou 3).',
-    pourquoi:'Après la session 1, on met en place des accès individuels pour suivre qui utilise l\'app, gérer le déploiement progressif et sauvegarder l\'historique de chaque commercial (multi-device).' },
+  { id:'d2', titre:'1 testeur commercial volontaire pour valider l\'app', destinataire:'Manager', deadline:'06/03',
+    detail:'Profil : 1 commercial terrain (RVE ou DE). Effort : 1h entre le 7 et le 10/03.',
+    pourquoi:'Valider l\'app en conditions réelles avant la formation. Son retour permet de corriger les derniers bugs sur un vrai cas métier.' },
+  { id:'d3', titre:'Liste des 66 participants aux 3 sessions (options B, C, D)', destinataire:'Organisateurs formation', deadline:'20/03',
+    detail:'Données : nom, prénom, profil (RVE/DE), session attribuée (1, 2 ou 3). Nécessaire pour les options B, C et D.',
+    pourquoi:'Permet de créer les accès individuels, suivre l\'adoption et gérer le déploiement progressif.' },
   { id:'d4', titre:'Validation budget 50$ (46€) pour compte IA dédié', destinataire:'Manager', deadline:'28/02',
     detail:'Paiement unique par carte.',
     pourquoi:'Séparer les crédits IA de Rubix Pitch de ceux de Smart Spec (risque de coupure). Ces 50$ sont aussi la condition pour monter en capacité (Tier 2 = 10× plus d\'utilisateurs simultanés). Les crédits sont consommés progressivement (~5$/mois pour 15 users).' },
@@ -1727,7 +1726,6 @@ let vercelBillingAPI = null;
 function initPitchSubTabs() {
   renderPitchSynthese();
   renderPitchAValider();
-  renderDemandes();
   renderPitchStatusWidget();
   renderPitchFormations();
   renderPitchCouts();
@@ -1936,6 +1934,28 @@ function renderPitchAValider() {
 
     </div>
   </div>`;
+
+  // ── Demandes intégrées ──
+  const doneCount = DEMANDES.filter(d => getDStatus(d.id) === 'done').length;
+  const pct = Math.round(doneCount / DEMANDES.length * 100);
+  h += `<div style="margin-top:8px">`;
+  for (const d of DEMANDES) {
+    const status = getDStatus(d.id);
+    const done = status === 'done';
+    h += `<div class="dem-row${done ? ' dem-done' : ''}" id="dc-${d.id}" style="border:1px solid #E2E8F0;border-radius:8px;margin-bottom:6px;overflow:hidden">
+      <div class="dem-row-main" onclick="toggleDemRow('${d.id}')" style="padding:10px 14px;display:flex;align-items:center;gap:10px;cursor:pointer">
+        <button class="dem-status-btn" id="db-${d.id}" onclick="event.stopPropagation();toggleDemandeStatus('${d.id}')" title="${D_LABELS[status]}" style="background:none;border:none;font-size:16px;cursor:pointer;flex-shrink:0">${D_ICONS[status]}</button>
+        <span style="font-size:13px;font-weight:600;color:${done?'#94A3B8':'#334155'};flex:1;${done?'text-decoration:line-through':''}">${d.titre}</span>
+        <span class="dem-badge ${demBadgeClass(d.destinataire)}" style="font-size:10px;padding:2px 8px;border-radius:10px;font-weight:700;white-space:nowrap">${d.destinataire}</span>
+        <span style="font-size:11px;color:#94A3B8;white-space:nowrap">${d.deadline}</span>
+      </div>
+      <div class="dem-expand"><div class="dem-expand-inner" style="padding:0 14px 10px 42px;font-size:12px;color:#64748B;line-height:1.6">
+        ${d.detail ? `<div>📋 ${d.detail}</div>` : ''}
+        <div>💬 ${d.pourquoi}</div>
+      </div></div>
+    </div>`;
+  }
+  h += `</div>`;
 
   el.innerHTML = h;
 }
@@ -2615,79 +2635,49 @@ function setRetroPrio(val) { retroFilterPrio = val; renderRetroFilters(); applyR
 function renderProgrammeSynth() {
   const el = $('programme-synth'); if (!el) return;
 
-  const common = [
-    { phase:'Préparation technique', dates:'25/02 → 14/03 (~3 semaines)', items:[
-      'Ouverture compte OpenAI dédié + chargement crédits',
-      peSpan('prog_matrice','Réception nouvelle matrice (<strong>prévu ~02/03</strong>) + encodage et tests'),
-      'Corrections bugs identifiés + fiabilisation',
-      'Mise en place login individuel par utilisateur',
-      peSpan('prog_qa','Demander un testeur QA pour valider les modifications avant formation'),
-      'Création canal Teams support',
-    ]},
+  const commonItems = [
+    'Ouverture compte OpenAI dédié + crédits',
+    peSpan('prog_matrice','Réception nouvelle matrice (<strong>~02/03</strong>) + encodage et tests'),
+    'Corrections bugs + fiabilisation',
+    'Login individuel par utilisateur',
+    peSpan('prog_qa','Demander 1 testeur QA pour valider les modifications'),
+    'Création canal Teams support',
   ];
 
   const options = [
     { id:'A', titre:'Attendre l\'IT', color:'#64748B', bg:'#F8FAFC', border:'#CBD5E1',
-      phases:[
-        ...common,
-        { phase:'Attente IT', dates:'Indéterminé', items:['Projet en pause jusqu\'à prise en charge IT','Aucun déploiement, aucune formation'] },
+      steps:[
+        { date:'25/02 → 14/03', label:'Préparation', desc:'Prête mais en attente' },
+        { date:'Indéterminé', label:'Attente IT', desc:'Projet en pause — aucun déploiement, aucune formation', accent:true },
       ]
     },
-    { id:'B', titre:'Déploiement progressif (5→10→15→25)', color:'#166534', bg:'#F0FDF4', border:'#86EFAC',
-      phases:[
-        ...common,
-        { phase:'Session 1 + 5 premiers utilisateurs', dates:'17/03', items:[
-          'Formation 22 participants (créneau app ~1h)',
-          '5 utilisateurs activés après la session',
-          'Suivi retours + corrections',
-        ]},
-        { phase:'Session 2 + 10 utilisateurs', dates:'25/03', items:[
-          'Formation 22 participants',
-          '5 nouveaux utilisateurs activés (total : 10)',
-          'Bilan stabilité',
-        ]},
-        { phase:'Session 3 + 15 utilisateurs', dates:'08/04', items:[
-          'Formation 22 participants',
-          '5 nouveaux utilisateurs activés (total : 15)',
-          'Bilan global',
-        ]},
-        { phase:'Ouverture progressive', dates:'Avril → Mai', items:[
-          'Montée en charge graduelle selon stabilité',
-          'Objectif 25+ utilisateurs actifs fin avril',
-        ]},
-        { phase:'Bilan pilote', dates:'30/04', items:['Présentation résultats + décision suite'] },
+    { id:'B', titre:'Progressif (5→10→15→25)', color:'#166534', bg:'#F0FDF4', border:'#86EFAC',
+      steps:[
+        { date:'25/02 → 14/03', label:'Préparation', desc:'Compte IA, matrice, corrections, tests' },
+        { date:'17/03', label:'Session 1', desc:'Formation 22 pers. — 5 activés', accent:true },
+        { date:'18/03 → 24/03', label:'Suivi', desc:'Retours + corrections' },
+        { date:'25/03', label:'Session 2', desc:'Formation 22 pers. — 10 actifs', accent:true },
+        { date:'08/04', label:'Session 3', desc:'Formation 22 pers. — 15 actifs', accent:true },
+        { date:'Avril → Mai', label:'Ouverture', desc:'Montée graduelle → 25+ actifs' },
+        { date:'30/04', label:'Bilan pilote', desc:'Résultats + décision suite', accent:true },
       ]
     },
-    { id:'C', titre:'Tous en live dès la 1re session', color:'#DC2626', bg:'#FEF2F2', border:'#FECACA',
-      phases:[
-        ...common,
-        { phase:'Session 1 — tout le monde actif', dates:'17/03', items:[
-          'Formation 22 participants — tous repartent avec l\'app',
-          'Risque de surcharge immédiate (limites API)',
-          'Support réactif nécessaire le jour même',
-        ]},
-        { phase:'Sessions 2 et 3', dates:'25/03 et 08/04', items:[
-          'Mêmes conditions, charge cumulée',
-          'Corrections urgentes entre les sessions',
-        ]},
-        { phase:'Bilan pilote', dates:'30/04', items:['Présentation résultats + décision suite'] },
+    { id:'C', titre:'Tous en live (25+)', color:'#DC2626', bg:'#FEF2F2', border:'#FECACA',
+      steps:[
+        { date:'25/02 → 14/03', label:'Préparation', desc:'Compte IA, matrice, corrections, tests de charge' },
+        { date:'17/03', label:'Session 1', desc:'22 pers. — tous actifs immédiatement', accent:true },
+        { date:'25/03', label:'Session 2', desc:'22 pers. — charge cumulée', accent:true },
+        { date:'08/04', label:'Session 3', desc:'22 pers. — corrections urgentes entre sessions', accent:true },
+        { date:'30/04', label:'Bilan pilote', desc:'Résultats + décision suite', accent:true },
       ]
     },
     { id:'D', titre:'Hybride — test live + accès limité', color:'#92400E', bg:'#FFFBEB', border:'#FDE68A',
-      phases:[
-        ...common,
-        { phase:'Session 1 — test en live', dates:'17/03', items:[
-          'Formation 22 participants — tous testent en séance',
-          'Seuls 5 repartent avec l\'app active',
-        ]},
-        { phase:'Session 2', dates:'25/03', items:[
-          'Même principe, 5 nouveaux activés (total : 10)',
-        ]},
-        { phase:'Session 3', dates:'08/04', items:[
-          'Même principe, 5 nouveaux activés (total : 15)',
-          'Communication nécessaire sur pourquoi certains n\'ont pas accès',
-        ]},
-        { phase:'Bilan pilote', dates:'30/04', items:['Présentation résultats + décision suite'] },
+      steps:[
+        { date:'25/02 → 14/03', label:'Préparation', desc:'Identique à C' },
+        { date:'17/03', label:'Session 1', desc:'Tous testent — seuls 5 gardent l\'accès', accent:true },
+        { date:'25/03', label:'Session 2', desc:'Idem — 10 actifs total', accent:true },
+        { date:'08/04', label:'Session 3', desc:'Idem — 15 actifs + communication accès', accent:true },
+        { date:'30/04', label:'Bilan pilote', desc:'Résultats + décision suite', accent:true },
       ]
     },
   ];
@@ -2696,16 +2686,14 @@ function renderProgrammeSynth() {
 
   // Prerequisite block
   h += `<div style="background:#EFF6FF;border:1px solid #BFDBFE;border-radius:10px;padding:20px;margin-bottom:24px">
-    <div style="font-size:15px;font-weight:700;color:#1D4ED8;margin-bottom:12px">📋 Prérequis communs à toutes les options</div>`;
-  for (const phase of common) {
-    h += `<div style="font-size:14px;font-weight:700;color:#334155;margin-bottom:6px">${phase.phase} <span style="font-weight:400;color:#64748B">${phase.dates}</span></div>`;
-    h += '<ul style="margin:0 0 12px 18px;padding:0;font-size:14px;color:#475569;line-height:2">';
-    for (const item of phase.items) h += `<li>${item}</li>`;
-    h += '</ul>';
+    <div style="font-size:15px;font-weight:700;color:#1D4ED8;margin-bottom:10px">📋 Prérequis communs — 25/02 → 14/03</div>
+    <div style="display:flex;flex-wrap:wrap;gap:8px">`;
+  for (const item of commonItems) {
+    h += `<div style="background:#fff;border:1px solid #BFDBFE;border-radius:8px;padding:8px 14px;font-size:13px;color:#334155;line-height:1.5">${item}</div>`;
   }
-  h += '</div>';
+  h += `</div></div>`;
 
-  // Options
+  // Options — horizontal timeline
   for (const opt of options) {
     h += `<div style="background:${opt.bg};border:1px solid ${opt.border};border-radius:10px;margin-bottom:16px;overflow:hidden">`;
     h += `<div style="padding:14px 20px;border-bottom:1px solid ${opt.border};display:flex;align-items:center;gap:12px">
@@ -2713,31 +2701,37 @@ function renderProgrammeSynth() {
       <span style="font-size:16px;font-weight:700;color:${opt.color}">${opt.titre}</span>
     </div>`;
 
-    // Timeline (skip common phases already shown above)
-    const specificPhases = opt.phases.filter(p => !common.includes(p));
-    if (specificPhases.length) {
-      h += '<div style="padding:16px 20px">';
-      for (let i = 0; i < specificPhases.length; i++) {
-        const phase = specificPhases[i];
-        const isLast = i === specificPhases.length - 1;
-        h += `<div style="display:flex;gap:14px;margin-bottom:${isLast?'0':'16px'}">`;
-        // Timeline dot + line
-        h += `<div style="display:flex;flex-direction:column;align-items:center;min-width:16px">
-          <div style="width:12px;height:12px;border-radius:50%;background:${opt.color};flex-shrink:0;margin-top:5px"></div>
-          ${!isLast ? `<div style="width:2px;flex:1;background:${opt.border};margin-top:4px"></div>` : ''}
-        </div>`;
-        // Content
-        h += `<div style="flex:1;padding-bottom:${isLast?'0':'4px'}">
-          <div style="font-size:14px;font-weight:700;color:${opt.color}">${phase.phase}</div>
-          <div style="font-size:13px;color:#64748B;margin-bottom:6px">${phase.dates}</div>`;
-        for (const item of phase.items) {
-          h += `<div style="font-size:14px;color:#475569;line-height:1.7;padding-left:10px">• ${item}</div>`;
-        }
-        h += '</div></div>';
-      }
-      h += '</div>';
+    // Horizontal scrollable timeline
+    h += `<div style="padding:20px;overflow-x:auto">`;
+    h += `<div style="display:flex;align-items:flex-start;gap:0;min-width:max-content">`;
+    for (let i = 0; i < opt.steps.length; i++) {
+      const s = opt.steps[i];
+      const isLast = i === opt.steps.length - 1;
+      const cardBg = s.accent ? '#fff' : 'rgba(255,255,255,0.6)';
+      const cardBorder = s.accent ? opt.color : opt.border;
+      const dateBg = s.accent ? opt.color : '#94A3B8';
+
+      // Step card
+      h += `<div style="display:flex;flex-direction:column;align-items:center;min-width:140px;max-width:180px;position:relative">`;
+      // Date badge
+      h += `<div style="background:${dateBg};color:#fff;padding:4px 12px;border-radius:20px;font-size:12px;font-weight:700;margin-bottom:10px;white-space:nowrap">${s.date}</div>`;
+      // Dot + line
+      h += `<div style="display:flex;align-items:center;width:100%;margin-bottom:10px">`;
+      if (i > 0) h += `<div style="flex:1;height:3px;background:${opt.border}"></div>`;
+      else h += `<div style="flex:1"></div>`;
+      h += `<div style="width:14px;height:14px;border-radius:50%;background:${s.accent?opt.color:opt.border};border:3px solid ${cardBg};box-shadow:0 0 0 2px ${s.accent?opt.color:opt.border};flex-shrink:0"></div>`;
+      if (!isLast) h += `<div style="flex:1;height:3px;background:${opt.border}"></div>`;
+      else h += `<div style="flex:1"></div>`;
+      h += `</div>`;
+      // Card
+      h += `<div style="background:${cardBg};border:2px solid ${cardBorder};border-radius:10px;padding:10px 14px;text-align:center;width:100%">
+        <div style="font-size:13px;font-weight:800;color:${opt.color};margin-bottom:4px">${s.label}</div>
+        <div style="font-size:12px;color:#475569;line-height:1.5">${s.desc}</div>
+      </div>`;
+      h += `</div>`;
     }
-    h += '</div>';
+    h += `</div></div>`;
+    h += `</div>`;
   }
 
   el.innerHTML = h;
@@ -2745,7 +2739,6 @@ function renderProgrammeSynth() {
 
 function initRetro() {
   restoreRetroEdits();
-  renderDemandes();
   renderProgrammeSynth();
   _weeksCache = null;
   $('retro-calendar').innerHTML = buildRetroCalendar();
