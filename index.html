@@ -1850,69 +1850,93 @@ function peReset() {
 function renderPitchSynthese() {
   const el = $('pitch-synthese-hero');
   if (!el) return;
-  const setupEUR = Math.ceil(COSTS.setup.reduce((s,r) => s + r.usd, 0) * COSTS.EUR_USD);
   let h = '';
 
-  /* --- Où on en est --- */
+  /* --- Situation --- */
   h += `<div style="background:#F8FAFC;border:1px solid #E2E8F0;border-radius:12px;padding:20px;margin-bottom:16px">
-    <div style="font-size:14px;font-weight:800;color:#051E50;margin-bottom:12px">Où on en est</div>
-    <div style="display:flex;flex-direction:column;gap:10px;font-size:13px;color:#334155;line-height:1.6">
-      <div style="display:flex;gap:10px;align-items:flex-start">
-        <span style="flex-shrink:0">✅</span>
-        <div><strong>L'application est prête</strong> — développée, fonctionnelle, hébergée.</div>
+    <div style="font-size:15px;font-weight:800;color:#051E50;margin-bottom:12px">${peSpan('s_titre','Situation')}</div>
+    <div style="display:flex;flex-direction:column;gap:8px;font-size:13px;color:#334155;line-height:1.6">
+      <div>${peSpan('s_1','L\'application Rubix Pitch est <strong>développée et fonctionnelle</strong>.')}</div>
+      <div>${peSpan('s_2','3 demandes de support IT ont été faites depuis le 6 février. <strong>Aucune n\'a abouti.</strong>')}</div>
+      <div>${peSpan('s_3','Les dates de formation sont fixées. Les commerciaux attendent de tester l\'outil.')}</div>
+      <div>${peSpan('s_4','L\'environnement actuel permet de lancer un test, mais il a des <strong>limites de capacité</strong>.')}</div>
+    </div>
+  </div>`;
+
+  /* --- 4 options --- */
+  h += `<div style="font-size:15px;font-weight:800;color:#051E50;margin-bottom:12px">${peSpan('s_opt_titre','4 options possibles')}</div>`;
+
+  const opts = [
+    { id:'A', color:'#64748B', bg:'#F8FAFC', border:'#CBD5E1',
+      titre: 'On attend l\'IT',
+      desc: 'Pas de test tant que l\'IT n\'a pas mis en place l\'infrastructure.',
+      testeurs: '0', delai: 'Indéterminé',
+      cout: '0€', charge: 'Aucune', limites: 'Aucun risque technique',
+      risque: 'Les formations sont repoussées. La crédibilité du projet baisse.',
+      verdict: 'Aucun risque technique, mais le projet est bloqué' },
+    { id:'B', color:'#166534', bg:'#F0FDF4', border:'#22C55E',
+      titre: 'Scalabilité progressive',
+      desc: 'On ouvre l\'app par vagues : 5, puis 10, puis 25 utilisateurs.',
+      testeurs: '5 → 25', delai: 'Immédiat',
+      cout: '~46€ set-up + 0,30€/user/mois', charge: '2-3 h/semaine pendant 6 semaines',
+      limites: 'Max 5-10 utilisateurs simultanés au départ. Ajustement entre chaque vague.',
+      risque: 'Faible. Les problèmes sont détectés et corrigés entre chaque vague.',
+      verdict: 'Recommandé — risque maîtrisé, résultats rapides' },
+    { id:'C', color:'#991B1B', bg:'#FEF2F2', border:'#EF4444',
+      titre: 'Tout le monde en live',
+      desc: 'Tous les commerciaux testent l\'app le même jour et repartent avec.',
+      testeurs: '25+', delai: '2-3 semaines de préparation',
+      cout: '~46€ set-up + 5-15€ crédits session + 0,30€/user/mois',
+      charge: 'Temps plein pendant 2-3 semaines (compte dédié, fiabilisation, tests de charge)',
+      limites: 'Si la préparation n\'est pas terminée : lenteurs, erreurs, app qui plante devant les commerciaux.',
+      risque: 'Élevé sans préparation complète. L\'image du projet est en jeu.',
+      verdict: 'Ambitieux — faisable uniquement si le calendrier le permet' },
+    { id:'D', color:'#92400E', bg:'#FFFBEB', border:'#F59E0B',
+      titre: 'Hybride',
+      desc: 'Tout le monde teste le jour J, mais seul un petit groupe repart avec l\'app.',
+      testeurs: '25+ le jour J → 5-10 ensuite', delai: '2-3 semaines de préparation',
+      cout: '~46€ set-up + 5-15€ crédits session + 0,30€/user/mois',
+      charge: 'Temps plein 2-3 semaines + gestion accès post-formation',
+      limites: 'Mêmes risques que l\'option C le jour J. Frustration possible des commerciaux qui n\'ont plus accès ensuite.',
+      risque: 'Élevé le jour J + risque d\'incompréhension sur le périmètre.',
+      verdict: 'Risqué — cumule les contraintes de C avec une communication complexe' },
+  ];
+
+  for (const o of opts) {
+    h += `<div style="background:${o.bg};border:2px solid ${o.border};border-radius:12px;padding:18px;margin-bottom:12px">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+        <span style="font-size:14px;font-weight:800;color:${o.color};background:#fff;border:2px solid ${o.border};border-radius:50%;width:28px;height:28px;display:flex;align-items:center;justify-content:center">${o.id}</span>
+        <span style="font-size:14px;font-weight:800;color:${o.color}">${peSpan('opt_'+o.id+'_titre', o.titre)}</span>
       </div>
-      <div style="display:flex;gap:10px;align-items:flex-start">
-        <span style="flex-shrink:0">📞</span>
-        <div><strong>3 demandes IT depuis le 6 février</strong> — aucune avancée.</div>
+      <div style="font-size:12px;color:#334155;margin-bottom:12px">${peSpan('opt_'+o.id+'_desc', o.desc)}</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:10px">
+        <div style="background:#fff;border-radius:8px;padding:10px;text-align:center">
+          <div style="font-size:10px;color:#64748B;margin-bottom:2px">Testeurs</div>
+          <div style="font-size:14px;font-weight:800;color:${o.color}">${peSpan('opt_'+o.id+'_testeurs', o.testeurs)}</div>
+        </div>
+        <div style="background:#fff;border-radius:8px;padding:10px;text-align:center">
+          <div style="font-size:10px;color:#64748B;margin-bottom:2px">Délai</div>
+          <div style="font-size:12px;font-weight:700;color:#334155">${peSpan('opt_'+o.id+'_delai', o.delai)}</div>
+        </div>
+        <div style="background:#fff;border-radius:8px;padding:10px;text-align:center">
+          <div style="font-size:10px;color:#64748B;margin-bottom:2px">Coût</div>
+          <div style="font-size:12px;font-weight:700;color:#334155">${peSpan('opt_'+o.id+'_cout', o.cout)}</div>
+        </div>
       </div>
-      <div style="display:flex;gap:10px;align-items:flex-start">
-        <span style="flex-shrink:0">📅</span>
-        <div><strong>Les formations approchent</strong> — les commerciaux attendent.</div>
+      <div style="display:flex;flex-direction:column;gap:6px;font-size:11px;color:#334155;line-height:1.5">
+        <div><strong>Charge de travail :</strong> ${peSpan('opt_'+o.id+'_charge', o.charge)}</div>
+        <div><strong>Limites :</strong> ${peSpan('opt_'+o.id+'_limites', o.limites)}</div>
+        <div><strong>Risque :</strong> ${peSpan('opt_'+o.id+'_risque', o.risque)}</div>
       </div>
-    </div>
+      <div style="margin-top:10px;padding:8px 12px;background:#fff;border-radius:6px;font-size:12px;font-weight:700;color:${o.color};text-align:center">
+        ${peSpan('opt_'+o.id+'_verdict', o.verdict)}
+      </div>
+    </div>`;
+  }
+
+  h += `<div style="text-align:right;margin-top:4px;margin-bottom:8px">
+    <button onclick="peReset()" style="font-size:10px;background:none;border:1px solid #E2E8F0;border-radius:4px;padding:2px 8px;color:#94A3B8;cursor:pointer">Réinitialiser les modifications</button>
   </div>`;
-
-  /* --- Proposition --- */
-  h += `<div style="background:#EFF6FF;border:1px solid #BFDBFE;border-radius:12px;padding:20px;margin-bottom:16px">
-    <div style="font-size:14px;font-weight:800;color:#1E40AF;margin-bottom:8px">Ce qu'on peut faire</div>
-    <div style="font-size:13px;color:#334155;line-height:1.7">
-      L'environnement actuel permet de <strong>lancer les tests sans attendre l'IT</strong>.<br>
-      Il a des limites. Selon le nombre de testeurs et le rythme, l'impact est très différent.
-    </div>
-  </div>`;
-
-  /* --- Deux scénarios --- */
-  h += `<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">`;
-
-  h += `<div style="background:#F0FDF4;border:2px solid #22C55E;border-radius:12px;padding:18px">
-    <div style="font-size:13px;font-weight:800;color:#166534;margin-bottom:8px">Progressif</div>
-    <div style="font-size:24px;font-weight:800;color:#166534;margin-bottom:2px">5 → 25 testeurs</div>
-    <div style="font-size:12px;color:#64748B;margin-bottom:14px">par vagues, sur plusieurs semaines</div>
-    <div style="font-size:12px;color:#334155;line-height:1.7">
-      <strong>Pas de préparation lourde.</strong><br>
-      On commence avec 5 personnes, on ajuste, on élargit.<br>
-      Budget maîtrisé. Problèmes corrigés entre chaque vague.
-    </div>
-    <div style="margin-top:14px;padding:10px;background:#DCFCE7;border-radius:8px;text-align:center;font-size:12px;color:#166534;font-weight:700">
-      Je peux garantir que ça fonctionne
-    </div>
-  </div>`;
-
-  h += `<div style="background:#FEF2F2;border:2px solid #EF4444;border-radius:12px;padding:18px">
-    <div style="font-size:13px;font-weight:800;color:#991B1B;margin-bottom:8px">Tous en même temps</div>
-    <div style="font-size:24px;font-weight:800;color:#991B1B;margin-bottom:2px">25+ testeurs</div>
-    <div style="font-size:12px;color:#64748B;margin-bottom:14px">une seule après-midi</div>
-    <div style="font-size:12px;color:#334155;line-height:1.7">
-      <strong>2 à 3 semaines de préparation obligatoire.</strong><br>
-      Compte dédié à créer (7 jours), capacité à augmenter,<br>
-      gestion des erreurs à renforcer. Sans ça, l'app plantera.
-    </div>
-    <div style="margin-top:14px;padding:10px;background:#FEE2E2;border-radius:8px;text-align:center;font-size:12px;color:#991B1B;font-weight:700">
-      Risque élevé sans cette préparation
-    </div>
-  </div>`;
-
-  h += `</div>`;
 
   el.innerHTML = h;
 }
@@ -1923,79 +1947,78 @@ function renderPitchAValider() {
   if (!el) return;
   let h = '';
 
-  /* --- Section Manager --- */
-  h += `<div style="font-size:14px;font-weight:800;color:#051E50;margin-bottom:14px">Ce que je demande</div>`;
+  h += `<div style="font-size:15px;font-weight:800;color:#051E50;margin-bottom:14px">${peSpan('av_titre','Ce qu\'il faut valider pour avancer')}</div>`;
 
+  /* --- Manager --- */
   h += `<div style="background:#F8FAFC;border:1px solid #E2E8F0;border-radius:12px;padding:20px;margin-bottom:16px">
-    <div style="font-size:13px;font-weight:800;color:#051E50;margin-bottom:12px">Pour mon manager</div>
-    <div style="display:flex;flex-direction:column;gap:12px">
+    <div style="font-size:14px;font-weight:800;color:#051E50;margin-bottom:14px">${peSpan('av_m_titre','Manager — Budget et charge')}</div>
 
-      <div style="display:flex;gap:12px;align-items:flex-start">
-        <div style="width:32px;height:32px;border-radius:8px;background:#EFF6FF;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:16px">💰</div>
-        <div>
-          <div style="font-size:12px;font-weight:700;color:#334155">Budget</div>
-          <div style="font-size:12px;color:#64748B;line-height:1.5;margin-top:2px">~46€ pour créer un compte IA dédié + 0,30€ par commercial par mois en fonctionnement. Le détail est dans l'onglet <strong>Coûts</strong>.</div>
-        </div>
+    <div style="display:flex;gap:12px;align-items:flex-start;margin-bottom:12px">
+      <div style="width:30px;height:30px;border-radius:8px;background:#EFF6FF;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:15px">💰</div>
+      <div>
+        <div style="font-size:12px;font-weight:700;color:#334155">${peSpan('av_m_budget_t','Budget')}</div>
+        <div style="font-size:12px;color:#64748B;line-height:1.5;margin-top:2px">${peSpan('av_m_budget','~46€ pour créer un compte IA dédié + 0,30€/commercial/mois. Détail dans l\'onglet Coûts.')}</div>
       </div>
+    </div>
 
-      <div style="display:flex;gap:12px;align-items:flex-start">
-        <div style="width:32px;height:32px;border-radius:8px;background:#EFF6FF;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:16px">⏱️</div>
-        <div>
-          <div style="font-size:12px;font-weight:700;color:#334155">Temps projet</div>
-          <div style="font-size:12px;color:#64748B;line-height:1.5;margin-top:2px">Préparation, fiabilisation et accompagnement des formations. Le programme détaillé est dans l'onglet <strong>Programme</strong>.</div>
-        </div>
+    <div style="display:flex;gap:12px;align-items:flex-start;margin-bottom:12px">
+      <div style="width:30px;height:30px;border-radius:8px;background:#EFF6FF;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:15px">⏱️</div>
+      <div>
+        <div style="font-size:12px;font-weight:700;color:#334155">${peSpan('av_m_temps_t','Charge de travail')}</div>
+        <div style="font-size:12px;color:#64748B;line-height:1.5;margin-top:2px">${peSpan('av_m_temps','2-3 h/semaine pendant 6 semaines : préparation technique, fiabilisation, accompagnement formations. Programme détaillé dans l\'onglet Programme.')}</div>
       </div>
+    </div>
 
-      <div style="display:flex;gap:12px;align-items:flex-start">
-        <div style="width:32px;height:32px;border-radius:8px;background:#EFF6FF;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:16px">🛡️</div>
-        <div>
-          <div style="font-size:12px;font-weight:700;color:#334155">Cadre</div>
-          <div style="font-size:12px;color:#64748B;line-height:1.5;margin-top:2px">Pas de support IT à ce jour malgré 3 demandes. Je fais tourner le projet en autonomie mais <strong>je ne peux pas porter la responsabilité d'un déploiement large sans appui IT</strong>.</div>
-        </div>
+    <div style="display:flex;gap:12px;align-items:flex-start;margin-bottom:12px">
+      <div style="width:30px;height:30px;border-radius:8px;background:#EFF6FF;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:15px">📊</div>
+      <div>
+        <div style="font-size:12px;font-weight:700;color:#334155">${peSpan('av_m_vercel_t','Pourquoi l\'hébergement augmente')}</div>
+        <div style="font-size:12px;color:#64748B;line-height:1.5;margin-top:2px">${peSpan('av_m_vercel','Chaque modification de l\'app déclenche une reconstruction automatique. Plus on améliore, plus on consomme de temps serveur. C\'est temporaire : une fois stabilisé, les coûts baissent.')}</div>
       </div>
+    </div>
 
+    <div style="display:flex;gap:12px;align-items:flex-start">
+      <div style="width:30px;height:30px;border-radius:8px;background:#EFF6FF;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:15px">🛡️</div>
+      <div>
+        <div style="font-size:12px;font-weight:700;color:#334155">${peSpan('av_m_cadre_t','Cadre')}</div>
+        <div style="font-size:12px;color:#64748B;line-height:1.5;margin-top:2px">${peSpan('av_m_cadre','Aucun support IT malgré 3 demandes. Le projet tourne en autonomie. Je ne peux pas porter la responsabilité d\'un déploiement large sans appui IT.')}</div>
+      </div>
     </div>
   </div>`;
 
-  /* --- Section Directrice --- */
+  /* --- Direction --- */
   h += `<div style="background:#FFFBEB;border:1px solid #FDE68A;border-radius:12px;padding:20px;margin-bottom:16px">
-    <div style="font-size:13px;font-weight:800;color:#92400E;margin-bottom:12px">Pour la direction</div>
-    <div style="display:flex;flex-direction:column;gap:12px">
+    <div style="font-size:14px;font-weight:800;color:#92400E;margin-bottom:14px">${peSpan('av_d_titre','Direction — Limites et attentes')}</div>
 
-      <div style="display:flex;gap:12px;align-items:flex-start">
-        <div style="width:32px;height:32px;border-radius:8px;background:#FEF3C7;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:16px">⚡</div>
-        <div>
-          <div style="font-size:12px;font-weight:700;color:#334155">Limites à accepter</div>
-          <div style="font-size:12px;color:#64748B;line-height:1.5;margin-top:2px">L'environnement actuel a des limites de capacité. En progressif, c'est gérable. En « tout le monde en même temps », il y aura des lenteurs ou des erreurs si la préparation n'est pas faite.</div>
-        </div>
+    <div style="display:flex;gap:12px;align-items:flex-start;margin-bottom:12px">
+      <div style="width:30px;height:30px;border-radius:8px;background:#FEF3C7;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:15px">⚡</div>
+      <div>
+        <div style="font-size:12px;font-weight:700;color:#334155">${peSpan('av_d_limites_t','Limites de capacité')}</div>
+        <div style="font-size:12px;color:#64748B;line-height:1.5;margin-top:2px">${peSpan('av_d_limites','L\'environnement actuel supporte un nombre limité d\'utilisateurs simultanés. En progressif c\'est gérable. Si tout le monde se connecte en même temps sans préparation, il y aura des lenteurs ou des plantages.')}</div>
       </div>
+    </div>
 
-      <div style="display:flex;gap:12px;align-items:flex-start">
-        <div style="width:32px;height:32px;border-radius:8px;background:#FEF3C7;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:16px">🐛</div>
-        <div>
-          <div style="font-size:12px;font-weight:700;color:#334155">Bugs possibles le jour J</div>
-          <div style="font-size:12px;color:#64748B;line-height:1.5;margin-top:2px">C'est un outil en phase pilote. Des lenteurs ou erreurs ponctuelles sont possibles si beaucoup d'utilisateurs se connectent en même temps. Ce n'est pas un produit fini.</div>
-        </div>
+    <div style="display:flex;gap:12px;align-items:flex-start;margin-bottom:12px">
+      <div style="width:30px;height:30px;border-radius:8px;background:#FEF3C7;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:15px">🐛</div>
+      <div>
+        <div style="font-size:12px;font-weight:700;color:#334155">${peSpan('av_d_bugs_t','Incidents possibles le jour J')}</div>
+        <div style="font-size:12px;color:#64748B;line-height:1.5;margin-top:2px">${peSpan('av_d_bugs','C\'est un outil en phase pilote, pas un produit fini. Des lenteurs ou erreurs sont possibles lors d\'une utilisation intensive. C\'est normal pour cette phase.')}</div>
       </div>
+    </div>
 
-      <div style="display:flex;gap:12px;align-items:flex-start">
-        <div style="width:32px;height:32px;border-radius:8px;background:#FEF3C7;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:16px">📢</div>
-        <div>
-          <div style="font-size:12px;font-weight:700;color:#334155">IT à débloquer</div>
-          <div style="font-size:12px;color:#64748B;line-height:1.5;margin-top:2px">Pour aller au-delà du pilote (domaine officiel, authentification, montée en charge illimitée), <strong>il faut un appui IT</strong>. 3 demandes ont été faites sans retour. C'est un sujet à escalader côté direction.</div>
-        </div>
+    <div style="display:flex;gap:12px;align-items:flex-start">
+      <div style="width:30px;height:30px;border-radius:8px;background:#FEF3C7;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:15px">📢</div>
+      <div>
+        <div style="font-size:12px;font-weight:700;color:#334155">${peSpan('av_d_it_t','L\'IT doit être débloqué')}</div>
+        <div style="font-size:12px;color:#64748B;line-height:1.5;margin-top:2px">${peSpan('av_d_it','Pour passer du pilote à un vrai déploiement (domaine officiel, authentification, montée en charge), il faut l\'IT. 3 demandes sans retour. C\'est un sujet à porter côté direction.')}</div>
       </div>
-
     </div>
   </div>`;
 
-  /* --- Résumé décision --- */
+  /* --- Résumé --- */
   h += `<div style="background:#051E50;color:#fff;border-radius:12px;padding:20px;text-align:center">
-    <div style="font-size:13px;opacity:.7;margin-bottom:6px">En résumé</div>
-    <div style="font-size:14px;font-weight:700;line-height:1.6">
-      Si on se lance, j'ai un programme prêt.<br>
-      J'ai besoin du budget, du temps, et d'attentes réalistes sur les limites.<br>
-      Le reste — l'IT — ce n'est pas dans mon périmètre.
+    <div style="font-size:14px;font-weight:700;line-height:1.7">
+      ${peSpan('av_resume','Le programme est prêt. J\'ai besoin du budget, du temps, et d\'attentes réalistes. Le sujet IT n\'est pas dans mon périmètre.','color:#fff')}
     </div>
   </div>`;
 
