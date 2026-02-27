@@ -1534,50 +1534,30 @@ function renderPitchCouts() {
   const oaiRem = C.openaiCredits.loaded - C.openaiCredits.consumed;
   const oaiPct = Math.round(C.openaiCredits.consumed / C.openaiCredits.loaded * 1000) / 10;
 
-  const OPTS = [
-    { id:'A', titre:'On attend l\'IT', color:'#64748B', bg:'#F8FAFC', border:'#CBD5E1',
-      openai_setup:'0€', vercel_surcout:'0€', ia_mois:'0€', total_pilote:'0€',
-      detail:'Aucun coût additionnel. Le projet est en pause.' },
-    { id:'B', titre:'Progressif (5→10→15→25)', color:'#166534', bg:'#F0FDF4', border:'#22C55E',
-      openai_setup:'~46€', vercel_surcout:'~13€ (temporaire)', ia_mois:'~3€', total_pilote:'~65€',
-      detail:'<strong>Crédits IA :</strong> 46€ prépayés (durée ~2 ans au rythme pilote).<br><strong>Surcoût Vercel :</strong> chaque amélioration déclenche une reconstruction. Pendant la phase de préparation (~1 mois), les builds augmentent → surcoût ~13€. <strong>Ce surcoût disparaît après stabilisation.</strong><br><strong>Consommation IA :</strong> ~0,06€/pitch, soit ~3€/mois pour 5-25 utilisateurs actifs.' },
-    { id:'C', titre:'Tous en live (25+)', color:'#991B1B', bg:'#FEF2F2', border:'#EF4444',
-      openai_setup:'~55€', vercel_surcout:'~15€', ia_mois:'~5€', total_pilote:'~85€',
-      detail:'<strong>Crédits IA :</strong> 46€ + provision ~10€ pour les sessions jour J (25+ pitchs en quelques heures).<br><strong>Surcoût Vercel :</strong> ~13€ de builds (préparation) + pic de consommation serveur les jours de formation (25+ utilisateurs simultanés).<br><strong>Consommation IA :</strong> ~5€/mois si tout le monde utilise régulièrement.' },
-    { id:'D', titre:'Hybride', color:'#92400E', bg:'#FFFBEB', border:'#F59E0B',
-      openai_setup:'~55€', vercel_surcout:'~15€', ia_mois:'~3€', total_pilote:'~80€',
-      detail:'<strong>Crédits IA :</strong> identique à C (même risque le jour J).<br><strong>Surcoût Vercel :</strong> identique à C pendant la préparation. Après : retour au niveau de B (5-10 utilisateurs actifs seulement).<br><strong>Consommation IA :</strong> après le jour J, seuls 5-10 utilisateurs restent → ~3€/mois.' },
-  ];
-
-  let h = `<div style="font-size:18px;font-weight:800;color:#051E50;margin-bottom:6px">${peSpan('c_titre','Coûts additionnels par option')}</div>`;
+  let h = `<div style="font-size:18px;font-weight:800;color:#051E50;margin-bottom:6px">${peSpan('c_titre','Coûts additionnels')}</div>`;
   h += `<div style="font-size:13px;color:#64748B;margin-bottom:18px">Hors abonnement Vercel Pro (20€/mois) déjà en place pour toutes les applications.</div>`;
 
-  for (const o of OPTS) {
-    h += `<div style="background:${o.bg};border:2px solid ${o.border};border-radius:12px;padding:20px;margin-bottom:16px">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px">
-        <div style="display:flex;align-items:center;gap:10px">
-          <span style="font-size:15px;font-weight:800;color:${o.color};background:#fff;border:2px solid ${o.border};border-radius:50%;width:32px;height:32px;display:flex;align-items:center;justify-content:center">${o.id}</span>
-          <span style="font-size:16px;font-weight:800;color:${o.color}">${peSpan('c_'+o.id+'_titre', o.titre)}</span>
-        </div>
-        <div style="background:${o.color};color:#fff;padding:6px 14px;border-radius:20px;font-size:14px;font-weight:800">Coût total : ${peSpan('c_'+o.id+'_total_pilote', o.total_pilote)}</div>
+  h += `<div style="background:#F0FDF4;border:2px solid #22C55E;border-radius:12px;padding:20px;margin-bottom:16px">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px">
+      <span style="font-size:16px;font-weight:800;color:#166534">${peSpan('c_sol_titre','Déploiement 75 commerciaux')}</span>
+      <div style="background:#166534;color:#fff;padding:6px 14px;border-radius:20px;font-size:14px;font-weight:800">Coût total : ${peSpan('c_sol_total','~85€ sur 6 semaines')}</div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:14px">
+      <div style="background:#fff;border-radius:8px;padding:12px;text-align:center">
+        <div style="font-size:11px;color:#64748B;margin-bottom:4px">Crédits IA (set-up)</div>
+        <div style="font-size:16px;font-weight:800;color:#166534">${peSpan('c_sol_openai','~55€')}</div>
       </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:14px">
-        <div style="background:#fff;border-radius:8px;padding:12px;text-align:center">
-          <div style="font-size:11px;color:#64748B;margin-bottom:4px">Crédits IA (set-up)</div>
-          <div style="font-size:16px;font-weight:800;color:${o.color}">${peSpan('c_'+o.id+'_openai', o.openai_setup)}</div>
-        </div>
-        <div style="background:#fff;border-radius:8px;padding:12px;text-align:center">
-          <div style="font-size:11px;color:#64748B;margin-bottom:4px">Surcoût Vercel</div>
-          <div style="font-size:14px;font-weight:800;color:#334155">${peSpan('c_'+o.id+'_vercel', o.vercel_surcout)}</div>
-        </div>
-        <div style="background:#fff;border-radius:8px;padding:12px;text-align:center">
-          <div style="font-size:11px;color:#64748B;margin-bottom:4px">Consommation IA / mois</div>
-          <div style="font-size:14px;font-weight:800;color:#334155">${peSpan('c_'+o.id+'_ia_mois', o.ia_mois)}</div>
-        </div>
+      <div style="background:#fff;border-radius:8px;padding:12px;text-align:center">
+        <div style="font-size:11px;color:#64748B;margin-bottom:4px">Surcoût Vercel</div>
+        <div style="font-size:14px;font-weight:800;color:#334155">${peSpan('c_sol_vercel','~15€')}</div>
       </div>
-      <div style="font-size:13px;color:#334155;line-height:1.7">${peSpan('c_'+o.id+'_detail', o.detail)}</div>
-    </div>`;
-  }
+      <div style="background:#fff;border-radius:8px;padding:12px;text-align:center">
+        <div style="font-size:11px;color:#64748B;margin-bottom:4px">Consommation IA / mois</div>
+        <div style="font-size:14px;font-weight:800;color:#334155">${peSpan('c_sol_ia_mois','~5€')}</div>
+      </div>
+    </div>
+    <div style="font-size:13px;color:#334155;line-height:1.7">${peSpan('c_sol_detail','<strong>Crédits IA :</strong> 46€ + provision ~10€ pour les sessions (25+ pitchs en quelques heures).<br><strong>Surcoût Vercel :</strong> ~13€ de builds (préparation) + pic de consommation serveur les jours de formation.<br><strong>Consommation IA :</strong> ~5€/mois si tout le monde utilise régulièrement.')}</div>
+  </div>`;
 
   html('pitch-couts-widget', h);
 }
@@ -1648,59 +1628,28 @@ function renderPitchPilote() {
   </div>`;
   h += `<p style="font-size:14px;color:#334155;margin:0 0 18px;line-height:1.7">${peSpan('pil_objectif','L\'objectif du pilote est de prouver que l\'application fonctionne en conditions réelles, que les commerciaux l\'adoptent, et que les coûts sont maîtrisés.')}</p>`;
 
-  /* --- Set-up par option --- */
-  h += `<div style="font-size:16px;font-weight:800;color:#051E50;margin-bottom:14px">${peSpan('pil_titre','Set-up par option')}</div>`;
+  /* --- Set-up solution retenue --- */
+  h += `<div style="font-size:16px;font-weight:800;color:#051E50;margin-bottom:14px">${peSpan('pil_titre','Set-up')}</div>`;
 
-  const SETUPS = [
-    { id:'A', titre:'On attend l\'IT', color:'#64748B', bg:'#F8FAFC', border:'#CBD5E1', items:[
-      { label:'Préparation', val:'Aucune' },
-      { label:'Compte IA', val:'Pas de changement' },
-      { label:'Formations', val:'Reportées' },
-      { label:'Infrastructure', val:'En attente IT' },
-      { label:'Support', val:'Aucun' },
-    ]},
-    { id:'B', titre:'Progressif (5→10→15→25)', color:'#166534', bg:'#F0FDF4', border:'#22C55E', items:[
-      { label:'Préparation', val:'Créer un compte IA dédié (7 jours) + tester la génération avec 5 users' },
-      { label:'Compte IA', val:'Compte OpenAI dédié Rubix Pitch, carte bancaire + 46€ crédits' },
-      { label:'Formations', val:'Vague 1 : 5 users → Vague 2 : 10 users → Vague 3 : 15 users → Vague 4 : 25 users' },
-      { label:'Gestion d\'erreurs', val:'Messages clairs + relance automatique (à déployer avant vague 2)' },
-      { label:'Monitoring', val:'Surveillance manuelle entre chaque vague, ajustements au fil de l\'eau' },
-      { label:'Support', val:'Claire seule, charge estimée : 2-3h/semaine' },
-    ]},
-    { id:'C', titre:'Tous en live (25+)', color:'#991B1B', bg:'#FEF2F2', border:'#EF4444', items:[
-      { label:'Préparation', val:'Compte IA dédié + gestion d\'erreurs + relance automatique + test de charge. 2 à 3 semaines minimum' },
-      { label:'Compte IA', val:'Compte OpenAI dédié, quota augmenté pour 25+ users simultanés (7 jours d\'activation)' },
-      { label:'Formations', val:'3 sessions de formation (25 pers. chacune). Tous les commerciaux repartent avec l\'app' },
-      { label:'Gestion d\'erreurs', val:'Indispensable, sinon l\'app plante devant 25 personnes' },
-      { label:'Crédits IA', val:'Provisionner 5-15€ de crédits pour la session' },
-      { label:'Support', val:'Claire temps plein pendant la préparation + jour J' },
-    ]},
-    { id:'D', titre:'Hybride (test live → accès restreint)', color:'#92400E', bg:'#FFFBEB', border:'#F59E0B', items:[
-      { label:'Préparation', val:'Identique à l\'option C, 2 à 3 semaines' },
-      { label:'Compte IA', val:'Identique à l\'option C' },
-      { label:'Formations', val:'Tout le monde teste le jour J, mais seuls 5-10 commerciaux gardent l\'accès ensuite' },
-      { label:'Gestion des accès', val:'Retirer l\'accès à une partie des commerciaux après la session. Communication à prévoir' },
-      { label:'Risque humain', val:'Frustration des commerciaux qui perdent l\'accès après avoir testé' },
-      { label:'Support', val:'Claire temps plein + gestion post-formation' },
-    ]},
+  const SETUP_ITEMS = [
+    { label:'Préparation', val:'Compte IA dédié + gestion d\'erreurs + relance automatique + test de charge. 2 à 3 semaines minimum' },
+    { label:'Compte IA', val:'Compte OpenAI dédié, quota augmenté pour 25+ users simultanés (7 jours d\'activation)' },
+    { label:'Formations', val:'3 sessions de 25 personnes (17/03, 25/03, 08/04). 75 commerciaux formés, tous repartent avec l\'app' },
+    { label:'Gestion d\'erreurs', val:'Indispensable, sinon l\'app plante devant 25 personnes' },
+    { label:'Crédits IA', val:'Provisionner 5-15€ de crédits pour les sessions' },
+    { label:'Support', val:'Claire temps plein pendant la préparation + jours de formation' },
   ];
 
-  for (const s of SETUPS) {
-    h += `<div style="background:${s.bg};border:2px solid ${s.border};border-radius:12px;padding:18px;margin-bottom:12px">
-      <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
-        <span style="font-size:13px;font-weight:800;color:${s.color};background:#fff;border:2px solid ${s.border};border-radius:50%;width:26px;height:26px;display:flex;align-items:center;justify-content:center">${s.id}</span>
-        <span style="font-size:14px;font-weight:800;color:${s.color}">${peSpan('pil_'+s.id+'_titre', s.titre)}</span>
-      </div>
-      <div style="display:flex;flex-direction:column;gap:8px">`;
-    for (let i = 0; i < s.items.length; i++) {
-      const it = s.items[i];
-      h += `<div style="display:flex;gap:10px;font-size:14px;line-height:1.6">
-        <div style="font-weight:700;color:#334155;min-width:130px;flex-shrink:0">${peSpan('pil_'+s.id+'_l'+i, it.label)}</div>
-        <div style="color:#64748B">${peSpan('pil_'+s.id+'_v'+i, it.val)}</div>
-      </div>`;
-    }
-    h += `</div></div>`;
+  h += `<div style="background:#F0FDF4;border:2px solid #22C55E;border-radius:12px;padding:18px;margin-bottom:12px">
+    <div style="display:flex;flex-direction:column;gap:8px">`;
+  for (let i = 0; i < SETUP_ITEMS.length; i++) {
+    const it = SETUP_ITEMS[i];
+    h += `<div style="display:flex;gap:10px;font-size:14px;line-height:1.6">
+      <div style="font-weight:700;color:#334155;min-width:130px;flex-shrink:0">${peSpan('pil_setup_l'+i, it.label)}</div>
+      <div style="color:#64748B">${peSpan('pil_setup_v'+i, it.val)}</div>
+    </div>`;
   }
+  h += `</div></div>`;
 
   // ── Critères de succès (pour le suivi après) ──
   h += `<details open style="margin-top:20px"><summary style="font-size:16px;font-weight:800;color:#051E50;cursor:pointer">Critères de succès du pilote</summary><div style="margin-top:14px">`;
@@ -2576,44 +2525,20 @@ function renderProgrammeSynth() {
   ];
 
   const options = [
-    { id:'A', titre:'Attendre l\'IT', color:'#64748B', bg:'#F8FAFC', border:'#CBD5E1',
-      steps:[
-        { date:'25/02 → 14/03', label:'Préparation', desc:'Prête mais en attente' },
-        { date:'Indéterminé', label:'Attente IT', desc:'Projet en pause, aucun déploiement ni formation', accent:true },
-      ]
-    },
-    { id:'B', titre:'Progressif (5→10→15→25)', color:'#166534', bg:'#F0FDF4', border:'#86EFAC',
-      steps:[
-        { date:'25/02 → 14/03', label:'Préparation', desc:'Compte IA, matrice, corrections, tests' },
-        { date:'17/03', label:'Session 1', desc:'Formation 25 pers., 5 activés', accent:true },
-        { date:'18/03 → 24/03', label:'Suivi', desc:'Retours + corrections' },
-        { date:'25/03', label:'Session 2', desc:'Formation 25 pers., 10 actifs', accent:true },
-        { date:'08/04', label:'Session 3', desc:'Formation 25 pers., 15 actifs', accent:true },
-        { date:'Mi-avril', label:'Ouverture', desc:'Montée graduelle → 25+ actifs' },
-        { date:'30/04', label:'Bilan pilote', desc:'Résultats + décision suite', accent:true },
-      ]
-    },
-    { id:'C', titre:'Tous en live (25+)', color:'#DC2626', bg:'#FEF2F2', border:'#FECACA',
+    { id:'', titre:'Déploiement 75 commerciaux', color:'#166534', bg:'#F0FDF4', border:'#86EFAC',
       steps:[
         { date:'25/02 → 14/03', label:'Préparation', desc:'Compte IA, matrice, corrections, tests de charge' },
-        { date:'17/03', label:'Session 1', desc:'25 pers., tous actifs immédiatement', accent:true },
-        { date:'25/03', label:'Session 2', desc:'25 pers., charge cumulée', accent:true },
-        { date:'08/04', label:'Session 3', desc:'25 pers., corrections urgentes entre sessions', accent:true },
-        { date:'30/04', label:'Bilan pilote', desc:'Résultats + décision suite', accent:true },
-      ]
-    },
-    { id:'D', titre:'Hybride : test live + accès limité', color:'#92400E', bg:'#FFFBEB', border:'#FDE68A',
-      steps:[
-        { date:'25/02 → 14/03', label:'Préparation', desc:'Identique à C' },
-        { date:'17/03', label:'Session 1', desc:'Tous testent, seuls 5 gardent l\'accès', accent:true },
-        { date:'25/03', label:'Session 2', desc:'Idem, 10 actifs total', accent:true },
-        { date:'08/04', label:'Session 3', desc:'Idem, 15 actifs + communication accès', accent:true },
+        { date:'17/03', label:'Session 1', desc:'25 pers., tous actifs', accent:true },
+        { date:'18/03 → 24/03', label:'Suivi', desc:'Retours + corrections' },
+        { date:'25/03', label:'Session 2', desc:'25 pers., 50 actifs cumulés', accent:true },
+        { date:'26/03 → 07/04', label:'Suivi', desc:'Retours + corrections' },
+        { date:'08/04', label:'Session 3', desc:'25 pers., 75 actifs', accent:true },
         { date:'30/04', label:'Bilan pilote', desc:'Résultats + décision suite', accent:true },
       ]
     },
   ];
 
-  let h = '<div style="font-size:18px;font-weight:800;color:#051E50;margin-bottom:20px">Programme par option de déploiement</div>';
+  let h = '<div style="font-size:18px;font-weight:800;color:#051E50;margin-bottom:20px">Programme</div>';
 
   // Prerequisite block
   h += `<div style="background:#EFF6FF;border:1px solid #BFDBFE;border-radius:10px;padding:20px;margin-bottom:24px">
@@ -2628,7 +2553,7 @@ function renderProgrammeSynth() {
   for (const opt of options) {
     h += `<div style="background:${opt.bg};border:1px solid ${opt.border};border-radius:10px;margin-bottom:16px;overflow:hidden">`;
     h += `<div style="padding:14px 20px;border-bottom:1px solid ${opt.border};display:flex;align-items:center;gap:12px">
-      <span style="background:${opt.color};color:#fff;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:15px">${opt.id}</span>
+      ${opt.id ? `<span style="background:${opt.color};color:#fff;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:15px">${opt.id}</span>` : ''}
       <span style="font-size:16px;font-weight:700;color:${opt.color}">${opt.titre}</span>
     </div>`;
 
