@@ -1886,27 +1886,40 @@ function renderPitchDemandes() {
 
 /* ---- Améliorations prévues (ex-Chantiers) ---- */
 const PITCH_AMELIORATIONS = [
-  { id:1, label:'Compte OpenAI : 2 options', detail:'Option A : garder le compte actuel Tier 5 (aucune limite, budget partagé, vérifier le solde avant chaque session). Option B : créer un compte dédié (budget maîtrisé, repart en Tier 1). À décider en S10.', impact:'critique', status:'a_faire', retroIds:['s1-1','s1-2','s1-3','s1-4'] },
-  { id:2, label:'Meilleure expérience en cas de problème', detail:'Messages clairs et bouton réessayer quand le service est lent ou indisponible', impact:'critique', status:'a_faire', retroIds:['s1-10','s1-11'] },
-  { id:3, label:'Relance automatique en cas de surcharge', detail:'3 tentatives max (1s, 3s, 9s) puis arrêt. Pas de boucle infinie, coût maîtrisé.', impact:'critique', status:'fait', retroIds:['s1-12','s1-13','s1-14'] },
-  { id:4, label:'Accélération de la génération', detail:'Temps de génération divisé par 2 grâce à l\'exécution en parallèle', impact:'important', status:'a_faire', retroIds:['s2-9'] },
-  { id:5, label:'Suivi automatique des incidents', detail:'Journalisation automatique pour détecter et corriger les problèmes rapidement', impact:'important', status:'a_faire', retroIds:['s2-11'] },
-  { id:6, label:'Surveillance de la disponibilité', detail:'Alerte automatique par email si le service tombe en panne', impact:'important', status:'a_faire', retroIds:['s2-14'] },
-  { id:7, label:'Mise en cache intelligente', detail:'Réutilisation des analyses précédentes pour le même secteur (économie de coûts)', impact:'optimisation', status:'a_faire', retroIds:['s7-3'] },
-  { id:8, label:'Mode secours', detail:'Si le service IA est indisponible, l\'app propose le dernier pitch généré', impact:'optimisation', status:'a_faire', retroIds:['s10-4'] },
+  { id:1, label:'Compte OpenAI : 2 options', detail:'Option A : garder le compte actuel Tier 5 (aucune limite, budget partagé, vérifier le solde avant chaque session). Option B : créer un compte dédié (budget maîtrisé, repart en Tier 1). À décider en S10.', impact:'critique', status:'a_faire', taskIds:['t10','t11','t12','t13'], semaine:'S10' },
+  { id:2, label:'Meilleure expérience en cas de problème', detail:'Messages clairs et bouton réessayer quand le service est lent ou indisponible', impact:'critique', status:'a_faire', taskIds:['t6','t19'], semaine:'S10' },
+  { id:3, label:'Relance automatique en cas de surcharge', detail:'3 tentatives max (1s, 3s, 9s) puis arrêt. Pas de boucle infinie, coût maîtrisé.', impact:'critique', status:'fait', taskIds:['t2'], semaine:'S9' },
+  { id:4, label:'Accélération de la génération', detail:'Temps de génération divisé par 2 grâce à l\'exécution en parallèle', impact:'important', status:'a_faire', taskIds:['t7'], semaine:'S10' },
+  { id:5, label:'Fiabilisation réseau et proxy', detail:'CORS ouvert, cache matrice 24h, headers anti-proxy, bannière offline', impact:'critique', status:'fait', taskIds:['t1','t3','t4','t5'], semaine:'S9' },
+  { id:6, label:'Suivi automatique des incidents', detail:'Journalisation automatique pour détecter et corriger les problèmes rapidement', impact:'important', status:'a_faire', taskIds:[], semaine:'Post-pilote' },
+  { id:7, label:'Mise en cache intelligente', detail:'Réutilisation des analyses précédentes pour le même secteur (économie de coûts)', impact:'optimisation', status:'a_faire', taskIds:[], semaine:'Post-pilote' },
+  { id:8, label:'Mode secours', detail:'Si le service IA est indisponible, l\'app propose le dernier pitch généré', impact:'optimisation', status:'a_faire', taskIds:[], semaine:'Post-pilote' },
 ];
 
-// Compute amélioration status from linked retro actions
-function getAmelRetroStatus(amelId) {
+// Compute amélioration status from linked planning tasks
+function getAmelAutoStatus(amelId) {
   const amel = PITCH_AMELIORATIONS.find(a => a.id === amelId);
-  if (!amel || !amel.retroIds || !amel.retroIds.length) return null;
-  const statuses = amel.retroIds.map(id => getRS(id));
-  const allDone = statuses.every(s => s === 'done');
-  const anyStarted = statuses.some(s => s === 'done' || s === 'inprogress');
+  if (!amel || !amel.taskIds || !amel.taskIds.length) return null;
+  const statuses = amel.taskIds.map(id => localStorage.getItem('plan_' + id) === 'done');
+  const allDone = statuses.every(s => s);
+  const anyDone = statuses.some(s => s);
   if (allDone) return 'fait';
-  if (anyStarted) return 'en_cours';
-  return 'a_faire';
+  if (anyDone) return 'en_cours';
+  return null;
 }
+
+// Toggle amélioration status manually
+function getAmelStatus(id) { return localStorage.getItem('av_check_amel_' + id) || ''; }
+const AMEL_CYCLE = ['a_faire','en_cours','fait'];
+window.toggleAmel = function(id) {
+  const manual = getAmelStatus(id);
+  const auto = getAmelAutoStatus(id);
+  const current = manual || auto || PITCH_AMELIORATIONS.find(a => a.id === id)?.status || 'a_faire';
+  const idx = AMEL_CYCLE.indexOf(current);
+  const next = AMEL_CYCLE[(idx + 1) % AMEL_CYCLE.length];
+  localStorage.setItem('av_check_amel_' + id, next);
+  renderPitchAmeliorations();
+};
 
 // ====================== TESTS ======================
 
@@ -1982,47 +1995,58 @@ function renderPitchTests() {
 function renderPitchAmeliorations() {
   const el = $('pitch-ameliorations-widget'); if (!el) return;
   const impactLabel = { critique:'Critique', important:'Important', optimisation:'Optimisation' };
-  const statusCycle = ['a_faire','en_cours','fait'];
   const statusIcons = { a_faire:'⬜', en_cours:'🔄', fait:'✅' };
   const statusLabels = { a_faire:'À faire', en_cours:'En cours', fait:'Fait' };
+  const statusColors = { a_faire:{ border:'#E2E8F0', badge:'#94A3B8' }, en_cours:{ border:'#FDE68A', badge:'#D97706' }, fait:{ border:'#BBF7D0', badge:'#059669' } };
+
+  // Count statuses
+  const statuses = PITCH_AMELIORATIONS.map(a => getAmelStatus(a.id) || getAmelAutoStatus(a.id) || a.status);
+  const doneCount = statuses.filter(s => s === 'fait').length;
+  const totalCount = PITCH_AMELIORATIONS.length;
 
   let h = `<div style="font-size:18px;font-weight:800;color:#051E50;margin-bottom:6px">Améliorations prévues</div>`;
-  h += `<div style="font-size:13px;color:#64748B;margin-bottom:14px">8 améliorations techniques planifiées pour renforcer la fiabilité et les performances.</div>`;
+  h += `<div style="font-size:13px;color:#64748B;margin-bottom:14px">${doneCount}/${totalCount} terminées. Cliquez pour changer le statut.</div>`;
 
   h += `<div style="display:flex;flex-direction:column;gap:6px">`;
   for (const a of PITCH_AMELIORATIONS) {
-    // Status from retro actions (auto) or manual override
-    const retroSt = getAmelRetroStatus(a.id);
-    const st = retroSt || pe('amel_status_'+a.id, a.status);
-    // Retro progress
-    const retroDone = a.retroIds ? a.retroIds.filter(id => getRS(id) === 'done').length : 0;
-    const retroTotal = a.retroIds ? a.retroIds.length : 0;
-    const retroPct = retroTotal > 0 ? Math.round(retroDone / retroTotal * 100) : 0;
+    const st = getAmelStatus(a.id) || getAmelAutoStatus(a.id) || a.status;
+    const sc = statusColors[st];
+    const hasTasks = a.taskIds && a.taskIds.length > 0;
+    const tasksDone = hasTasks ? a.taskIds.filter(id => localStorage.getItem('plan_' + id) === 'done').length : 0;
+    const tasksTotal = hasTasks ? a.taskIds.length : 0;
+    const tasksPct = tasksTotal > 0 ? Math.round(tasksDone / tasksTotal * 100) : 0;
 
-    h += `<div style="background:#fff;border:1px solid ${st==='fait'?'#BBF7D0':st==='en_cours'?'#FDE68A':'#E2E8F0'};border-radius:8px;padding:12px 16px${st==='fait'?';opacity:.7':''}">
+    h += `<div onclick="toggleAmel(${a.id})" style="background:#fff;border:1px solid ${sc.border};border-radius:8px;padding:12px 16px;cursor:pointer;transition:all .15s${st==='fait'?';opacity:.7':''}">
       <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
         <span style="font-size:16px">${statusIcons[st]}</span>
         <span style="font-size:14px;font-weight:700;color:#051E50;flex:1">${a.id}. ${a.label}</span>
+        <span style="font-size:11px;font-weight:600;color:${sc.badge};background:${sc.border};padding:2px 10px;border-radius:12px">${statusLabels[st]}</span>
         <span class="badge ${a.impact === 'critique' ? 'bd-crit' : ''}" style="font-size:11px">${impactLabel[a.impact]}</span>
       </div>
       <div style="font-size:13px;color:#64748B;padding-left:30px">${a.detail}</div>`;
-    // Retro progress bar
-    if (retroTotal > 0) {
-      h += `<div style="padding-left:28px;margin-top:6px;display:flex;align-items:center;gap:8px">
-        <div style="flex:1;height:4px;background:#E5E7EB;border-radius:2px;overflow:hidden;max-width:120px"><div style="width:${retroPct}%;height:100%;background:${retroPct===100?'#22C55E':'#3B82F6'};border-radius:2px"></div></div>
-        <span style="font-size:10px;color:${retroPct===100?'#059669':'#64748B'};font-weight:600">${retroDone}/${retroTotal} actions</span>
+    // Linked tasks info
+    if (hasTasks) {
+      h += `<div style="padding-left:28px;margin-top:6px;display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+        <div style="flex-shrink:0;width:80px;height:4px;background:#E5E7EB;border-radius:2px;overflow:hidden"><div style="width:${tasksPct}%;height:100%;background:${tasksPct===100?'#22C55E':'#3B82F6'};border-radius:2px"></div></div>
+        <span style="font-size:11px;color:${tasksPct===100?'#059669':'#64748B'};font-weight:600">${tasksDone}/${tasksTotal} tâches (${a.semaine})</span>
       </div>`;
+    } else {
+      h += `<div style="padding-left:28px;margin-top:6px"><span style="font-size:11px;color:#94A3B8">${a.semaine}</span></div>`;
     }
     h += `</div>`;
   }
   h += `</div>`;
 
   h += `<div style="margin-top:18px;padding:16px;background:#EFF6FF;border-radius:10px;border:1px solid #BFDBFE">
-    <div style="font-size:14px;font-weight:700;color:#051E50;margin-bottom:6px">Action en cours : création d'un compte IA dédié</div>
-    <div style="font-size:13px;color:#334155;line-height:1.6">Actuellement Rubix Pitch partage son compte IA avec Smart Spec. Un compte séparé est en cours de création pour éviter tout risque de coupure.</div>
+    <div style="font-size:14px;font-weight:700;color:#051E50;margin-bottom:6px">Compte IA : 2 options possibles</div>
+    <div style="font-size:13px;color:#334155;line-height:1.8">
+      <strong>Option A</strong> : garder le compte actuel Tier 5 (aucune limite de débit, budget partagé avec Smart Spec, vérifier le solde avant chaque session).<br>
+      <strong>Option B</strong> : créer un compte dédié (budget maîtrisé, mais repart en Tier 1, limites plus basses pour 25 users simultanés).
+    </div>
     <details style="margin-top:10px"><summary style="font-size:12px;color:#64748B;cursor:pointer">Détail technique</summary>
       <div style="font-size:13px;color:#334155;margin-top:8px;line-height:1.8">
-        <strong>Capacité actuelle :</strong> ~40 utilisateurs simultanés.<br><strong>Objectif :</strong> ~800 utilisateurs (montée automatique après 46€ + 7 jours).<br><strong>Procédure :</strong> Créer un compte dédié → Carte bancaire → 46€ crédits → Clé API → Mise à jour serveur.
+        <strong>Tier 5 (actuel) :</strong> aucune limite de requêtes par minute. Budget partagé, à surveiller.<br>
+        <strong>Tier 1 (nouveau compte) :</strong> 500 req/min max, suffisant pour 25 users si les appels sont parallélisés. Budget 50$ pour démarrer, montée en Tier 2 après 7 jours + 100$ dépensés.
       </div>
     </details>
   </div>`;
