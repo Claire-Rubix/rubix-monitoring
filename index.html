@@ -1897,7 +1897,7 @@ const PITCH_AMELIORATIONS = [
   { id:6, label:'Suivi automatique des incidents', detail:'Journalisation automatique pour détecter et corriger les problèmes rapidement', impact:'important', status:'a_faire', taskIds:[], semaine:'Post-pilote' },
   { id:7, label:'Mise en cache intelligente', detail:'Réutilisation des analyses précédentes pour le même secteur (économie de coûts)', impact:'optimisation', status:'a_faire', taskIds:[], semaine:'Post-pilote' },
   { id:8, label:'Mode secours', detail:'Si le service IA est indisponible, l\'app propose le dernier pitch généré', impact:'optimisation', status:'a_faire', taskIds:[], semaine:'Post-pilote' },
-  { id:9, label:'Limites d\'utilisation et protection budget', detail:'Chaque utilisateur est limité à 20 générations par jour et 3 par minute. Suffisant pour 3 à 5 rendez-vous + retries. Empêche le spam et protège le budget. Si la limite est atteinte, l\'app affiche un message clair ("Limite atteinte, réessayez dans quelques minutes").', impact:'important', status:'a_faire', taskIds:['t44'], semaine:'S10' },
+  { id:9, label:'Limites d\'utilisation et protection budget', detail:'Chaque utilisateur est limité à 20 générations par jour et 3 par minute. Stocké dans Vercel KV (base de données persistante) pour que les limites tiennent même si le serveur redémarre. Suffisant pour 3 à 5 rendez-vous + retries. Si la limite est atteinte, l\'app affiche "Limite atteinte, réessayez dans quelques minutes".', impact:'important', status:'a_faire', taskIds:['t44','t46'], semaine:'S10' },
 ];
 
 // Compute amélioration status from linked planning tasks
@@ -2758,6 +2758,7 @@ function renderCleanPlanning() {
         { id:'t18', text:'Sauvegarde multi-appareil' },
         { id:'t19', text:'Messages d\'attente UX pendant la génération ("En cours...", "Serveur occupé, nouvelle tentative...")' },
         { id:'t44', text:'Limites d\'utilisation : 20 générations/jour et 3/minute par utilisateur + message clair si limite atteinte' },
+        { id:'t46', text:'Activer Vercel KV sur le dashboard (nécessaire pour que les limites tiennent entre les redémarrages serveur)' },
         { id:'t45', text:'Supprimer le stockage Blob Vercel une fois la branche passée en main' },
       ]},
     { id:'w3', label:'S11', title:'10/03 → 14/03', subtitle:'Tests + validation', color:'#1D4ED8', bg:'#EFF6FF', border:'#BFDBFE',
