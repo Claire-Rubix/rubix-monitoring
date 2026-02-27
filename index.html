@@ -1802,7 +1802,6 @@ function renderPitchAValider() {
     { id:'av3', label:'Exclusivité projet', desc:'Pas de développement d\'autres applications pendant cette période. Le temps est dédié à la fiabilisation et au déploiement de Rubix Pitch.' },
     { id:'av4', label:'Télétravail nécessaire', desc:'Le réseau Rubix bloque l\'accès aux outils de développement et d\'hébergement (Vercel, GitHub, API OpenAI). Le travail technique ne peut se faire qu\'en télétravail.' },
     { id:'av5', label:'Limites de capacité acceptées', desc:'L\'environnement actuel supporte un nombre limité d\'utilisateurs simultanés. Avec 25 personnes par session, des lenteurs sont possibles. Tests de charge prévus en amont.' },
-    { id:'av6', label:'Pas de sauvegarde multi-appareil', desc:'L\'historique des pitchs générés est stocké dans le navigateur. Si un commercial change de poste, il perd son historique. Amélioration prévue mais pas disponible au lancement.' },
     { id:'av7', label:'Incidents possibles le jour J', desc:'C\'est un outil en phase pilote, pas un produit fini. Des lenteurs ou erreurs sont possibles lors d\'une utilisation intensive.' },
     { id:'av8', label:'Suivi des bugs par email pendant tout le pilote', desc:'Les remontées d\'incidents se font par email à Claire. Claire assure le suivi et les corrections tout au long des 6 semaines.' },
     { id:'av9', label:'1 personne pour tester l\'app avant les formations', desc:'Quelqu\'un qui parcourt l\'app et remonte les problèmes. Effort : ~1h. Échéance : 10/03.' },
@@ -2520,6 +2519,7 @@ function renderProgrammeSynth() {
     'Configuration des appels IA par lots (batch) pour gérer la charge',
     'Login individuel par utilisateur',
     peSpan('prog_qa','1 personne pour tester l\'app et vérifier les bugs avant les formations'),
+    'Sauvegarde multi-appareil (historique accessible sur tous les postes)',
     'Remontée des bugs par email à Claire',
     'Déploiement obligatoire via Vercel (proxy réseau Rubix bloque les outils de dev)',
   ];
