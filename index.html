@@ -1777,7 +1777,7 @@ function renderPitchSynthese() {
       </div>
     </div>
     <div style="display:flex;flex-direction:column;gap:8px;font-size:14px;color:#334155;line-height:1.6">
-      <div><strong>Charge :</strong> ${peSpan('sol_charge','Temps plein pendant 2-3 semaines de préparation, puis accompagnement formations')}</div>
+      <div><strong>Charge :</strong> ${peSpan('sol_charge','Préparation en amont (2-3 semaines) + présente les jours de formation')}</div>
       <div><strong>Prérequis :</strong> ${peSpan('sol_prereq','Compte IA dédié, tests de charge, fiabilisation, nouvelle matrice encodée')}</div>
       <div><strong>Sessions :</strong> ${peSpan('sol_sessions','17/03 (25 pers.) + 25/03 (25 pers.) + 08/04 (25 pers.)')}</div>
     </div>
@@ -1803,7 +1803,7 @@ function renderPitchAValider() {
 
   const AV_ITEMS = [
     { id:'av1', label:'Budget validé', desc:'~85€ sur 6 semaines. Inclut crédits IA + surcoût Vercel temporaire. Détail dans l\'onglet Coûts.' },
-    { id:'av2', label:'Charge de travail acceptée', desc:'Temps plein pendant 2-3 semaines de préparation + accompagnement formations (3 sessions).' },
+    { id:'av2', label:'Charge de travail acceptée', desc:'Préparation en amont (2-3 semaines) + présente les 3 jours de formation.' },
     { id:'av3', label:'Exclusivité projet', desc:'Pas de développement d\'autres applications pendant cette période. Le temps est dédié à la fiabilisation et au déploiement de Rubix Pitch.' },
     { id:'av4', label:'Télétravail nécessaire', desc:'Le réseau Rubix bloque l\'accès aux outils de développement et d\'hébergement (Vercel, GitHub, API OpenAI). Le travail technique ne peut se faire qu\'en télétravail.' },
     { id:'av5', label:'Limites de capacité acceptées', desc:'L\'environnement actuel supporte un nombre limité d\'utilisateurs simultanés. Avec 25 personnes par session, des lenteurs sont possibles. Tests de charge prévus en amont.' },
