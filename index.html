@@ -2542,10 +2542,10 @@ function renderProgrammeSynth() {
 
   // Prerequisite block
   h += `<div style="background:#EFF6FF;border:1px solid #BFDBFE;border-radius:10px;padding:20px;margin-bottom:24px">
-    <div style="font-size:15px;font-weight:700;color:#1D4ED8;margin-bottom:10px">📋 Prérequis communs : 25/02 → 14/03</div>
-    <div style="display:flex;flex-wrap:wrap;gap:8px">`;
+    <div style="font-size:15px;font-weight:700;color:#1D4ED8;margin-bottom:12px">📋 Prérequis : 25/02 → 14/03</div>
+    <div style="display:flex;flex-direction:column;gap:6px">`;
   for (const item of commonItems) {
-    h += `<div style="background:#fff;border:1px solid #BFDBFE;border-radius:8px;padding:8px 14px;font-size:13px;color:#334155;line-height:1.5">${item}</div>`;
+    h += `<div style="display:flex;align-items:flex-start;gap:10px;font-size:14px;color:#334155;line-height:1.6"><span style="color:#1D4ED8;font-weight:700;flex-shrink:0">•</span><span>${item}</span></div>`;
   }
   h += `</div></div>`;
 
