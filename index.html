@@ -1811,6 +1811,7 @@ function renderPitchAValider() {
     { id:'av8', label:'Suivi des bugs par email pendant tout le pilote', desc:'Les remontées d\'incidents se font par email à Claire. Claire assure le suivi et les corrections tout au long des 6 semaines.' },
     { id:'av9', label:'1 personne pour tester l\'app avant les formations', desc:'Quelqu\'un qui parcourt l\'app et remonte les problèmes. Effort : ~1h. Échéance : 10/03.' },
     { id:'av11', label:'Liste des 75 participants (3 sessions x 25)', desc:'Nom, prénom, profil, session attribuée. À demander aux organisateurs formation. Échéance : 20/03.' },
+    { id:'av12', label:'Plan Vercel Pro (hébergement)', desc:'Le plan gratuit (Hobby) ne supporte que 10 exécutions simultanées. Avec 25 personnes qui cliquent "Générer" en même temps, 15 reçoivent une erreur. Le plan Pro (20$/mois) supporte 1 000 exécutions simultanées, largement suffisant pour 75 utilisateurs. Actuellement sur la carte de Claire en note de frais. À valider pour la durée du pilote (6 semaines, ~120$).' },
   ];
 
   function getAVStatus(id) { return localStorage.getItem('av_check_' + id) || 'pending'; }
@@ -1894,6 +1895,7 @@ const PITCH_AMELIORATIONS = [
   { id:6, label:'Suivi automatique des incidents', detail:'Journalisation automatique pour détecter et corriger les problèmes rapidement', impact:'important', status:'a_faire', taskIds:[], semaine:'Post-pilote' },
   { id:7, label:'Mise en cache intelligente', detail:'Réutilisation des analyses précédentes pour le même secteur (économie de coûts)', impact:'optimisation', status:'a_faire', taskIds:[], semaine:'Post-pilote' },
   { id:8, label:'Mode secours', detail:'Si le service IA est indisponible, l\'app propose le dernier pitch généré', impact:'optimisation', status:'a_faire', taskIds:[], semaine:'Post-pilote' },
+  { id:9, label:'Protection anti-dérapage budget', detail:'Plafond de sécurité : si plus de 50 appels IA échouent en 10 minutes, l\'app bloque automatiquement les nouvelles générations et affiche "Service temporairement indisponible". Empêche une boucle de retries infinie d\'exploser le budget.', impact:'important', status:'a_faire', taskIds:['t44'], semaine:'S10' },
 ];
 
 // Compute amélioration status from linked planning tasks
@@ -1933,6 +1935,8 @@ const TEST_ITEMS = [
   { id:'test7', cat:'Cache', label:'Matrice toujours là après 2h', desc:'Sans recharger la page pendant 2h, les secteurs et fonctions restent affichés (cache 24h).', how:'Pas besoin de tester. Le cache est codé à 24h, c\'est bon.' },
   { id:'test8', cat:'Charge', label:'Simulation 25 pitchs (conditions réelles)', desc:'25 pitchs lancés pour simuler une session de formation.', how:'Simulation virtuelle en S11. Pas encore.' },
   { id:'test9', cat:'Charge', label:'Simulation stress 35 pitchs en rafale', desc:'35 pitchs lancés rapidement pour tester les limites.', how:'Simulation virtuelle en S11. Pas encore.' },
+  { id:'test10', cat:'UX', label:'Bouton "Réessayer" visible après échec', desc:'Quand la génération échoue après 3 tentatives, un bouton "Réessayer" apparaît (pas juste un message d\'erreur).', how:'Simule un échec : coupe le wifi juste après avoir cliqué "Générer". Attends les 3 retries (~15s). Le bouton "Réessayer" doit s\'afficher.' },
+  { id:'test11', cat:'UX', label:'Messages d\'attente clairs pendant la génération', desc:'Pendant la génération : "En cours..." visible. Si retry : "Serveur occupé, nouvelle tentative...". Si échec : message clair sans code technique (pas de 502/504).', how:'Lance un pitch en Slow 4G (F12 → Network). Vérifie les messages affichés à chaque étape.' },
 ];
 
 const TEST_CYCLE = ['todo','ok','ko'];
@@ -2729,6 +2733,7 @@ function renderCleanPlanning() {
         { id:'t17', text:'Encoder la nouvelle matrice + tests' },
         { id:'t18', text:'Sauvegarde multi-appareil' },
         { id:'t19', text:'Messages d\'attente UX pendant la génération ("En cours...", "Serveur occupé, nouvelle tentative...")' },
+        { id:'t44', text:'Protection anti-dérapage : bloquer les appels IA si trop d\'échecs en rafale (plafond de sécurité)' },
       ]},
     { id:'w3', label:'S11', title:'10/03 → 14/03', subtitle:'Tests + validation', color:'#1D4ED8', bg:'#EFF6FF', border:'#BFDBFE',
       tasks:[
