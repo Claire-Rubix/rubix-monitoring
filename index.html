@@ -1794,86 +1794,47 @@ function renderPitchSynthese() {
     <div style="font-size:18px;font-weight:800;color:#051E50;margin-bottom:14px">${peSpan('s_titre','Situation')}</div>
     <div style="display:flex;flex-direction:column;gap:10px;font-size:14px;color:#334155;line-height:1.7">
       <div>${peSpan('s_1','L\'application Rubix Pitch est <strong>développée et fonctionnelle</strong>.')}</div>
+      <div>${peSpan('s_matrice','Nouvelle matrice attendue le <strong>~02/03</strong>. Encodage et tests à prévoir dès réception.')}</div>
       <div>${peSpan('s_3','Les dates de formation sont fixées. Les commerciaux attendent de tester l\'outil.')}</div>
-      <div>${peSpan('s_4','L\'environnement actuel permet de lancer un test, mais il a des <strong>limites de capacité</strong>.')}</div>
+      <div>${peSpan('s_4','L\'environnement actuel permet de lancer le pilote avec des <strong>ajustements techniques</strong> en amont.')}</div>
     </div>
   </div>`;
 
-  /* --- 4 options --- */
-  h += `<div style="font-size:18px;font-weight:800;color:#051E50;margin-bottom:14px">${peSpan('s_opt_titre','4 options possibles')}</div>`;
+  /* --- Solution retenue --- */
+  h += `<div style="font-size:18px;font-weight:800;color:#051E50;margin-bottom:14px">${peSpan('s_opt_titre','Solution retenue')}</div>`;
 
-  const opts = [
-    { id:'A', color:'#64748B', bg:'#F8FAFC', border:'#CBD5E1',
-      titre: 'On attend l\'IT',
-      desc: 'Pas de test tant que l\'IT n\'a pas mis en place l\'infrastructure.',
-      testeurs: '0', delai: 'Indéterminé',
-      cout: '0€', charge: 'Aucune', limites: 'Aucun risque technique',
-      risque: 'Les formations sont repoussées. La crédibilité du projet baisse.',
-      verdict: 'Aucun risque technique, mais le projet est bloqué' },
-    { id:'B', color:'#166534', bg:'#F0FDF4', border:'#22C55E',
-      titre: 'Progressif (5→10→15→25)',
-      desc: 'On ouvre l\'app par vagues : 5, puis 10, puis 15, puis 25 utilisateurs.',
-      testeurs: '5 → 25', delai: 'Dès fin de préparation (~14/03)',
-      cout: '~65€ sur 6 semaines', charge: '2-3 h/semaine pendant 6 semaines',
-      limites: 'Max 5-10 utilisateurs simultanés au départ. Ajustement entre chaque vague.',
-      risque: 'Faible. Les problèmes sont détectés et corrigés entre chaque vague.',
-      verdict: 'Recommandé : risque maîtrisé, résultats rapides',
-      bonus: 'En parallèle, une page de consultation de la matrice (personas, questions découverte, solutions) peut être mise à disposition de tous les commerciaux sans IA, sans coût supplémentaire et sans risque technique. Temps de réalisation estimé : ~0.5 jour.' },
-    { id:'C', color:'#991B1B', bg:'#FEF2F2', border:'#EF4444',
-      titre: 'Tout le monde en live',
-      desc: 'Tous les commerciaux testent l\'app le même jour et repartent avec.',
-      testeurs: '25+', delai: '2-3 semaines de préparation',
-      cout: '~85€ sur 6 semaines',
-      charge: 'Temps plein pendant 2-3 semaines (compte dédié, fiabilisation, tests de charge)',
-      limites: 'Si la préparation n\'est pas terminée : lenteurs, erreurs, app qui plante devant les commerciaux.',
-      risque: 'Élevé sans préparation complète. L\'image du projet est en jeu.',
-      verdict: 'Ambitieux : nécessite que toute la préparation soit terminée à temps' },
-    { id:'D', color:'#92400E', bg:'#FFFBEB', border:'#F59E0B',
-      titre: 'Hybride',
-      desc: 'Tout le monde teste le jour J, mais seul un petit groupe repart avec l\'app.',
-      testeurs: '25+ le jour J → 5-10 ensuite', delai: '2-3 semaines de préparation',
-      cout: '~80€ sur 6 semaines',
-      charge: 'Temps plein 2-3 semaines + gestion accès post-formation',
-      limites: 'Mêmes risques que l\'option C le jour J. Frustration possible des commerciaux qui n\'ont plus accès ensuite.',
-      risque: 'Élevé le jour J + risque d\'incompréhension sur le périmètre.',
-      verdict: 'Risqué : cumule les contraintes de C avec une communication complexe' },
-  ];
-
-  for (const o of opts) {
-    h += `<div style="background:${o.bg};border:2px solid ${o.border};border-radius:12px;padding:20px;margin-bottom:14px">
-      <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px">
-        <span style="font-size:15px;font-weight:800;color:${o.color};background:#fff;border:2px solid ${o.border};border-radius:50%;width:32px;height:32px;display:flex;align-items:center;justify-content:center">${o.id}</span>
-        <span style="font-size:16px;font-weight:800;color:${o.color}">${peSpan('opt_'+o.id+'_titre', o.titre)}</span>
+  h += `<div style="background:#F0FDF4;border:2px solid #22C55E;border-radius:12px;padding:20px;margin-bottom:14px">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px">
+      <span style="font-size:16px;font-weight:800;color:#166534">${peSpan('sol_titre','Déploiement complet : 3 sessions x 25 personnes, 75 commerciaux formés')}</span>
+    </div>
+    <div style="font-size:14px;color:#334155;margin-bottom:14px">${peSpan('sol_desc','Tous les commerciaux testent l\'app en formation et repartent avec. 3 sessions planifiées.')}</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px">
+      <div style="background:#fff;border-radius:8px;padding:12px;text-align:center">
+        <div style="font-size:12px;color:#64748B;margin-bottom:4px">Participants</div>
+        <div style="font-size:16px;font-weight:800;color:#166534">${peSpan('sol_participants','75')}</div>
       </div>
-      <div style="font-size:14px;color:#334155;margin-bottom:14px">${peSpan('opt_'+o.id+'_desc', o.desc)}</div>
-      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px">
-        <div style="background:#fff;border-radius:8px;padding:12px;text-align:center">
-          <div style="font-size:12px;color:#64748B;margin-bottom:4px">Testeurs</div>
-          <div style="font-size:16px;font-weight:800;color:${o.color}">${peSpan('opt_'+o.id+'_testeurs', o.testeurs)}</div>
-        </div>
-        <div style="background:#fff;border-radius:8px;padding:12px;text-align:center">
-          <div style="font-size:12px;color:#64748B;margin-bottom:4px">Délai</div>
-          <div style="font-size:14px;font-weight:700;color:#334155">${peSpan('opt_'+o.id+'_delai', o.delai)}</div>
-        </div>
-        <div style="background:#fff;border-radius:8px;padding:12px;text-align:center">
-          <div style="font-size:12px;color:#64748B;margin-bottom:4px">Coût</div>
-          <div style="font-size:14px;font-weight:700;color:#334155">${peSpan('opt_'+o.id+'_cout', o.cout)}</div>
-        </div>
+      <div style="background:#fff;border-radius:8px;padding:12px;text-align:center">
+        <div style="font-size:12px;color:#64748B;margin-bottom:4px">Préparation</div>
+        <div style="font-size:14px;font-weight:700;color:#334155">${peSpan('sol_delai','2-3 semaines avant la 1re session')}</div>
       </div>
-      <div style="display:flex;flex-direction:column;gap:8px;font-size:14px;color:#334155;line-height:1.6">
-        <div><strong>Charge :</strong> ${peSpan('opt_'+o.id+'_charge', o.charge)}</div>
-        <div><strong>Limites :</strong> ${peSpan('opt_'+o.id+'_limites', o.limites)}</div>
-        <div><strong>Risque :</strong> ${peSpan('opt_'+o.id+'_risque', o.risque)}</div>
+      <div style="background:#fff;border-radius:8px;padding:12px;text-align:center">
+        <div style="font-size:12px;color:#64748B;margin-bottom:4px">Coût total</div>
+        <div style="font-size:14px;font-weight:700;color:#334155">${peSpan('sol_cout','~85€ sur 6 semaines')}</div>
       </div>
-      <div style="margin-top:12px;padding:10px 14px;background:#051E50;border-radius:8px;font-size:14px;font-weight:700;color:#FFD700;text-align:center">
-        ${peSpan('opt_'+o.id+'_verdict', o.verdict)}
-      </div>
-      ${o.bonus ? `<div style="margin-top:10px;padding:12px 16px;background:#FFFBEB;border:1px solid #FDE68A;border-radius:8px;display:flex;gap:10px;align-items:flex-start">
-        <span style="font-size:18px;flex-shrink:0">&#11088;</span>
-        <div style="font-size:13px;color:#92400E;line-height:1.6"><strong>Bonus possible :</strong> ${peSpan('opt_'+o.id+'_bonus', o.bonus)}</div>
-      </div>` : ''}
-    </div>`;
-  }
+    </div>
+    <div style="display:flex;flex-direction:column;gap:8px;font-size:14px;color:#334155;line-height:1.6">
+      <div><strong>Charge :</strong> ${peSpan('sol_charge','Temps plein pendant 2-3 semaines de préparation, puis accompagnement formations')}</div>
+      <div><strong>Prérequis :</strong> ${peSpan('sol_prereq','Compte IA dédié, tests de charge, fiabilisation, nouvelle matrice encodée')}</div>
+      <div><strong>Sessions :</strong> ${peSpan('sol_sessions','17/03 (25 pers.) + 25/03 (25 pers.) + 08/04 (25 pers.)')}</div>
+    </div>
+    <div style="margin-top:12px;padding:10px 14px;background:#051E50;border-radius:8px;font-size:14px;font-weight:700;color:#FFD700;text-align:center">
+      ${peSpan('sol_verdict','75 commerciaux formés et équipés en 6 semaines')}
+    </div>
+    <div style="margin-top:10px;padding:12px 16px;background:#FFFBEB;border:1px solid #FDE68A;border-radius:8px;display:flex;gap:10px;align-items:flex-start">
+      <span style="font-size:18px;flex-shrink:0">&#11088;</span>
+      <div style="font-size:13px;color:#92400E;line-height:1.6"><strong>Bonus possible :</strong> ${peSpan('sol_bonus','En parallèle, une page de consultation de la matrice (personas, questions découverte, solutions) peut être mise à disposition de tous les commerciaux sans IA, sans coût supplémentaire et sans risque technique. Temps de réalisation estimé : ~0.5 jour.')}</div>
+    </div>
+  </div>`;
 
   h += `<div style="text-align:right;margin-top:4px;margin-bottom:8px">
     <button onclick="peReset()" style="font-size:10px;background:none;border:1px solid #E2E8F0;border-radius:4px;padding:2px 8px;color:#94A3B8;cursor:pointer">Réinitialiser les modifications</button>
