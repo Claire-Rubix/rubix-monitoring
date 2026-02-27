@@ -1886,7 +1886,7 @@ function renderPitchDemandes() {
 
 /* ---- Améliorations prévues (ex-Chantiers) ---- */
 const PITCH_AMELIORATIONS = [
-  { id:1, label:'Ouverture d\'un compte OpenAI dédié', detail:'Séparer le compte IA de Rubix Pitch de celui de Smart Spec pour éviter les conflits et lever les limites de capacité', impact:'critique', status:'a_faire', retroIds:['s1-1','s1-2','s1-3','s1-4'] },
+  { id:1, label:'Compte OpenAI : 2 options', detail:'Option A : garder le compte actuel Tier 5 (aucune limite, budget partagé, vérifier le solde avant chaque session). Option B : créer un compte dédié (budget maîtrisé, repart en Tier 1). À décider en S10.', impact:'critique', status:'a_faire', retroIds:['s1-1','s1-2','s1-3','s1-4'] },
   { id:2, label:'Meilleure expérience en cas de problème', detail:'Messages clairs et bouton réessayer quand le service est lent ou indisponible', impact:'critique', status:'a_faire', retroIds:['s1-10','s1-11'] },
   { id:3, label:'Relance automatique en cas de surcharge', detail:'3 tentatives max (1s, 3s, 9s) puis arrêt. Pas de boucle infinie, coût maîtrisé.', impact:'critique', status:'fait', retroIds:['s1-12','s1-13','s1-14'] },
   { id:4, label:'Accélération de la génération', detail:'Temps de génération divisé par 2 grâce à l\'exécution en parallèle', impact:'important', status:'a_faire', retroIds:['s2-9'] },
