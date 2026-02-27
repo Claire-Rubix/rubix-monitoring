@@ -1099,9 +1099,9 @@ const DEMANDES = [
   { id:'d2', titre:'1 personne pour tester l\'app avant les formations (vérification bugs)', destinataire:'À désigner', deadline:'10/03',
     detail:'Quelqu\'un qui parcourt l\'app, teste les fonctionnalités et remonte les problèmes. Effort : ~1h.',
     pourquoi:'Vérifier que l\'application fonctionne correctement avant de la mettre dans les mains de 25 personnes.' },
-  { id:'d3', titre:'Liste des 75 participants aux 3 sessions', destinataire:'Organisateurs formation', deadline:'20/03',
-    detail:'Nom, prénom, profil (RVE/DE), session attribuée (1, 2 ou 3).',
-    pourquoi:'Permet de créer les accès individuels et gérer le déploiement progressif.' },
+  { id:'d3', titre:'Liste des 75 participants aux 3 sessions', destinataire:'Organisateurs formation', deadline:'Début S10 (03/03)',
+    detail:'Nom, prénom, profil (RVE/DE), session attribuée (1, 2 ou 3). Attendue début de semaine prochaine.',
+    pourquoi:'Permet de créer les accès individuels (login par utilisateur) avant les formations.' },
 ];
 
 const D_CYCLE = ['todo', 'inprogress', 'done'];
@@ -1629,11 +1629,11 @@ function renderPitchPilote() {
   h += `<div style="font-size:16px;font-weight:800;color:#051E50;margin-bottom:14px">${peSpan('pil_titre','Set-up')}</div>`;
 
   const SETUP_ITEMS = [
-    { label:'Préparation', val:'Compte IA dédié + gestion d\'erreurs + relance automatique + test de charge. 2 à 3 semaines minimum' },
-    { label:'Compte IA', val:'Compte OpenAI dédié, quota augmenté pour 25+ users simultanés (7 jours d\'activation)' },
+    { label:'Préparation', val:'Corrections + relance automatique + test de charge. 2 à 3 semaines (25/02 → 14/03)' },
+    { label:'Compte IA', val:'Compte OpenAI dédié prévu mercredi 04/03. Crédits 5-15€ pour les sessions' },
+    { label:'Accès', val:'Liste des utilisateurs attendue début de semaine prochaine. Création des logins individuels' },
+    { label:'Matrice', val:'Nouvelle matrice attendue ~02/03. Encodage et tests dès réception' },
     { label:'Formations', val:'3 sessions de 25 personnes (17/03, 25/03, 08/04). 75 commerciaux formés, tous repartent avec l\'app' },
-    { label:'Gestion d\'erreurs', val:'Indispensable, sinon l\'app plante devant 25 personnes' },
-    { label:'Crédits IA', val:'Provisionner 5-15€ de crédits pour les sessions' },
     { label:'Support', val:'Claire temps plein pendant la préparation + jours de formation' },
   ];
 
@@ -2510,11 +2510,11 @@ function renderProgrammeSynth() {
   const el = $('programme-synth'); if (!el) return;
 
   const commonItems = [
-    'Ouverture compte OpenAI dédié + crédits',
+    'Ouverture compte OpenAI dédié + crédits (prévu mercredi 04/03)',
     peSpan('prog_matrice','Réception nouvelle matrice (<strong>~02/03</strong>) + encodage et tests'),
+    'Réception liste des utilisateurs (début de semaine prochaine) + création des accès individuels',
     'Corrections bugs + fiabilisation',
     'Configuration des appels IA par lots (batch) pour gérer la charge',
-    'Login individuel par utilisateur',
     peSpan('prog_qa','1 personne pour tester l\'app et vérifier les bugs avant les formations'),
     'Sauvegarde multi-appareil (historique accessible sur tous les postes)',
     'Remontée des bugs par email à Claire',
@@ -2524,7 +2524,7 @@ function renderProgrammeSynth() {
   const options = [
     { id:'', titre:'Déploiement 75 commerciaux', color:'#166534', bg:'#F0FDF4', border:'#86EFAC',
       steps:[
-        { date:'25/02 → 14/03', label:'Préparation', days:'14 jours ouvrés', desc:'Compte IA, matrice, corrections, tests de charge' },
+        { date:'25/02 → 14/03', label:'Préparation', days:'14 jours ouvrés', desc:'Corrections, compte IA (04/03), matrice, accès utilisateurs, tests de charge' },
         { date:'17/03', label:'Session 1', desc:'25 pers., tous actifs', accent:true },
         { date:'18/03 → 24/03', label:'Suivi', days:'5 jours ouvrés', desc:'Retours + corrections' },
         { date:'25/03', label:'Session 2', desc:'25 pers., 50 actifs cumulés', accent:true },
@@ -2602,60 +2602,62 @@ function renderCleanPlanning() {
   const el = $('retro-clean-planning'); if (!el) return;
 
   const WEEKS = [
-    { id:'w1', label:'S9', title:'25/02 → 28/02', subtitle:'Lancement', color:'#1D4ED8', bg:'#EFF6FF', border:'#BFDBFE',
+    { id:'w1', label:'S9', title:'25/02 → 28/02', subtitle:'Corrections + préparation', color:'#1D4ED8', bg:'#EFF6FF', border:'#BFDBFE',
       tasks:[
-        { id:'t1', text:'Créer compte OpenAI dédié' },
-        { id:'t2', text:'Charger 50$ de crédits' },
-        { id:'t3', text:'Mettre à jour la clé API dans Vercel' },
-        { id:'t4', text:'Corriger bugs connus (API Fusion, tendances)' },
+        { id:'t1', text:'Corriger bugs connus (API Fusion, tendances, crédibilité)' },
+        { id:'t2', text:'Messages d\'erreur UX (timeout, surcharge, erreur serveur)' },
+        { id:'t3', text:'Relance automatique en cas d\'erreur' },
+        { id:'t4', text:'Bouton "Signaler un problème" vers email Claire' },
       ]},
-    { id:'w2', label:'S10', title:'03/03 → 07/03', subtitle:'Matrice + corrections', color:'#1D4ED8', bg:'#EFF6FF', border:'#BFDBFE',
+    { id:'w2', label:'S10', title:'03/03 → 07/03', subtitle:'Compte IA + matrice + accès', color:'#1D4ED8', bg:'#EFF6FF', border:'#BFDBFE',
       tasks:[
-        { id:'t5', text:'Réceptionner la nouvelle matrice (~02/03)' },
-        { id:'t6', text:'Vérifier format et données' },
-        { id:'t7', text:'Uploader sur Vercel + backup ancienne' },
-        { id:'t8', text:'Relance automatique en cas d\'erreur' },
-        { id:'t9', text:'Accélérer la génération (parallélisation)' },
-        { id:'t10', text:'Sauvegarde multi-appareil' },
+        { id:'t5', text:'Créer compte OpenAI dédié (mercredi 04/03)' },
+        { id:'t6', text:'Charger crédits + mettre à jour clé API' },
+        { id:'t7', text:'Réceptionner liste des utilisateurs (début de semaine)' },
+        { id:'t8', text:'Créer les accès individuels (login par utilisateur)' },
+        { id:'t9', text:'Réceptionner la nouvelle matrice (~02/03)' },
+        { id:'t10', text:'Encoder la nouvelle matrice + tests' },
+        { id:'t11', text:'Accélérer la génération (parallélisation)' },
+        { id:'t12', text:'Sauvegarde multi-appareil' },
       ]},
     { id:'w3', label:'S11', title:'10/03 → 14/03', subtitle:'Tests + validation', color:'#1D4ED8', bg:'#EFF6FF', border:'#BFDBFE',
       tasks:[
-        { id:'t11', text:'Tester 3 combinaisons nouvelle matrice' },
-        { id:'t12', text:'Simulation : 25 pitchs en conditions réelles' },
-        { id:'t13', text:'Simulation stress : 35 pitchs en rafale' },
-        { id:'t14', text:'1 testeur parcourt l\'app et remonte les bugs' },
-        { id:'t15', text:'Code freeze si tests OK' },
+        { id:'t13', text:'Tester 3 combinaisons nouvelle matrice' },
+        { id:'t14', text:'Simulation : 25 pitchs en conditions réelles' },
+        { id:'t15', text:'Simulation stress : 35 pitchs en rafale' },
+        { id:'t16', text:'1 testeur parcourt l\'app et remonte les bugs' },
+        { id:'t17', text:'Code freeze si tests OK' },
       ]},
     { id:'w4', label:'S12', title:'17/03 → 21/03', subtitle:'Session 1', color:'#166534', bg:'#F0FDF4', border:'#86EFAC', accent:true,
       tasks:[
-        { id:'t16', text:'Veille : vérifier app, crédits, pitch test' },
-        { id:'t17', text:'Session 1 : 25 personnes formées', highlight:true },
-        { id:'t18', text:'Vérifier les logs après la session' },
-        { id:'t19', text:'Surveiller emails de remontées' },
+        { id:'t18', text:'Veille : vérifier app, crédits, pitch test' },
+        { id:'t19', text:'Session 1 : 25 personnes formées', highlight:true },
+        { id:'t20', text:'Vérifier les logs après la session' },
+        { id:'t21', text:'Surveiller emails de remontées' },
       ]},
     { id:'w5', label:'S13', title:'24/03 → 28/03', subtitle:'Session 2 + suivi', color:'#166534', bg:'#F0FDF4', border:'#86EFAC', accent:true,
       tasks:[
-        { id:'t20', text:'Corriger bugs remontés session 1' },
-        { id:'t21', text:'Session 2 : 25 personnes, 50 actifs', highlight:true },
-        { id:'t22', text:'Vérifier les logs après la session' },
-        { id:'t23', text:'Point rapide avec utilisateurs' },
+        { id:'t22', text:'Corriger bugs remontés session 1' },
+        { id:'t23', text:'Session 2 : 25 personnes, 50 actifs', highlight:true },
+        { id:'t24', text:'Vérifier les logs après la session' },
+        { id:'t25', text:'Point rapide avec utilisateurs' },
       ]},
     { id:'w6', label:'S14-15', title:'31/03 → 07/04', subtitle:'Suivi inter-sessions', color:'#166534', bg:'#F0FDF4', border:'#86EFAC',
       tasks:[
-        { id:'t24', text:'Surveillance emails + logs 2x/semaine' },
-        { id:'t25', text:'Corrections si nécessaire' },
-        { id:'t26', text:'Préparer ouverture session 3' },
+        { id:'t26', text:'Surveillance emails + logs 2x/semaine' },
+        { id:'t27', text:'Corrections si nécessaire' },
+        { id:'t28', text:'Préparer ouverture session 3' },
       ]},
     { id:'w7', label:'S15', title:'08/04', subtitle:'Session 3', color:'#166534', bg:'#F0FDF4', border:'#86EFAC', accent:true,
       tasks:[
-        { id:'t27', text:'Session 3 : 25 personnes, 75 actifs', highlight:true },
-        { id:'t28', text:'Vérifier logs + bilan erreurs cumulées' },
+        { id:'t29', text:'Session 3 : 25 personnes, 75 actifs', highlight:true },
+        { id:'t30', text:'Vérifier logs + bilan erreurs cumulées' },
       ]},
     { id:'w8', label:'S16-18', title:'09/04 → 30/04', subtitle:'Bilan pilote', color:'#92400E', bg:'#FFFBEB', border:'#FDE68A',
       tasks:[
-        { id:'t29', text:'Ouverture complète si tout est stable' },
-        { id:'t30', text:'Préparer métriques (adoption, coûts, stabilité)' },
-        { id:'t31', text:'Bilan pilote 30/04 : GO / NO GO', highlight:true },
+        { id:'t31', text:'Ouverture complète si tout est stable' },
+        { id:'t32', text:'Préparer métriques (adoption, coûts, stabilité)' },
+        { id:'t33', text:'Bilan pilote 30/04 : GO / NO GO', highlight:true },
       ]},
   ];
 
