@@ -554,6 +554,7 @@ th{color:#1D4ED8;font-weight:600;font-size:10px;text-transform:uppercase;letter-
       <button class="sub-tab-btn" onclick="showPitchTab('programme',this)">Programme</button>
       <button class="sub-tab-btn" onclick="showPitchTab('couts',this)">Coûts</button>
       <button class="sub-tab-btn" onclick="showPitchTab('avalider',this)">À valider</button>
+      <button class="sub-tab-btn" onclick="showPitchTab('tests',this)">Tests</button>
     </div>
 
     <!-- ===== RÉUNION : ce qu'ils voient ===== -->
@@ -582,6 +583,11 @@ th{color:#1D4ED8;font-weight:600;font-size:10px;text-transform:uppercase;letter-
       <div id="retro-detail-full" style="display:none;margin-top:16px">
         <div id="retro-clean-planning"></div>
       </div>
+    </div>
+
+    <!-- Tests -->
+    <div class="sub-page" id="pitch-sub-tests">
+      <div id="pitch-tests-widget"></div>
     </div>
 
     <!-- Coûts -->
@@ -1680,6 +1686,7 @@ function initPitchSubTabs() {
   renderPitchPilote();
   initPitchChecklist();
   renderPitchAmeliorations();
+  renderPitchTests();
 }
 
 /* ---- Synthèse hero (chiffre clé) ---- */
@@ -1899,6 +1906,77 @@ function getAmelRetroStatus(amelId) {
   if (allDone) return 'fait';
   if (anyStarted) return 'en_cours';
   return 'a_faire';
+}
+
+// ====================== TESTS ======================
+
+const TEST_ITEMS = [
+  { id:'test1', cat:'Offline', label:'Bannière offline visible', desc:'Couper le wifi. Une barre rouge apparaît en haut "Pas de connexion internet". Remettre le wifi, la barre disparaît.', how:'Coupe le wifi sur ton PC et regarde l\'app.' },
+  { id:'test2', cat:'Offline', label:'Historique accessible hors ligne', desc:'Wifi coupé : l\'historique des pitchs déjà générés reste consultable.', how:'Coupe le wifi, va dans l\'historique.' },
+  { id:'test3', cat:'Offline', label:'Export PDF hors ligne', desc:'Wifi coupé : tu peux toujours exporter un pitch de l\'historique en PDF.', how:'Coupe le wifi, ouvre un pitch dans l\'historique, clique "Télécharger PDF".' },
+  { id:'test4', cat:'Réseau', label:'Retry visible en console', desc:'En réseau lent, la console affiche [API] retry 1/3, retry 2/3. Le pitch finit par passer.', how:'F12 → Network → choisis "Slow 4G" → lance un pitch → regarde l\'onglet Console.' },
+  { id:'test5', cat:'Réseau', label:'Login depuis le réseau Rubix (bureau)', desc:'Depuis le bureau (pas en télétravail), le login fonctionne et la matrice charge.', how:'Lundi au bureau : ouvre l\'app, connecte-toi, vérifie que les secteurs/fonctions s\'affichent.' },
+  { id:'test6', cat:'Réseau', label:'5 pitchs en parallèle (réseau Rubix)', desc:'Ouvrir 5 onglets, lancer un pitch dans chacun. Les 5 passent (même si certains mettent 30s).', how:'Au bureau : 5 onglets, 5 pitchs en même temps.' },
+  { id:'test7', cat:'Cache', label:'Matrice toujours là après 2h', desc:'Sans recharger la page pendant 2h, les secteurs et fonctions restent affichés (cache 24h).', how:'Pas besoin de tester. Le cache est codé à 24h, c\'est bon.' },
+  { id:'test8', cat:'Charge', label:'Simulation 25 pitchs (conditions réelles)', desc:'25 pitchs lancés pour simuler une session de formation.', how:'Simulation virtuelle en S11. Pas encore.' },
+  { id:'test9', cat:'Charge', label:'Simulation stress 35 pitchs en rafale', desc:'35 pitchs lancés rapidement pour tester les limites.', how:'Simulation virtuelle en S11. Pas encore.' },
+];
+
+const TEST_CYCLE = ['todo','ok','ko'];
+const TEST_ICONS = { todo:'⏳', ok:'✅', ko:'❌' };
+const TEST_LABELS = { todo:'À tester', ok:'Passé', ko:'Échoué' };
+const TEST_COLORS = { todo:{ bg:'#F8FAFC', border:'#E2E8F0', text:'#64748B' }, ok:{ bg:'#F0FDF4', border:'#86EFAC', text:'#166534' }, ko:{ bg:'#FEF2F2', border:'#FECACA', text:'#991B1B' } };
+
+function getTestStatus(id) { return localStorage.getItem('test_' + id) || 'todo'; }
+function toggleTestStatus(id) {
+  const cur = getTestStatus(id);
+  const idx = TEST_CYCLE.indexOf(cur);
+  const next = TEST_CYCLE[(idx + 1) % TEST_CYCLE.length];
+  next === 'todo' ? localStorage.removeItem('test_' + id) : localStorage.setItem('test_' + id, next);
+  renderPitchTests();
+}
+
+function renderPitchTests() {
+  const el = $('pitch-tests-widget'); if (!el) return;
+
+  const passed = TEST_ITEMS.filter(t => getTestStatus(t.id) === 'ok').length;
+  const failed = TEST_ITEMS.filter(t => getTestStatus(t.id) === 'ko').length;
+  const total = TEST_ITEMS.length;
+
+  let h = `<div style="font-size:18px;font-weight:800;color:#051E50;margin-bottom:6px">Tests de validation</div>`;
+  h += `<div style="font-size:14px;color:#64748B;margin-bottom:16px">${passed}/${total} passés${failed ? ' · <span style="color:#DC2626">' + failed + ' échoué' + (failed>1?'s':'') + '</span>' : ''}</div>`;
+
+  // Progress bar
+  const pctOk = Math.round(passed / total * 100);
+  const pctKo = Math.round(failed / total * 100);
+  h += `<div style="width:100%;height:10px;background:#E5E7EB;border-radius:5px;overflow:hidden;margin-bottom:20px;display:flex">
+    <div style="width:${pctOk}%;height:100%;background:#22C55E"></div>
+    <div style="width:${pctKo}%;height:100%;background:#EF4444"></div>
+  </div>`;
+
+  // Group by category
+  const cats = [...new Set(TEST_ITEMS.map(t => t.cat))];
+  for (const cat of cats) {
+    const items = TEST_ITEMS.filter(t => t.cat === cat);
+    h += `<div style="font-size:15px;font-weight:700;color:#051E50;margin:16px 0 10px">${cat}</div>`;
+    for (const t of items) {
+      const st = getTestStatus(t.id);
+      const c = TEST_COLORS[st];
+      h += `<div onclick="toggleTestStatus('${t.id}')" style="background:${c.bg};border:1px solid ${c.border};border-radius:10px;padding:14px 16px;margin-bottom:8px;cursor:pointer;transition:all .15s">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:10px">
+          <div style="display:flex;align-items:center;gap:10px">
+            <span style="font-size:18px">${TEST_ICONS[st]}</span>
+            <span style="font-size:14px;font-weight:700;color:${c.text}">${t.label}</span>
+          </div>
+          <span style="font-size:12px;font-weight:600;color:${c.text};background:${c.border};padding:2px 10px;border-radius:12px">${TEST_LABELS[st]}</span>
+        </div>
+        <div style="font-size:13px;color:#475569;margin-top:6px;line-height:1.5">${t.desc}</div>
+        <div style="font-size:12px;color:#94A3B8;margin-top:4px;font-style:italic">Comment : ${t.how}</div>
+      </div>`;
+    }
+  }
+
+  el.innerHTML = h;
 }
 
 function renderPitchAmeliorations() {
