@@ -1099,12 +1099,10 @@ function renderGlobalAlerts(proj) {
 // ====================== DEMANDES EN ATTENTE ======================
 
 const DEMANDES = [
-  { id:'d1', titre:'Création canal Teams "Rubix Pitch - Retours & Support"', destinataire:'IT', deadline:'28/02',
-    pourquoi:'Centraliser les remontées de bugs des commerciaux pendant et après les formations.' },
   { id:'d2', titre:'1 personne pour tester l\'app avant les formations (vérification bugs)', destinataire:'À désigner', deadline:'10/03',
     detail:'Quelqu\'un qui parcourt l\'app, teste les fonctionnalités et remonte les problèmes. Effort : ~1h.',
-    pourquoi:'Vérifier que l\'application fonctionne correctement avant de la mettre dans les mains de 22 personnes.' },
-  { id:'d3', titre:'Liste des 66 participants aux 3 sessions (options B, C, D)', destinataire:'Organisateurs formation', deadline:'20/03',
+    pourquoi:'Vérifier que l\'application fonctionne correctement avant de la mettre dans les mains de 25 personnes.' },
+  { id:'d3', titre:'Liste des 75 participants aux 3 sessions', destinataire:'Organisateurs formation', deadline:'20/03',
     detail:'Nom, prénom, profil (RVE/DE), session attribuée (1, 2 ou 3).',
     pourquoi:'Permet de créer les accès individuels et gérer le déploiement progressif.' },
 ];
@@ -1208,7 +1206,7 @@ const VERCEL_PROJECTIONS = [
   { label:'Maintenant (dev intensif)',    build:30,  functions:2.50, status:'red',    comment:'Surplus ~$14' },
   { label:'Après code freeze (mars)',     build:5,   functions:2.50, status:'green',  comment:'Dans le crédit' },
   { label:'15 users actifs (avril)',      build:3,   functions:5,    status:'green',  comment:'' },
-  { label:'66 users actifs (cible)',      build:3,   functions:12,   status:'green',  comment:'' },
+  { label:'75 users actifs (cible)',      build:3,   functions:12,   status:'green',  comment:'' },
 ];
 
 function renderVercelCosts() {
@@ -1409,9 +1407,9 @@ const PITCH_STATUS_META   = { ok:{icon:'🟢',label:'OK',cls:'ok'}, warning:{ico
 
 const PITCH_FORMATION_DATES = [
   { date:'2026-02-25', label:'25 fév',   desc:'Test solo Claire',               users:1,  done:true  },
-  { date:'2026-03-17', label:'17 mars',  desc:'Session 1, pilote réduit',       users:22, done:false },
-  { date:'2026-03-25', label:'25 mars',  desc:'Session 2, pilote élargi',       users:22, done:false },
-  { date:'2026-04-08', label:'8 avr',    desc:'Session 3, déploiement final',   users:22, done:false },
+  { date:'2026-03-17', label:'17 mars',  desc:'Session 1 (25 pers.)',            users:25, done:false },
+  { date:'2026-03-25', label:'25 mars',  desc:'Session 2 (25 pers.)',            users:25, done:false },
+  { date:'2026-04-08', label:'8 avr',    desc:'Session 3 (25 pers.)',            users:25, done:false },
 ];
 const PITCH_PRICE_CALL  = 0.00623; // $ par appel OpenAI
 const PITCH_CALLS_PITCH = 6;       // appels par pitch complet
@@ -1495,7 +1493,7 @@ const COSTS = {
   running: {
     vercelPro:      15,
     openaiPer15:    0.60,
-    openaiPer66:    2.64,
+    openaiPer75:    3.00,
     costPerPitch:   0.008,
   },
   openaiCredits: {
@@ -1506,17 +1504,17 @@ const COSTS = {
   testBudget: [
     { label:'Tests unitaires (matrice)',     pitchs:3,  cost:0.024 },
     { label:'Tests petit groupe',            pitchs:10, cost:0.08  },
-    { label:'Simulation formation (22)',     pitchs:22, cost:0.18  },
+    { label:'Simulation formation (25)',     pitchs:25, cost:0.20  },
     { label:'Simulation stress (35)',        pitchs:35, cost:0.28  },
     { label:'Testeurs réels (5 pers.)',      pitchs:25, cost:0.20  },
-    { label:'Retests après debug',           pitchs:22, cost:0.18  },
+    { label:'Retests après debug',           pitchs:25, cost:0.20  },
     { label:'Tests quotidiens (7 jours)',    pitchs:7,  cost:0.056 },
   ],
   oaiScenarios: [
     { label:'5 users (pilote)',   pitchs:25  },
     { label:'15 users',           pitchs:75  },
     { label:'50 users',           pitchs:250 },
-    { label:'66 users (cible)',   pitchs:330 },
+    { label:'75 users (cible)',   pitchs:375 },
     { label:'100 users',          pitchs:500 },
   ],
   EUR_USD: 0.92,
@@ -1672,7 +1670,7 @@ function renderPitchPilote() {
     { id:'C', titre:'Tous en live (25+)', color:'#991B1B', bg:'#FEF2F2', border:'#EF4444', items:[
       { label:'Préparation', val:'Compte IA dédié + gestion d\'erreurs + relance automatique + test de charge. 2 à 3 semaines minimum' },
       { label:'Compte IA', val:'Compte OpenAI dédié, quota augmenté pour 25+ users simultanés (7 jours d\'activation)' },
-      { label:'Formations', val:'3 sessions de formation (22 pers. chacune). Tous les commerciaux repartent avec l\'app' },
+      { label:'Formations', val:'3 sessions de formation (25 pers. chacune). Tous les commerciaux repartent avec l\'app' },
       { label:'Gestion d\'erreurs', val:'Indispensable, sinon l\'app plante devant 25 personnes' },
       { label:'Crédits IA', val:'Provisionner 5-15€ de crédits pour la session' },
       { label:'Support', val:'Claire temps plein pendant la préparation + jour J' },
@@ -1796,7 +1794,6 @@ function renderPitchSynthese() {
     <div style="font-size:18px;font-weight:800;color:#051E50;margin-bottom:14px">${peSpan('s_titre','Situation')}</div>
     <div style="display:flex;flex-direction:column;gap:10px;font-size:14px;color:#334155;line-height:1.7">
       <div>${peSpan('s_1','L\'application Rubix Pitch est <strong>développée et fonctionnelle</strong>.')}</div>
-      <div>${peSpan('s_2','3 demandes de support IT ont été faites depuis le 6 février. <strong>Aucune n\'a abouti.</strong>')}</div>
       <div>${peSpan('s_3','Les dates de formation sont fixées. Les commerciaux attendent de tester l\'outil.')}</div>
       <div>${peSpan('s_4','L\'environnement actuel permet de lancer un test, mais il a des <strong>limites de capacité</strong>.')}</div>
     </div>
@@ -1901,10 +1898,9 @@ function renderPitchAValider() {
     { id:'av5', label:'Limites de capacité acceptées', desc:'L\'environnement actuel supporte un nombre limité d\'utilisateurs simultanés. En progressif c\'est gérable. Si tout le monde se connecte en même temps, il y aura des lenteurs ou des plantages.' },
     { id:'av6', label:'Pas de sauvegarde multi-appareil', desc:'L\'historique des pitchs générés est stocké dans le navigateur. Si un commercial change de poste, il perd son historique. Amélioration prévue mais pas disponible au lancement.' },
     { id:'av7', label:'Incidents possibles le jour J', desc:'C\'est un outil en phase pilote, pas un produit fini. Des lenteurs ou erreurs sont possibles lors d\'une utilisation intensive.' },
-    { id:'av8', label:'Suivi des bugs via Teams pendant tout le pilote', desc:'Un canal Teams dédié est nécessaire pour centraliser les remontées d\'incidents. Claire assure le suivi et les corrections tout au long des 6 semaines.' },
+    { id:'av8', label:'Suivi des bugs par email pendant tout le pilote', desc:'Les remontées d\'incidents se font par email à Claire. Claire assure le suivi et les corrections tout au long des 6 semaines.' },
     { id:'av9', label:'1 personne pour tester l\'app avant les formations', desc:'Quelqu\'un qui parcourt l\'app et remonte les problèmes. Effort : ~1h. Échéance : 10/03.' },
-    { id:'av10', label:'Canal Teams "Rubix Pitch - Retours & Support"', desc:'Demande à l\'IT. Nécessaire avant la 1re formation. Échéance : 28/02.' },
-    { id:'av11', label:'Liste des 66 participants (options B, C, D)', desc:'Nom, prénom, profil, session attribuée. À demander aux organisateurs formation. Échéance : 20/03.' },
+    { id:'av11', label:'Liste des 75 participants (3 sessions x 25)', desc:'Nom, prénom, profil, session attribuée. À demander aux organisateurs formation. Échéance : 20/03.' },
   ];
 
   function getAVStatus(id) { return localStorage.getItem('av_check_' + id) || 'pending'; }
@@ -2071,8 +2067,7 @@ const RETRO_DATA = [
     { id:'s1-2', text:'Charger 50$ de crédits sur le nouveau compte', responsable:'CLAIRE', priority:'red' },
     { id:'s1-3', text:'Mettre à jour OPENAI_API_KEY dans Vercel', responsable:'CLAIRE', priority:'red' },
     { id:'s1-4', text:'Tester que l\'app fonctionne avec la nouvelle clé', responsable:'CLAIRE', priority:'red' },
-    { id:'s1-5', text:'Créer canal Teams "Rubix Pitch - Retours & Support"', responsable:'CLAIRE', priority:'blue' },
-    { id:'s1-20', text:'Demander à l\'IT la création du canal Teams "Rubix Pitch - Retours & Support"', responsable:'CLAIRE', priority:'blue' },
+    { id:'s1-5', text:'Préparer adresse email dédiée pour les remontées de bugs', responsable:'CLAIRE', priority:'blue' },
     { id:'s1-21', text:'Demander validation budget 50$ (46€) pour compte OpenAI dédié au manager', responsable:'CLAIRE', priority:'blue' },
   ]},
   { date:'2026-02-26', milestone:null, actions:[
@@ -2088,7 +2083,7 @@ const RETRO_DATA = [
     { id:'s1-12', text:'Implémenter timeout frontend 58s (couper avant le 60s Vercel)', responsable:'CLAUDE CODE', priority:'red' },
     { id:'s1-13', text:'Implémenter retry exponential backoff (api/generate-pitch.js)', responsable:'CLAUDE CODE', priority:'red' },
     { id:'s1-14', text:'Implémenter retry exponential backoff (api/generate-fusion.js)', responsable:'CLAUDE CODE', priority:'red' },
-    { id:'s1-15', text:'Ajouter bouton "Signaler un problème" → lien canal Teams', responsable:'CLAUDE CODE', priority:'orange' },
+    { id:'s1-15', text:'Ajouter bouton "Signaler un problème" → lien email Claire', responsable:'CLAUDE CODE', priority:'orange' },
     { id:'s1-16', text:'Implémenter login individuel (identifiant + code) → remplacer le mot de passe unique', responsable:'CLAUDE CODE', priority:'orange' },
     { id:'s1-17', text:'Créer fichier users.json sur Vercel Blob (liste utilisateurs avec champ "actif")', responsable:'CLAUDE CODE', priority:'orange' },
     { id:'s1-18', text:'Tester parcours complet — vérifier corrections bugs', responsable:'CLAIRE', priority:'green' },
@@ -2121,20 +2116,20 @@ const RETRO_DATA = [
     { id:'s2-16', text:'Vérifier statut Tier 2 (automatique ? réponse support ?)', responsable:'CLAIRE', priority:'green' },
     { id:'s2-17', text:'Décision : plan 5+5+5 (Tier 1) ou ouverture totale (Tier 2)', responsable:'CLAIRE', priority:'green' },
     { id:'s2-18', text:'Confirmer liste testeurs (noms reçus du point manager)', responsable:'CLAIRE', priority:'blue' },
-    { id:'s2-19', text:'Préparer users.json avec les 66 participants', responsable:'CLAIRE', priority:'blue' },
+    { id:'s2-19', text:'Préparer users.json avec les 75 participants', responsable:'CLAIRE', priority:'blue' },
     { id:'s2-20', text:'Décider quota pitchs/jour par utilisateur : 5 (~€72/mois, recommandé) ou 10 (~€146/mois)', responsable:'CLAIRE', priority:'orange' },
     { id:'s2-22', text:'Mettre à jour les métriques Vercel dans la page /monitoring (vercel.com → Dashboard → Usage → copier les chiffres dans VERCEL_USAGE)', responsable:'CLAIRE', priority:'green' },
   ]},
   // Semaine 3 — Bêta test + Simulations (09/03 → 13/03)
   // 07/03 (Sam) + 08/03 (Dim) → déplacés semaine du 09/03
   { date:'2026-03-09', milestone:null, actions:[
-    { id:'s3-1', text:'Envoyer accès app aux testeurs + consignes canal Teams', responsable:'CLAIRE', priority:'blue' },
+    { id:'s3-1', text:'Envoyer accès app aux testeurs + consignes remontée bugs par email', responsable:'CLAIRE', priority:'blue' },
     { id:'s3-2', text:'Corriger bugs remontés par testeurs (au fil de l\'eau)', responsable:'CLAUDE CODE', priority:'orange' },
     { id:'s3-6', text:'🧪 Simulation formation : 22 pitchs / 5 vagues / 3s — Coût : $0.18', responsable:'CLAIRE', priority:'green' },
   ]},
   { date:'2026-03-10', milestone:'🔒 Code freeze', actions:[
     { id:'s3-3', text:'Corrections bugs testeurs', responsable:'CLAUDE CODE', priority:'orange' },
-    { id:'s3-4', text:'Vérifier logs Vercel + retours canal Teams', responsable:'CLAIRE', priority:'green' },
+    { id:'s3-4', text:'Vérifier logs Vercel + retours email', responsable:'CLAIRE', priority:'green' },
     { id:'s3-7', text:'🧪 Simulation stress : 35 pitchs / 7 vagues / 3s — Coût : $0.28', responsable:'CLAIRE', priority:'green' },
     { id:'s3-8', text:'Analyser résultats simulations : taux succès, temps moyen, erreurs', responsable:'CLAIRE', priority:'green' },
     { id:'s3-11', text:'DÉCISION : code freeze si tests OK (reporté 11/03 max si debug)', responsable:'CLAIRE', priority:'green' },
@@ -2165,7 +2160,7 @@ const RETRO_DATA = [
     { id:'s4-9', text:'Générer 1 pitch test complet → résultat cohérent — Coût : $0.008', responsable:'CLAIRE', priority:'green' },
     { id:'s4-10', text:'Tester depuis un téléphone en 4G (backup wifi)', responsable:'CLAIRE', priority:'green' },
     { id:'s4-11', text:'Vérifier pitchs PDF fallback prêts et accessibles', responsable:'CLAIRE', priority:'green' },
-    { id:'s4-12', text:'Vérifier canal Teams accessible par les participants', responsable:'CLAIRE', priority:'green' },
+    { id:'s4-12', text:'Vérifier que les participants ont l\'adresse email pour les remontées', responsable:'CLAIRE', priority:'green' },
     { id:'s4-13', text:'Vérifier page /monitoring → connaître les points orange/rouge restants', responsable:'CLAIRE', priority:'green' },
   ]},
   { date:'2026-03-17', milestone:'🎯 SESSION 1', actions:[
@@ -2174,12 +2169,12 @@ const RETRO_DATA = [
     { id:'s4-16', text:'Créneau app (~1h) : guider les 22 participants', responsable:'FORMATEUR', priority:'blue' },
     { id:'s4-17', text:'Si bug en live → montrer le pitch PDF de fallback', responsable:'FORMATEUR', priority:'blue' },
     { id:'s4-18', text:'17h30 : Vérifier les logs — erreurs 429 ? Timeouts ?', responsable:'CLAIRE', priority:'green' },
-    { id:'s4-19', text:'17h30 : Confirmer les 5 ambassadeurs → leur partager lien + canal Teams', responsable:'CLAIRE', priority:'blue' },
+    { id:'s4-19', text:'17h30 : Confirmer les 5 ambassadeurs → leur partager lien app + email support', responsable:'CLAIRE', priority:'blue' },
   ]},
   // ===== PHASE 2 — App solide pour 10 utilisateurs (18/03 → 25/03) =====
   { date:'2026-03-18', phaseHeader:{ label:'🌱 Phase 2 — App solide pour 10 utilisateurs  ·  18/03 → 25/03', color:'#166534', bg:'#DCFCE7' }, milestone:null, actions:[
     { id:'s5-1', text:'Vérifier logs Vercel : les ambassadeurs utilisent l\'app ?', responsable:'CLAIRE', priority:'green' },
-    { id:'s5-2', text:'Vérifier canal Teams : bugs remontés ?', responsable:'CLAIRE', priority:'green' },
+    { id:'s5-2', text:'Vérifier emails : bugs remontés ?', responsable:'CLAIRE', priority:'green' },
   ]},
   { date:'2026-03-19', milestone:null, actions:[
     { id:'s5-3', text:'Point rapide ambassadeurs : "Ça marche ? Des soucis ?"', responsable:'CLAIRE', priority:'green' },
@@ -2189,7 +2184,7 @@ const RETRO_DATA = [
   { date:'2026-03-20', milestone:null, actions:[
     { id:'s5-5', text:'Bilan semaine pilote : logs, feedback ambassadeurs, décision suite', responsable:'CLAIRE', priority:'green' },
     { id:'s5-6', text:'Si KO → identifier et corriger avant le 25/03', responsable:'CLAIRE', priority:'green' },
-    { id:'s5-7', text:'Relancer les organisateurs formation pour la liste des 66 participants si pas encore reçue (deadline 20/03)', responsable:'CLAIRE', priority:'blue' },
+    { id:'s5-7', text:'Relancer les organisateurs formation pour la liste des 75 participants si pas encore reçue (deadline 20/03)', responsable:'CLAIRE', priority:'blue' },
   ]},
   { date:'2026-03-24', milestone:'📋 Veille formation 2', actions:[
     { id:'s6-1', text:'Checklist veille complète (même que 16/03)', responsable:'CLAIRE', priority:'green' },
@@ -2205,7 +2200,7 @@ const RETRO_DATA = [
   // ===== PHASE 3 — Robustesse + ouverture progressive (30/03 → 08/04+) =====
   { date:'2026-03-30', phaseHeader:{ label:'🚀 Phase 3 — Robustesse + ouverture progressive  ·  30/03 → 08/04+', color:'#92400E', bg:'#FEF9C3' }, milestone:null, actions:[
     { id:'s7-1', text:'Vérifier logs 2×/semaine (lundi + jeudi)', responsable:'CLAIRE', priority:'green' },
-    { id:'s7-2', text:'Surveiller canal Teams', responsable:'CLAIRE', priority:'green' },
+    { id:'s7-2', text:'Surveiller emails remontées bugs', responsable:'CLAIRE', priority:'green' },
     { id:'s7-3', text:'Implémenter cache priorisations (préparer ouverture large)', responsable:'CLAUDE CODE', priority:'orange' },
   ]},
   { date:'2026-04-03', milestone:null, actions:[
@@ -2229,7 +2224,7 @@ const RETRO_DATA = [
     { id:'s10-1', text:'Bilan 15 users → décision ouverture 30 users', responsable:'CLAIRE', priority:'green' },
   ]},
   { date:'2026-04-21', milestone:null, actions:[
-    { id:'s10-2', text:'Si Tier 2 → ouverture 66 users', responsable:'CLAIRE', priority:'green' },
+    { id:'s10-2', text:'Si Tier 2 → ouverture 75 users', responsable:'CLAIRE', priority:'green' },
     { id:'s10-3', text:'Si Tier 1 → relancer support OpenAI', responsable:'CLAIRE', priority:'blue' },
     { id:'s10-4', text:'Implémenter mode dégradé, monitoring alertes, métriques d\'usage', responsable:'CLAUDE CODE', priority:'orange' },
   ]},
@@ -2619,7 +2614,7 @@ function renderProgrammeSynth() {
     'Configuration des appels IA par lots (batch) pour gérer la charge',
     'Login individuel par utilisateur',
     peSpan('prog_qa','1 personne pour tester l\'app et vérifier les bugs avant les formations'),
-    'Création canal Teams support',
+    'Remontée des bugs par email à Claire',
     'Déploiement obligatoire via Vercel (proxy réseau Rubix bloque les outils de dev)',
   ];
 
@@ -2633,10 +2628,10 @@ function renderProgrammeSynth() {
     { id:'B', titre:'Progressif (5→10→15→25)', color:'#166534', bg:'#F0FDF4', border:'#86EFAC',
       steps:[
         { date:'25/02 → 14/03', label:'Préparation', desc:'Compte IA, matrice, corrections, tests' },
-        { date:'17/03', label:'Session 1', desc:'Formation 22 pers., 5 activés', accent:true },
+        { date:'17/03', label:'Session 1', desc:'Formation 25 pers., 5 activés', accent:true },
         { date:'18/03 → 24/03', label:'Suivi', desc:'Retours + corrections' },
-        { date:'25/03', label:'Session 2', desc:'Formation 22 pers., 10 actifs', accent:true },
-        { date:'08/04', label:'Session 3', desc:'Formation 22 pers., 15 actifs', accent:true },
+        { date:'25/03', label:'Session 2', desc:'Formation 25 pers., 10 actifs', accent:true },
+        { date:'08/04', label:'Session 3', desc:'Formation 25 pers., 15 actifs', accent:true },
         { date:'Mi-avril', label:'Ouverture', desc:'Montée graduelle → 25+ actifs' },
         { date:'30/04', label:'Bilan pilote', desc:'Résultats + décision suite', accent:true },
       ]
@@ -2644,9 +2639,9 @@ function renderProgrammeSynth() {
     { id:'C', titre:'Tous en live (25+)', color:'#DC2626', bg:'#FEF2F2', border:'#FECACA',
       steps:[
         { date:'25/02 → 14/03', label:'Préparation', desc:'Compte IA, matrice, corrections, tests de charge' },
-        { date:'17/03', label:'Session 1', desc:'22 pers., tous actifs immédiatement', accent:true },
-        { date:'25/03', label:'Session 2', desc:'22 pers., charge cumulée', accent:true },
-        { date:'08/04', label:'Session 3', desc:'22 pers., corrections urgentes entre sessions', accent:true },
+        { date:'17/03', label:'Session 1', desc:'25 pers., tous actifs immédiatement', accent:true },
+        { date:'25/03', label:'Session 2', desc:'25 pers., charge cumulée', accent:true },
+        { date:'08/04', label:'Session 3', desc:'25 pers., corrections urgentes entre sessions', accent:true },
         { date:'30/04', label:'Bilan pilote', desc:'Résultats + décision suite', accent:true },
       ]
     },
