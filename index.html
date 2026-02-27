@@ -2524,11 +2524,11 @@ function renderProgrammeSynth() {
   const options = [
     { id:'', titre:'Déploiement 75 commerciaux', color:'#166534', bg:'#F0FDF4', border:'#86EFAC',
       steps:[
-        { date:'25/02 → 14/03', label:'Préparation', desc:'14 jours ouvrés. Compte IA, matrice, corrections, tests de charge' },
+        { date:'25/02 → 14/03', label:'Préparation', days:'14 jours ouvrés', desc:'Compte IA, matrice, corrections, tests de charge' },
         { date:'17/03', label:'Session 1', desc:'25 pers., tous actifs', accent:true },
-        { date:'18/03 → 24/03', label:'Suivi', desc:'5 jours ouvrés. Retours + corrections' },
+        { date:'18/03 → 24/03', label:'Suivi', days:'5 jours ouvrés', desc:'Retours + corrections' },
         { date:'25/03', label:'Session 2', desc:'25 pers., 50 actifs cumulés', accent:true },
-        { date:'26/03 → 07/04', label:'Suivi', desc:'9 jours ouvrés. Retours + corrections' },
+        { date:'26/03 → 07/04', label:'Suivi', days:'9 jours ouvrés', desc:'Retours + corrections' },
         { date:'08/04', label:'Session 3', desc:'25 pers., 75 actifs', accent:true },
         { date:'30/04', label:'Bilan pilote', desc:'Résultats + décision suite', accent:true },
       ]
@@ -2566,6 +2566,8 @@ function renderProgrammeSynth() {
 
       // Step card
       h += `<div style="display:flex;flex-direction:column;align-items:center;min-width:140px;max-width:180px;position:relative">`;
+      // Days badge (above date)
+      if (s.days) h += `<div style="font-size:11px;font-weight:700;color:${opt.color};margin-bottom:4px;white-space:nowrap">${s.days}</div>`;
       // Date badge
       h += `<div style="background:${dateBg};color:#fff;padding:4px 12px;border-radius:20px;font-size:12px;font-weight:700;margin-bottom:10px;white-space:nowrap">${s.date}</div>`;
       // Dot + line
@@ -2599,118 +2601,116 @@ function initRetro() {
 function renderCleanPlanning() {
   const el = $('retro-clean-planning'); if (!el) return;
 
-  const PHASES = [
-    { id:'p1', title:'Préparation technique', period:'25/02 → 14/03', days:'14 jours ouvrés', color:'#1D4ED8', bg:'#EFF6FF', border:'#BFDBFE',
-      groups:[
-        { title:'Compte IA', tasks:[
-          { id:'t1', text:'Créer compte OpenAI dédié Rubix Pitch' },
-          { id:'t2', text:'Charger 50$ de crédits' },
-          { id:'t3', text:'Mettre à jour la clé API dans Vercel' },
-          { id:'t4', text:'Tester que l\'app fonctionne avec la nouvelle clé' },
-        ]},
-        { title:'Nouvelle matrice', tasks:[
-          { id:'t5', text:'Réceptionner la nouvelle matrice (~02/03)' },
-          { id:'t6', text:'Vérifier le format et les données' },
-          { id:'t7', text:'Uploader sur Vercel, garder l\'ancienne en backup' },
-          { id:'t8', text:'Tester 3 combinaisons avec la nouvelle matrice' },
-        ]},
-        { title:'Corrections et fiabilisation', tasks:[
-          { id:'t9', text:'Corriger les bugs connus (API Fusion, tendances, crédibilité)' },
-          { id:'t10', text:'Implémenter la relance automatique en cas d\'erreur' },
-          { id:'t11', text:'Accélérer la génération (parallélisation)' },
-          { id:'t12', text:'Sauvegarde multi-appareil' },
-        ]},
-        { title:'Tests et validation', tasks:[
-          { id:'t13', text:'Simulation formation : 25 pitchs en conditions réelles' },
-          { id:'t14', text:'Simulation stress : 35 pitchs en rafale' },
-          { id:'t15', text:'1 testeur parcourt l\'app et remonte les problèmes' },
-          { id:'t16', text:'Code freeze si tests OK' },
-        ]},
-      ]
-    },
-    { id:'p2', title:'Session 1 + Suivi', period:'17/03 → 24/03', days:'5 jours ouvrés', color:'#166534', bg:'#F0FDF4', border:'#86EFAC',
-      groups:[
-        { title:'Veille + Session', tasks:[
-          { id:'t17', text:'Veille : vérifier app, crédits, pitch test' },
-          { id:'t18', text:'Session 1 : 25 personnes formées, tous actifs' },
-          { id:'t19', text:'Vérifier les logs après la session' },
-        ]},
-        { title:'Suivi post-session', tasks:[
-          { id:'t20', text:'Surveiller les emails de remontées' },
-          { id:'t21', text:'Corriger les bugs remontés' },
-          { id:'t22', text:'Point rapide avec les premiers utilisateurs' },
-        ]},
-      ]
-    },
-    { id:'p3', title:'Session 2 + Suivi', period:'25/03 → 07/04', days:'9 jours ouvrés', color:'#166534', bg:'#F0FDF4', border:'#86EFAC',
-      groups:[
-        { title:'Veille + Session', tasks:[
-          { id:'t23', text:'Veille : vérifier corrections post-session 1' },
-          { id:'t24', text:'Session 2 : 25 personnes, 50 actifs cumulés' },
-          { id:'t25', text:'Vérifier les logs après la session' },
-        ]},
-        { title:'Suivi inter-sessions', tasks:[
-          { id:'t26', text:'Surveillance emails + logs 2x/semaine' },
-          { id:'t27', text:'Corrections si nécessaire' },
-          { id:'t28', text:'Préparer l\'ouverture session 3' },
-        ]},
-      ]
-    },
-    { id:'p4', title:'Session 3 + Bilan', period:'08/04 → 30/04', days:'Jusqu\'au bilan', color:'#92400E', bg:'#FFFBEB', border:'#FDE68A',
-      groups:[
-        { title:'Session 3', tasks:[
-          { id:'t29', text:'Session 3 : 25 personnes, 75 actifs' },
-          { id:'t30', text:'Vérifier les logs + bilan erreurs cumulées' },
-        ]},
-        { title:'Ouverture + Bilan', tasks:[
-          { id:'t31', text:'Ouverture complète si tout est stable' },
-          { id:'t32', text:'Préparer les métriques (adoption, coûts, stabilité)' },
-          { id:'t33', text:'Bilan pilote le 30/04 : GO / NO GO' },
-        ]},
-      ]
-    },
+  const WEEKS = [
+    { id:'w1', label:'S9', title:'25/02 → 28/02', subtitle:'Lancement', color:'#1D4ED8', bg:'#EFF6FF', border:'#BFDBFE',
+      tasks:[
+        { id:'t1', text:'Créer compte OpenAI dédié' },
+        { id:'t2', text:'Charger 50$ de crédits' },
+        { id:'t3', text:'Mettre à jour la clé API dans Vercel' },
+        { id:'t4', text:'Corriger bugs connus (API Fusion, tendances)' },
+      ]},
+    { id:'w2', label:'S10', title:'03/03 → 07/03', subtitle:'Matrice + corrections', color:'#1D4ED8', bg:'#EFF6FF', border:'#BFDBFE',
+      tasks:[
+        { id:'t5', text:'Réceptionner la nouvelle matrice (~02/03)' },
+        { id:'t6', text:'Vérifier format et données' },
+        { id:'t7', text:'Uploader sur Vercel + backup ancienne' },
+        { id:'t8', text:'Relance automatique en cas d\'erreur' },
+        { id:'t9', text:'Accélérer la génération (parallélisation)' },
+        { id:'t10', text:'Sauvegarde multi-appareil' },
+      ]},
+    { id:'w3', label:'S11', title:'10/03 → 14/03', subtitle:'Tests + validation', color:'#1D4ED8', bg:'#EFF6FF', border:'#BFDBFE',
+      tasks:[
+        { id:'t11', text:'Tester 3 combinaisons nouvelle matrice' },
+        { id:'t12', text:'Simulation : 25 pitchs en conditions réelles' },
+        { id:'t13', text:'Simulation stress : 35 pitchs en rafale' },
+        { id:'t14', text:'1 testeur parcourt l\'app et remonte les bugs' },
+        { id:'t15', text:'Code freeze si tests OK' },
+      ]},
+    { id:'w4', label:'S12', title:'17/03 → 21/03', subtitle:'Session 1', color:'#166534', bg:'#F0FDF4', border:'#86EFAC', accent:true,
+      tasks:[
+        { id:'t16', text:'Veille : vérifier app, crédits, pitch test' },
+        { id:'t17', text:'Session 1 : 25 personnes formées', highlight:true },
+        { id:'t18', text:'Vérifier les logs après la session' },
+        { id:'t19', text:'Surveiller emails de remontées' },
+      ]},
+    { id:'w5', label:'S13', title:'24/03 → 28/03', subtitle:'Session 2 + suivi', color:'#166534', bg:'#F0FDF4', border:'#86EFAC', accent:true,
+      tasks:[
+        { id:'t20', text:'Corriger bugs remontés session 1' },
+        { id:'t21', text:'Session 2 : 25 personnes, 50 actifs', highlight:true },
+        { id:'t22', text:'Vérifier les logs après la session' },
+        { id:'t23', text:'Point rapide avec utilisateurs' },
+      ]},
+    { id:'w6', label:'S14-15', title:'31/03 → 07/04', subtitle:'Suivi inter-sessions', color:'#166534', bg:'#F0FDF4', border:'#86EFAC',
+      tasks:[
+        { id:'t24', text:'Surveillance emails + logs 2x/semaine' },
+        { id:'t25', text:'Corrections si nécessaire' },
+        { id:'t26', text:'Préparer ouverture session 3' },
+      ]},
+    { id:'w7', label:'S15', title:'08/04', subtitle:'Session 3', color:'#166534', bg:'#F0FDF4', border:'#86EFAC', accent:true,
+      tasks:[
+        { id:'t27', text:'Session 3 : 25 personnes, 75 actifs', highlight:true },
+        { id:'t28', text:'Vérifier logs + bilan erreurs cumulées' },
+      ]},
+    { id:'w8', label:'S16-18', title:'09/04 → 30/04', subtitle:'Bilan pilote', color:'#92400E', bg:'#FFFBEB', border:'#FDE68A',
+      tasks:[
+        { id:'t29', text:'Ouverture complète si tout est stable' },
+        { id:'t30', text:'Préparer métriques (adoption, coûts, stabilité)' },
+        { id:'t31', text:'Bilan pilote 30/04 : GO / NO GO', highlight:true },
+      ]},
   ];
 
   function getT(id) { return localStorage.getItem('plan_' + id) === 'done'; }
-  function toggleT(id) {
+  window.toggleT = function(id) {
     const cur = getT(id);
     cur ? localStorage.removeItem('plan_' + id) : localStorage.setItem('plan_' + id, 'done');
     renderCleanPlanning();
-  }
+  };
 
-  let h = '';
-  for (const phase of PHASES) {
-    const allTasks = phase.groups.flatMap(g => g.tasks);
-    const done = allTasks.filter(t => getT(t.id)).length;
-    const total = allTasks.length;
+  // Global progress
+  const allTasks = WEEKS.flatMap(w => w.tasks);
+  const totalDone = allTasks.filter(t => getT(t.id)).length;
+  const totalAll = allTasks.length;
+  const totalPct = totalAll ? Math.round(totalDone / totalAll * 100) : 0;
+
+  let h = `<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:8px">
+    <div style="font-size:15px;font-weight:700;color:#051E50">Progression globale</div>
+    <div style="display:flex;align-items:center;gap:10px">
+      <div style="width:160px;height:10px;background:#E5E7EB;border-radius:5px;overflow:hidden"><div style="width:${totalPct}%;height:100%;background:${totalPct===100?'#22C55E':'#051E50'};border-radius:5px;transition:width .3s"></div></div>
+      <span style="font-size:14px;font-weight:800;color:${totalPct===100?'#22C55E':'#051E50'}">${totalDone}/${totalAll}</span>
+    </div>
+  </div>`;
+
+  for (const week of WEEKS) {
+    const done = week.tasks.filter(t => getT(t.id)).length;
+    const total = week.tasks.length;
     const pct = total ? Math.round(done / total * 100) : 0;
+    const allDone = done === total;
 
-    h += `<div style="border:1px solid ${phase.border};border-radius:12px;margin-bottom:16px;overflow:hidden">`;
-    h += `<div style="background:${phase.bg};padding:16px 20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
-      <div>
-        <div style="font-size:16px;font-weight:800;color:${phase.color}">${phase.title}</div>
-        <div style="font-size:13px;color:#64748B;margin-top:2px">${phase.period} · ${phase.days}</div>
-      </div>
+    h += `<div style="border:1px solid ${week.border};border-radius:10px;margin-bottom:10px;overflow:hidden;${allDone?'opacity:.7':''}">`;
+    // Header
+    h += `<div style="background:${week.bg};padding:12px 16px;display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap">
       <div style="display:flex;align-items:center;gap:10px">
-        <div style="width:100px;height:8px;background:#E5E7EB;border-radius:4px;overflow:hidden"><div style="width:${pct}%;height:100%;background:${pct===100?'#22C55E':phase.color};border-radius:4px;transition:width .3s"></div></div>
-        <span style="font-size:13px;font-weight:700;color:${pct===100?'#22C55E':phase.color}">${done}/${total}</span>
+        <span style="background:${week.color};color:#fff;padding:3px 10px;border-radius:6px;font-size:12px;font-weight:800">${week.label}</span>
+        <div>
+          <span style="font-size:14px;font-weight:700;color:${week.color}">${week.subtitle}</span>
+          <span style="font-size:12px;color:#64748B;margin-left:8px">${week.title}</span>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <div style="width:80px;height:6px;background:#E5E7EB;border-radius:3px;overflow:hidden"><div style="width:${pct}%;height:100%;background:${allDone?'#22C55E':week.color};border-radius:3px"></div></div>
+        <span style="font-size:12px;font-weight:700;color:${allDone?'#22C55E':week.color}">${done}/${total}</span>
       </div>
     </div>`;
-
-    h += `<div style="padding:16px 20px;display:flex;flex-direction:column;gap:16px">`;
-    for (const group of phase.groups) {
-      h += `<div>`;
-      h += `<div style="font-size:14px;font-weight:700;color:#051E50;margin-bottom:8px">${group.title}</div>`;
-      for (const task of group.tasks) {
-        const isDone = getT(task.id);
-        h += `<div onclick="toggleT('${task.id}')" style="display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:8px;cursor:pointer;transition:all .1s;${isDone?'background:#F0FDF4':''}">
-          <div style="width:20px;height:20px;border-radius:6px;border:2px solid ${isDone?'#22C55E':'#CBD5E1'};background:${isDone?'#22C55E':'#fff'};display:flex;align-items:center;justify-content:center;flex-shrink:0">
-            ${isDone ? '<span style="color:#fff;font-size:12px;font-weight:800">✓</span>' : ''}
-          </div>
-          <span style="font-size:14px;color:${isDone?'#059669':'#334155'};${isDone?'text-decoration:line-through;opacity:.7':''}">${task.text}</span>
-        </div>`;
-      }
-      h += `</div>`;
+    // Tasks
+    h += `<div style="padding:8px 12px">`;
+    for (const task of week.tasks) {
+      const isDone = getT(task.id);
+      h += `<div onclick="toggleT('${task.id}')" style="display:flex;align-items:center;gap:10px;padding:6px 8px;border-radius:6px;cursor:pointer;${isDone?'background:#F0FDF4':''}${task.highlight&&!isDone?';background:'+week.bg:''}">
+        <div style="width:18px;height:18px;border-radius:5px;border:2px solid ${isDone?'#22C55E':'#CBD5E1'};background:${isDone?'#22C55E':'#fff'};display:flex;align-items:center;justify-content:center;flex-shrink:0">
+          ${isDone ? '<span style="color:#fff;font-size:11px;font-weight:800">✓</span>' : ''}
+        </div>
+        <span style="font-size:14px;color:${isDone?'#059669':'#334155'};${isDone?'text-decoration:line-through;opacity:.6':''}${task.highlight&&!isDone?';font-weight:700':''}">${task.text}</span>
+      </div>`;
     }
     h += `</div></div>`;
   }
