@@ -1897,7 +1897,7 @@ const PITCH_AMELIORATIONS = [
   { id:6, label:'Suivi automatique des incidents', detail:'Journalisation automatique pour détecter et corriger les problèmes rapidement', impact:'important', status:'a_faire', taskIds:[], semaine:'Post-pilote' },
   { id:7, label:'Mise en cache intelligente', detail:'Réutilisation des analyses précédentes pour le même secteur (économie de coûts)', impact:'optimisation', status:'a_faire', taskIds:[], semaine:'Post-pilote' },
   { id:8, label:'Mode secours', detail:'Si le service IA est indisponible, l\'app propose le dernier pitch généré', impact:'optimisation', status:'a_faire', taskIds:[], semaine:'Post-pilote' },
-  { id:9, label:'Limites d\'utilisation et protection budget', detail:'20 générations/jour et 3/minute par utilisateur (par email). Stocké dans Upstash Redis. Nécessite des comptes individuels (t14/t15) pour fonctionner correctement par user. Message traduit FR/EN. Le 429 n\'est jamais retenté. Redis down = on laisse passer (fail open).', impact:'important', status:'en_cours', taskIds:['t44','t46','t14','t15'], semaine:'S10' },
+  { id:9, label:'Limites d\'utilisation et protection budget', detail:'20 générations/jour et 3/minute par utilisateur (par email). Stocké dans Neon Postgres (persistant). 100 comptes individuels créés. Message traduit FR/EN. Le 429 n\'est jamais retenté. Stress test passé à 100 users simultanés.', impact:'important', status:'en_cours', taskIds:['t44','t15'], semaine:'S10' },
 ];
 
 // Compute amélioration status from linked planning tasks
@@ -1944,7 +1944,7 @@ const TEST_ITEMS = [
   { id:'test14', cat:'Performance', label:'Fallback si une priorisation échoue', desc:'Si une des 5 priorisations échoue, les 4 autres s\'affichent quand même. Pas de crash global.', how:'Difficile à simuler manuellement. Vérifié par le code (.catch individuel par promesse). Vérifiable si un bug apparaît : les autres sections doivent rester visibles.' },
   { id:'test15', cat:'Limites', label:'Limite par minute (3/min)', desc:'Après 3 générations rapides en moins d\'1 minute, la 4e affiche "Trop de requêtes. Veuillez patienter 1 minute." Le bouton Réessayer reste disponible.', how:'Lance 3 pitchs rapidement (dans des onglets différents ou en cliquant vite). La 4e tentative doit afficher le message de limite.' },
   { id:'test16', cat:'Limites', label:'Limite par jour (20/jour)', desc:'Après 20 générations dans la journée, l\'app affiche "Vous avez atteint la limite de 20 générations par jour. Réessayez demain."', how:'Difficile à tester manuellement (20 pitchs). Vérifiable dans les logs Vercel : cherche "rate limit" ou "429".' },
-  { id:'test17', cat:'Limites', label:'Variables Upstash configurées', desc:'Les variables UPSTASH_REDIS_REST_URL et UPSTASH_REDIS_REST_TOKEN sont bien dans les env vars Vercel.', how:'Vercel → ton projet → Settings → Environment Variables. Vérifie que UPSTASH_REDIS_REST_URL et UPSTASH_REDIS_REST_TOKEN sont présentes.' },
+  { id:'test17', cat:'Limites', label:'Variables Neon Postgres configurées', desc:'Les variables DATABASE_URL (Neon Postgres) sont bien dans les env vars Vercel.', how:'Vercel → ton projet → Settings → Environment Variables. Vérifie que DATABASE_URL est présente et pointe vers Neon.' },
 ];
 
 const TEST_CYCLE = ['todo','ok','ko'];
@@ -2746,30 +2746,25 @@ function renderCleanPlanning() {
       ]},
     { id:'w2', label:'S10', title:'03/03 → 07/03', subtitle:'Corrections + compte IA + matrice + accès', color:'#1D4ED8', bg:'#EFF6FF', border:'#BFDBFE',
       tasks:[
-        { id:'t6', text:'Messages d\'erreur UX (timeout, surcharge, erreur serveur)' },
         { id:'t7', text:'Paralléliser les appels IA et Vercel (éviter bugs avec 25 users)' },
+        { id:'t15', text:'Créer les accès individuels (100 users créés)' },
+        { id:'t44', text:'Limites d\'utilisation : 20 générations/jour et 3/minute par utilisateur (Neon Postgres)' },
+        { id:'t22', text:'Stress test : 100 pitchs simultanés (passé)' },
+        { id:'t6', text:'Messages UX : erreurs (timeout, surcharge) + attente ("En cours...", "Serveur occupé...") - à vérifier' },
+        { id:'t18', text:'Sauvegarde multi-appareil (historique accessible sur tous les postes)' },
         { id:'t8', text:'Bouton "Signaler un problème" vers email Claire' },
         { id:'t9', text:'Corriger bugs connus (API Fusion, tendances, crédibilité)' },
         { id:'t10', text:'Décision compte IA : garder Tier 5 (partagé) ou créer dédié (Tier 1)' },
-        { id:'t11', text:'Si nouveau compte : créer + charger 50$ crédits' },
-        { id:'t12', text:'Si compte actuel : vérifier solde + prévenir collègue des dates sessions' },
-        { id:'t13', text:'Mettre à jour clé API dans Vercel si changement de compte' },
-        { id:'t14', text:'Réceptionner liste des utilisateurs (début de semaine)' },
-        { id:'t15', text:'Créer les accès individuels (login par utilisateur)' },
-        { id:'t16', text:'Réceptionner la nouvelle matrice (~02/03)' },
+        { id:'t12', text:'Vérifier solde OpenAI + prévenir collègue des dates sessions' },
+        { id:'t14', text:'Réceptionner liste des vrais utilisateurs' },
+        { id:'t16', text:'Réceptionner la nouvelle matrice' },
         { id:'t17', text:'Encoder la nouvelle matrice + tests' },
-        { id:'t18', text:'Sauvegarde multi-appareil' },
-        { id:'t19', text:'Messages d\'attente UX pendant la génération ("En cours...", "Serveur occupé, nouvelle tentative...")' },
-        { id:'t44', text:'Limites d\'utilisation : 20 générations/jour et 3/minute par utilisateur + message clair si limite atteinte' },
-        { id:'t46', text:'Activer Vercel KV sur le dashboard (nécessaire pour que les limites tiennent entre les redémarrages serveur)' },
         { id:'t45', text:'Supprimer le stockage Blob Vercel une fois la branche passée en main' },
       ]},
     { id:'w3', label:'S11', title:'10/03 → 14/03', subtitle:'Tests + validation', color:'#1D4ED8', bg:'#EFF6FF', border:'#BFDBFE',
       tasks:[
         { id:'t20', text:'Tester l\'app depuis le réseau Rubix au bureau' },
         { id:'t21', text:'Tester 3 combinaisons nouvelle matrice' },
-        { id:'t22', text:'Simulation : 25 pitchs en conditions réelles' },
-        { id:'t23', text:'Simulation stress virtuelle : 35 pitchs en rafale' },
         { id:'t24', text:'Tester offline : couper le wifi, vérifier bannière + historique + PDF' },
         { id:'t25', text:'Tester depuis le réseau Rubix : 5 pitchs en parallèle' },
         { id:'t26', text:'1 testeur parcourt l\'app et remonte les bugs' },
