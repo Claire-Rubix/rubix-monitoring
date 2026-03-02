@@ -517,7 +517,7 @@ th{color:#1D4ED8;font-weight:600;font-size:10px;text-transform:uppercase;letter-
         <div class="reco">
           <h4>Recommandations pour scaler</h4>
           <p>1. <strong>Batcher les appels grounding</strong> : combiner infos entreprise + matcher + fournisseur en 1 seul appel multi-tool (divise par 3)</p>
-          <p>2. <strong>Cacher les resultats</strong> : même entreprise = meme recherche, cacher 24h (Redis / KV Vercel)</p>
+          <p>2. <strong>Cacher les resultats</strong> : même entreprise = meme recherche, cacher 24h (Neon Postgres)</p>
           <p>3. <strong>Migrer vers GCP billing</strong> à partir de 5 users : 1 500 appels/min au lieu de 15 (x100)</p>
           <p>4. <strong>Queue + rate limiter côté serveur</strong> : limiter à 10 appels/min et mettre les requêtes en file d'attente</p>
         </div>
