@@ -1104,9 +1104,9 @@ function renderGlobalAlerts(proj) {
 const DEMANDES = [
   { id:'d2', titre:'1 personne pour tester l\'app avant les formations (vérification bugs)', destinataire:'À désigner', deadline:'10/03',
     detail:'Quelqu\'un qui parcourt l\'app, teste les fonctionnalités et remonte les problèmes. Effort : ~1h.',
-    pourquoi:'Vérifier que l\'application fonctionne correctement avant de la mettre dans les mains de 25 personnes.' },
-  { id:'d3', titre:'Liste des 75 participants aux 3 sessions', destinataire:'Organisateurs formation', deadline:'Début S10 (03/03)',
-    detail:'Nom, prénom, profil (RVE/DE), session attribuée (1, 2 ou 3). Attendue début de semaine prochaine.',
+    pourquoi:'Vérifier que l\'application fonctionne correctement avant de la mettre dans les mains des participants.' },
+  { id:'d3', titre:'Liste des 26 premiers participants (sessions 1 et 2 : 13 + 13)', destinataire:'Organisateurs formation', deadline:'Début S10 (03/03)',
+    detail:'Nom, prénom, profil (RVE/DE), session attribuée (1 ou 2). Sessions 3 à 5 : nombre à confirmer.',
     pourquoi:'Permet de créer les accès individuels (login par utilisateur) avant les formations.' },
 ];
 
@@ -1209,7 +1209,7 @@ const VERCEL_PROJECTIONS = [
   { label:'Maintenant (dev intensif)',    build:30,  functions:2.50, status:'red',    comment:'Surplus ~$14' },
   { label:'Après code freeze (mars)',     build:5,   functions:2.50, status:'green',  comment:'Dans le crédit' },
   { label:'15 users actifs (avril)',      build:3,   functions:5,    status:'green',  comment:'' },
-  { label:'75 users actifs (cible)',      build:3,   functions:12,   status:'green',  comment:'' },
+  { label:'26+ users actifs (5 sessions)',build:3,   functions:12,   status:'green',  comment:'' },
 ];
 
 function renderVercelCosts() {
@@ -1410,9 +1410,11 @@ const PITCH_STATUS_META   = { ok:{icon:'🟢',label:'OK',cls:'ok'}, warning:{ico
 
 const PITCH_FORMATION_DATES = [
   { date:'2026-02-25', label:'25 fév',   desc:'Test solo Claire',               users:1,  done:true  },
-  { date:'2026-03-17', label:'17 mars',  desc:'Session 1 (25 pers.)',            users:25, done:false },
-  { date:'2026-03-25', label:'25 mars',  desc:'Session 2 (25 pers.)',            users:25, done:false },
-  { date:'2026-04-08', label:'8 avr',    desc:'Session 3 (25 pers.)',            users:25, done:false },
+  { date:'2026-03-16', label:'16 mars',  desc:'Session 1 (13 pers.)',            users:13, done:false },
+  { date:'2026-03-17', label:'17 mars',  desc:'Session 2 (13 pers.)',            users:13, done:false },
+  { date:'2026-04-08', label:'8 avr',    desc:'Session 3 (à confirmer)',         users:0,  done:false },
+  { date:'2026-04-15', label:'15 avr',   desc:'Session 4 (à confirmer)',         users:0,  done:false },
+  { date:'2026-04-22', label:'22 avr',   desc:'Session 5 (à confirmer)',         users:0,  done:false },
 ];
 const PITCH_PRICE_CALL  = 0.00623; // $ par appel OpenAI
 const PITCH_CALLS_PITCH = 6;       // appels par pitch complet
@@ -1517,7 +1519,7 @@ const COSTS = {
     { label:'5 users (pilote)',   pitchs:25  },
     { label:'15 users',           pitchs:75  },
     { label:'50 users',           pitchs:250 },
-    { label:'75 users (cible)',   pitchs:375 },
+    { label:'26+ users (5 sessions)', pitchs:130 },
     { label:'100 users',          pitchs:500 },
   ],
   EUR_USD: 0.92,
@@ -1542,7 +1544,7 @@ function renderPitchCouts() {
 
   h += `<div style="background:#F0FDF4;border:2px solid #22C55E;border-radius:12px;padding:20px;margin-bottom:16px">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px">
-      <span style="font-size:16px;font-weight:800;color:#166534">${peSpan('c_sol_titre','Déploiement 75 commerciaux')}</span>
+      <span style="font-size:16px;font-weight:800;color:#166534">${peSpan('c_sol_titre','Déploiement commerciaux (5 sessions)')}</span>
       <div style="background:#166534;color:#fff;padding:6px 14px;border-radius:20px;font-size:14px;font-weight:800">Coût total : ${peSpan('c_sol_total','~85€ sur 6 semaines')}</div>
     </div>
     <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:14px">
@@ -1636,11 +1638,11 @@ function renderPitchPilote() {
 
   const SETUP_ITEMS = [
     { label:'Préparation', val:'Corrections + parallélisation appels IA et Vercel + relance automatique + test de charge. 2 à 3 semaines (25/02 → 14/03)' },
-    { label:'Compte IA', val:'Option A : garder le compte actuel (Tier 5, aucune limite de débit, budget partagé, vérifier le solde avant chaque session). Option B : créer un compte dédié (budget maîtrisé, mais repart en Tier 1, limites plus basses pour 25 users simultanés)' },
-    { label:'Parallélisation', val:'Appels IA et Vercel parallélisés pour éviter les bugs et lenteurs avec 25 utilisateurs simultanés' },
+    { label:'Compte IA', val:'Option A : garder le compte actuel (Tier 5, aucune limite de débit, budget partagé, vérifier le solde avant chaque session). Option B : créer un compte dédié (budget maîtrisé, mais repart en Tier 1, limites plus basses pour 13 users simultanés)' },
+    { label:'Parallélisation', val:'Appels IA et Vercel parallélisés pour éviter les bugs et lenteurs avec 13 utilisateurs simultanés' },
     { label:'Accès', val:'Liste des utilisateurs attendue début de semaine prochaine. Création des logins individuels' },
     { label:'Matrice', val:'Nouvelle matrice attendue ~02/03. Encodage et tests dès réception' },
-    { label:'Formations', val:'3 sessions de 25 personnes (17/03, 25/03, 08/04). 75 commerciaux formés, tous repartent avec l\'app' },
+    { label:'Formations', val:'Session 1 : lundi 16/03 (13 pers.), Session 2 : mardi 17/03 (13 pers.), Sessions 3 à 5 : dates et nombre à confirmer. Formation des formateurs le 10/03. Test virtuel le 09/03. Les formateurs présentent l\'app, Claire assiste. Tous repartent avec l\'app.' },
     { label:'Support', val:'Claire en accompagnement pendant la préparation + présente les jours de formation' },
     { label:'Limites', val:'20 générations max par jour et par utilisateur (suffisant pour 3 à 5 RDV). 3 par minute max (empêche le spam). Message clair affiché si la limite est atteinte.' },
   ];
@@ -1760,13 +1762,13 @@ function renderPitchSynthese() {
 
   h += `<div style="background:#F0FDF4;border:2px solid #22C55E;border-radius:12px;padding:20px;margin-bottom:14px">
     <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px">
-      <span style="font-size:16px;font-weight:800;color:#166534">${peSpan('sol_titre','Déploiement complet : 3 sessions x 25 personnes, 75 commerciaux formés')}</span>
+      <span style="font-size:16px;font-weight:800;color:#166534">${peSpan('sol_titre','Déploiement complet : 5 sessions de formation (13 pers. par session)')}</span>
     </div>
-    <div style="font-size:14px;color:#334155;margin-bottom:14px">${peSpan('sol_desc','Tous les commerciaux testent l\'app en formation et repartent avec. 3 sessions planifiées.')}</div>
+    <div style="font-size:14px;color:#334155;margin-bottom:14px">${peSpan('sol_desc','Tous les commerciaux testent l\'app en formation et repartent avec. 5 sessions planifiées.')}</div>
     <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px">
       <div style="background:#fff;border-radius:8px;padding:12px;text-align:center">
         <div style="font-size:12px;color:#64748B;margin-bottom:4px">Participants</div>
-        <div style="font-size:16px;font-weight:800;color:#166534">${peSpan('sol_participants','75')}</div>
+        <div style="font-size:16px;font-weight:800;color:#166534">${peSpan('sol_participants','26 confirmés')}</div>
       </div>
       <div style="background:#fff;border-radius:8px;padding:12px;text-align:center">
         <div style="font-size:12px;color:#64748B;margin-bottom:4px">Préparation</div>
@@ -1780,10 +1782,10 @@ function renderPitchSynthese() {
     <div style="display:flex;flex-direction:column;gap:8px;font-size:14px;color:#334155;line-height:1.6">
       <div><strong>Charge :</strong> ${peSpan('sol_charge','Préparation en amont (2-3 semaines) + présente les jours de formation')}</div>
       <div><strong>Prérequis :</strong> ${peSpan('sol_prereq','Compte IA dédié, tests de charge, fiabilisation, nouvelle matrice encodée')}</div>
-      <div><strong>Sessions :</strong> ${peSpan('sol_sessions','17/03 (25 pers.) + 25/03 (25 pers.) + 08/04 (25 pers.)')}</div>
+      <div><strong>Sessions :</strong> ${peSpan('sol_sessions','16/03 (13 pers.) + 17/03 (13 pers.) + sessions 3 à 5 (à confirmer)')}</div>
     </div>
     <div style="margin-top:12px;padding:10px 14px;background:#051E50;border-radius:8px;font-size:14px;font-weight:700;color:#FFD700;text-align:center">
-      ${peSpan('sol_verdict','75 commerciaux formés et équipés en 6 semaines')}
+      ${peSpan('sol_verdict','26 commerciaux confirmés + sessions 3 à 5 à venir')}
     </div>
   </div>`;
 
@@ -1807,12 +1809,12 @@ function renderPitchAValider() {
     { id:'av2', label:'Charge de travail acceptée', desc:'Préparation en amont (2-3 semaines) + présente les 3 jours de formation.' },
     { id:'av3', label:'Exclusivité projet', desc:'Pas de développement d\'autres applications pendant cette période. Le temps est dédié à la fiabilisation et au déploiement de Rubix Pitch.' },
     { id:'av4', label:'Télétravail nécessaire', desc:'Le réseau Rubix bloque l\'accès aux outils de développement et d\'hébergement (Vercel, GitHub, API OpenAI). Le travail technique ne peut se faire qu\'en télétravail.' },
-    { id:'av5', label:'Limites de capacité acceptées', desc:'L\'environnement actuel supporte un nombre limité d\'utilisateurs simultanés. Avec 25 personnes par session, des lenteurs sont possibles. Tests de charge prévus en amont.' },
+    { id:'av5', label:'Limites de capacité acceptées', desc:'L\'environnement actuel supporte un nombre limité d\'utilisateurs simultanés. Avec 13 personnes par session, des lenteurs sont possibles. Tests de charge prévus en amont (stress test passé à 100 utilisateurs).' },
     { id:'av7', label:'Incidents possibles le jour J', desc:'C\'est un outil en phase pilote, pas un produit fini. Des lenteurs ou erreurs sont possibles lors d\'une utilisation intensive.' },
     { id:'av8', label:'Suivi des bugs par email pendant tout le pilote', desc:'Les remontées d\'incidents se font par email à Claire. Claire assure le suivi et les corrections tout au long des 6 semaines.' },
     { id:'av9', label:'1 personne pour tester l\'app avant les formations', desc:'Quelqu\'un qui parcourt l\'app et remonte les problèmes. Effort : ~1h. Échéance : 10/03.' },
-    { id:'av11', label:'Liste des 75 participants (3 sessions x 25)', desc:'Nom, prénom, profil, session attribuée. À demander aux organisateurs formation. Échéance : 20/03.' },
-    { id:'av12', label:'Plan Vercel Pro (hébergement)', desc:'Le plan gratuit (Hobby) ne supporte que 10 exécutions simultanées. Avec 25 personnes qui cliquent "Générer" en même temps, 15 reçoivent une erreur. Le plan Pro (20$/mois) supporte 1 000 exécutions simultanées, largement suffisant pour 75 utilisateurs. Actuellement sur la carte de Claire en note de frais. À valider pour la durée du pilote (6 semaines, ~120$).' },
+    { id:'av11', label:'Liste des 26 premiers participants (sessions 1 et 2 : 13 + 13)', desc:'Nom, prénom, profil, session attribuée. À demander aux organisateurs formation. Sessions 3 à 5 : nombre à confirmer. Échéance : 10/03.' },
+    { id:'av12', label:'Plan Vercel Pro (hébergement)', desc:'Le plan gratuit (Hobby) ne supporte que 10 exécutions simultanées. Avec 13 personnes qui cliquent "Générer" en même temps, 3 reçoivent une erreur. Le plan Pro (20$/mois) supporte 1 000 exécutions simultanées, largement suffisant. Actuellement sur la carte de Claire en note de frais. À valider pour la durée du pilote (6 semaines, ~120$).' },
     { id:'av13', label:'Limites d\'utilisation acceptées', desc:'Pour maîtriser le budget, chaque utilisateur est limité à 20 générations par jour et 3 par minute. C\'est suffisant pour 3 à 5 rendez-vous clients par jour. Si la limite est atteinte, un message clair s\'affiche. Pas de risque de dérapage budgétaire.' },
     { id:'av14', label:'Support le jour J : ordinateur ou mobile ?', desc:'Les commerciaux utiliseront-ils l\'app sur ordinateur portable ou sur mobile le jour de la formation ? Cela impacte l\'affichage (responsive) et les tests à prioriser avant le jour J.' },
     { id:'av15', label:'Budget Claude IA (développement) - 150€/mois', desc:'<strong>Situation actuelle : 100€/mois</strong><br>Claire utilise Claude (plan Max) pour le développement de Rubix Pitch. Tout passe par un seul compte personnel. Ce plan impose des <strong>limites hebdomadaires et journalières</strong> qui bloquent régulièrement le travail de développement en pleine semaine.<br><br><strong>Problème de sécurité</strong><br>Pour intégrer les données commerciales sensibles (matrice Rubix, configurations, structure des solutions), il faut un canal sécurisé où les données ne sont <strong>ni utilisées pour entraîner l\'IA, ni conservées plus de 30 jours</strong>. Le plan Max actuel conserve les données 90 jours et ne fournit pas de contrat de protection des données (DPA).<br><br><strong>Demande : passer à 150€/mois (+50€)</strong><br>Séparer l\'usage en deux canaux distincts :<br><br><strong>1. Chat Claude (100€/mois, plan Max)</strong><br>Usage : assistants IA, projets de rédaction, prompts, génération de documents Confluence, brainstorming.<br>Données concernées : aucune donnée sensible, uniquement de la rédaction et de l\'organisation.<br><br><strong>2. Clé API Anthropic (+50€/mois estimés)</strong><br>Usage : développement du code Rubix Pitch dans VS Code (Claude Code).<br>Données concernées : code source, configurations, structure de la matrice commerciale.<br><br><strong>Pourquoi la clé API ?</strong><br>- <strong>DPA inclus automatiquement</strong> (contrat de protection des données, conformité RGPD). Le DPA encadre la durée de conservation, les accès, l\'obligation de notification sous 72h en cas de fuite, le droit de suppression.<br>- <strong>Données non utilisées</strong> pour entraîner l\'IA (engagement contractuel, conditions commerciales API)<br>- <strong>Données supprimées après 30 jours</strong> (au lieu de 90 jours sur le chat). Les 30 jours servent uniquement à détecter les abus et les comportements malveillants, conformément aux obligations légales. Aucune exploitation commerciale, aucun entraînement. Suppression automatique après 30 jours.<br>- <strong>Plus de limites</strong> : jamais bloquée en plein développement<br>- <strong>Plafond de dépenses configurable</strong> : on fixe un budget max mensuel sur la console Anthropic, impossible de le dépasser<br>- C\'est le canal utilisé par les grandes entreprises (banques, CAC 40) pour leurs données sensibles<br><br><strong>Sans la clé API</strong> : les données de développement passent par le chat grand public (rétention 90 jours, pas de DPA, pas de garantie contractuelle en cas d\'audit). Et Claire est régulièrement bloquée par les quotas.<br><br><strong>Résumé</strong> : +50€/mois pour un cadre juridique conforme RGPD, des données non conservées au-delà de 30 jours, et un développement sans interruption. Budget plafonnable.' },
@@ -2074,12 +2076,12 @@ function renderPitchAmeliorations() {
     <div style="font-size:14px;font-weight:700;color:#051E50;margin-bottom:6px">Compte IA : 2 options possibles</div>
     <div style="font-size:13px;color:#334155;line-height:1.8">
       <strong>Option A</strong> : garder le compte actuel Tier 5 (aucune limite de débit, budget partagé avec Smart Spec, vérifier le solde avant chaque session).<br>
-      <strong>Option B</strong> : créer un compte dédié (budget maîtrisé, mais repart en Tier 1, limites plus basses pour 25 users simultanés).
+      <strong>Option B</strong> : créer un compte dédié (budget maîtrisé, mais repart en Tier 1, limites plus basses pour 13 users simultanés).
     </div>
     <details style="margin-top:10px"><summary style="font-size:12px;color:#64748B;cursor:pointer">Détail technique</summary>
       <div style="font-size:13px;color:#334155;margin-top:8px;line-height:1.8">
         <strong>Tier 5 (actuel) :</strong> aucune limite de requêtes par minute. Budget partagé, à surveiller.<br>
-        <strong>Tier 1 (nouveau compte) :</strong> 500 req/min max, suffisant pour 25 users si les appels sont parallélisés. Budget 50$ pour démarrer, montée en Tier 2 après 7 jours + 100$ dépensés.
+        <strong>Tier 1 (nouveau compte) :</strong> 500 req/min max, suffisant pour 13 users si les appels sont parallélisés. Budget 50$ pour démarrer, montée en Tier 2 après 7 jours + 100$ dépensés.
       </div>
     </details>
   </div>`;
@@ -2154,7 +2156,7 @@ const RETRO_DATA = [
     { id:'s2-16', text:'Vérifier statut Tier 2 (automatique ? réponse support ?)', responsable:'CLAIRE', priority:'green' },
     { id:'s2-17', text:'Décision : plan 5+5+5 (Tier 1) ou ouverture totale (Tier 2)', responsable:'CLAIRE', priority:'green' },
     { id:'s2-18', text:'Confirmer liste testeurs (noms reçus du point manager)', responsable:'CLAIRE', priority:'blue' },
-    { id:'s2-19', text:'Préparer users.json avec les 75 participants', responsable:'CLAIRE', priority:'blue' },
+    { id:'s2-19', text:'Préparer users.json avec les 26 premiers participants (13 + 13)', responsable:'CLAIRE', priority:'blue' },
     { id:'s2-20', text:'Décider quota pitchs/jour par utilisateur : 5 (~€72/mois, recommandé) ou 10 (~€146/mois)', responsable:'CLAIRE', priority:'orange' },
     { id:'s2-22', text:'Mettre à jour les métriques Vercel dans la page /monitoring (vercel.com → Dashboard → Usage → copier les chiffres dans VERCEL_USAGE)', responsable:'CLAIRE', priority:'green' },
   ]},
@@ -2222,7 +2224,7 @@ const RETRO_DATA = [
   { date:'2026-03-20', milestone:null, actions:[
     { id:'s5-5', text:'Bilan semaine pilote : logs, feedback ambassadeurs, décision suite', responsable:'CLAIRE', priority:'green' },
     { id:'s5-6', text:'Si KO → identifier et corriger avant le 25/03', responsable:'CLAIRE', priority:'green' },
-    { id:'s5-7', text:'Relancer les organisateurs formation pour la liste des 75 participants si pas encore reçue (deadline 20/03)', responsable:'CLAIRE', priority:'blue' },
+    { id:'s5-7', text:'Relancer les organisateurs formation pour la liste des participants session 3 (08/04) si pas encore reçue', responsable:'CLAIRE', priority:'blue' },
   ]},
   { date:'2026-03-24', milestone:'📋 Veille formation 2', actions:[
     { id:'s6-1', text:'Checklist veille complète (même que 16/03)', responsable:'CLAIRE', priority:'green' },
@@ -2262,7 +2264,7 @@ const RETRO_DATA = [
     { id:'s10-1', text:'Bilan 15 users → décision ouverture 30 users', responsable:'CLAIRE', priority:'green' },
   ]},
   { date:'2026-04-21', milestone:null, actions:[
-    { id:'s10-2', text:'Si Tier 2 → ouverture 75 users', responsable:'CLAIRE', priority:'green' },
+    { id:'s10-2', text:'Si Tier 2 → ouverture complète (sessions 3 à 5)', responsable:'CLAIRE', priority:'green' },
     { id:'s10-3', text:'Si Tier 1 → relancer support OpenAI', responsable:'CLAIRE', priority:'blue' },
     { id:'s10-4', text:'Implémenter mode dégradé, monitoring alertes, métriques d\'usage', responsable:'CLAUDE CODE', priority:'orange' },
   ]},
@@ -2647,7 +2649,7 @@ function renderProgrammeSynth() {
 
   const commonItems = [
     'Compte IA : Option A, garder le compte actuel Tier 5 (aucune limite, budget partagé). Option B, créer un compte dédié (budget maîtrisé, Tier 1 au départ)',
-    'Parallélisation des appels IA et Vercel (indispensable pour 25 utilisateurs simultanés)',
+    'Parallélisation des appels IA et Vercel (indispensable pour 13 utilisateurs simultanés)',
     peSpan('prog_matrice','Réception nouvelle matrice (<strong>~02/03</strong>) + encodage et tests'),
     'Réception liste des utilisateurs (début de semaine prochaine) + création des accès individuels',
     'Corrections bugs + fiabilisation + relance automatique en cas d\'erreur',
@@ -2658,14 +2660,13 @@ function renderProgrammeSynth() {
   ];
 
   const options = [
-    { id:'', titre:'Déploiement 75 commerciaux', color:'#166534', bg:'#F0FDF4', border:'#86EFAC',
+    { id:'', titre:'Déploiement commerciaux (5 sessions)', color:'#166534', bg:'#F0FDF4', border:'#86EFAC',
       steps:[
-        { date:'25/02 → 14/03', label:'Préparation', days:'14 jours ouvrés', desc:'Corrections, compte IA (04/03), matrice, accès utilisateurs, tests de charge' },
-        { date:'17/03', label:'Session 1', desc:'25 pers., tous actifs', accent:true },
-        { date:'18/03 → 24/03', label:'Suivi', days:'5 jours ouvrés', desc:'Retours + corrections' },
-        { date:'25/03', label:'Session 2', desc:'25 pers., 50 actifs cumulés', accent:true },
-        { date:'26/03 → 07/04', label:'Suivi', days:'9 jours ouvrés', desc:'Retours + corrections' },
-        { date:'08/04', label:'Session 3', desc:'25 pers., 75 actifs', accent:true },
+        { date:'25/02 → 14/03', label:'Préparation', days:'14 jours ouvrés', desc:'Corrections, compte IA, matrice, test virtuel 09/03, formation formateurs 10/03' },
+        { date:'16/03', label:'Session 1', desc:'13 pers., tous actifs', accent:true },
+        { date:'17/03', label:'Session 2', desc:'13 pers., 26 actifs cumulés', accent:true },
+        { date:'18/03 → 07/04', label:'Suivi', days:'15 jours ouvrés', desc:'Retours + corrections' },
+        { date:'08/04+', label:'Sessions 3 à 5', desc:'Dates et nombre à confirmer', accent:true },
         { date:'30/04', label:'Bilan pilote', desc:'Résultats + décision suite', accent:true },
       ]
     },
@@ -2748,7 +2749,7 @@ function renderCleanPlanning() {
       ]},
     { id:'w2', label:'S10', title:'03/03 → 07/03', subtitle:'Corrections + compte IA + matrice + accès', color:'#1D4ED8', bg:'#EFF6FF', border:'#BFDBFE',
       tasks:[
-        { id:'t7', text:'Paralléliser les appels IA et Vercel (éviter bugs avec 25 users)' },
+        { id:'t7', text:'Paralléliser les appels IA et Vercel (éviter bugs avec 13 users simultanés)' },
         { id:'t15', text:'Créer les accès individuels (100 users créés)' },
         { id:'t44', text:'Limites d\'utilisation : 20 générations/jour et 3/minute par utilisateur (Neon Postgres)' },
         { id:'t22', text:'Stress test : 100 pitchs simultanés (passé)' },
@@ -2764,39 +2765,36 @@ function renderCleanPlanning() {
         { id:'t17', text:'Encoder la nouvelle matrice + tests' },
         { id:'t45', text:'Supprimer le stockage Blob Vercel une fois la branche passée en main' },
       ]},
-    { id:'w3', label:'S11', title:'10/03 → 14/03', subtitle:'Tests + validation', color:'#1D4ED8', bg:'#EFF6FF', border:'#BFDBFE',
+    { id:'w3', label:'S11', title:'09/03 → 14/03', subtitle:'Tests live + formation formateurs', color:'#1D4ED8', bg:'#EFF6FF', border:'#BFDBFE',
       tasks:[
+        { id:'t48', text:'Lundi 09/03 : test live en réunion d\'équipe (plusieurs personnes, conditions réelles)', highlight:true },
+        { id:'t49', text:'Mardi 10/03 : création des accès formateurs + formation des formateurs', highlight:true },
         { id:'t20', text:'Tester l\'app depuis le réseau Rubix au bureau' },
         { id:'t21', text:'Tester 3 combinaisons nouvelle matrice' },
         { id:'t24', text:'Tester offline : couper le wifi, vérifier bannière + historique + PDF' },
         { id:'t25', text:'Tester depuis le réseau Rubix : 5 pitchs en parallèle' },
-        { id:'t26', text:'1 testeur parcourt l\'app et remonte les bugs' },
+        { id:'t26', text:'Corrections post-test live si nécessaire' },
         { id:'t27', text:'Code freeze si tests OK' },
       ]},
-    { id:'w4', label:'S12', title:'17/03 → 21/03', subtitle:'Session 1 : mardi 17/03', color:'#166534', bg:'#F0FDF4', border:'#86EFAC', accent:true,
+    { id:'w4', label:'S12', title:'16/03 → 17/03', subtitle:'Sessions 1 et 2 : lundi 16 + mardi 17/03', color:'#166534', bg:'#F0FDF4', border:'#86EFAC', accent:true,
       tasks:[
-        { id:'t28', text:'Veille lundi 16/03 : vérifier app, crédits, pitch test' },
-        { id:'t29', text:'Mardi 17/03 : Session 1, 25 personnes formées', highlight:true },
-        { id:'t30', text:'Vérifier les logs après la session' },
+        { id:'t28', text:'Veille : vérifier app, crédits, pitch test' },
+        { id:'t50', text:'Lundi 16/03 : Session 1, 13 personnes (formateurs présentent, Claire assiste)', highlight:true },
+        { id:'t51', text:'Mardi 17/03 : Session 2, 13 personnes (formateurs présentent, Claire assiste)', highlight:true },
+        { id:'t30', text:'Vérifier les logs après chaque session' },
         { id:'t31', text:'Surveiller emails de remontées' },
       ]},
-    { id:'w5', label:'S13', title:'24/03 → 28/03', subtitle:'Session 2 : mardi 25/03', color:'#166534', bg:'#F0FDF4', border:'#86EFAC', accent:true,
+    { id:'w5', label:'S13-14', title:'18/03 → 28/03', subtitle:'Suivi post-sessions', color:'#166534', bg:'#F0FDF4', border:'#86EFAC',
       tasks:[
-        { id:'t32', text:'Corriger bugs remontés session 1' },
-        { id:'t33', text:'Mardi 25/03 : Session 2, 25 personnes, 50 actifs', highlight:true },
-        { id:'t34', text:'Vérifier les logs après la session' },
-        { id:'t35', text:'Point rapide avec utilisateurs' },
-      ]},
-    { id:'w6', label:'S14-15', title:'31/03 → 07/04', subtitle:'Suivi inter-sessions', color:'#166534', bg:'#F0FDF4', border:'#86EFAC',
-      tasks:[
+        { id:'t32', text:'Corriger bugs remontés sessions 1 et 2' },
+        { id:'t35', text:'Point rapide avec formateurs et utilisateurs' },
         { id:'t36', text:'Surveillance emails + logs 2x/semaine' },
         { id:'t37', text:'Corrections si nécessaire' },
-        { id:'t38', text:'Préparer ouverture session 3' },
       ]},
-    { id:'w7', label:'S15', title:'08/04', subtitle:'Session 3 : mardi 08/04', color:'#166534', bg:'#F0FDF4', border:'#86EFAC', accent:true,
+    { id:'w6', label:'S15+', title:'08/04+', subtitle:'Sessions 3 à 5 (dates et nombre à confirmer)', color:'#166534', bg:'#F0FDF4', border:'#86EFAC', accent:true,
       tasks:[
-        { id:'t39', text:'Mardi 08/04 : Session 3, 25 personnes, 75 actifs', highlight:true },
-        { id:'t40', text:'Vérifier logs + bilan erreurs cumulées' },
+        { id:'t39', text:'Sessions 3 à 5 : dates, nombre de participants et lieu à confirmer', highlight:true },
+        { id:'t40', text:'Vérifier logs + bilan erreurs cumulées après chaque session' },
       ]},
     { id:'w8', label:'S16-18', title:'09/04 → 30/04', subtitle:'Bilan pilote : mercredi 30/04', color:'#051E50', bg:'#EFF6FF', border:'#BFDBFE',
       tasks:[
